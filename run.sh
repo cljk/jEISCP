@@ -1,0 +1,1 @@
+mvn exec:java -Dexec.mainClass="de.csmp.jeiscp.app.ThreadedConsoleApp"  
