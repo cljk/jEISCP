@@ -1,7 +1,7 @@
 jEISCP
 ======
 
-jEISCP is an implementation of Onkyo (E)ISCP-protocol used by various network enabled (Onkyo-) receivers to control volume, source selection and so on.
+jEISCP is a Java implementation of Onkyo (E)ISCP-protocol used by various network enabled (Onkyo-) receivers to control volume, source selection and so on.
 
 ISCP is called the message format used by Onkyo for already previously available serial connections to the devices. EISCP is the ethernet (TCP/IP) encapsulation of ISCP - used for WLAN and LAN.
 
