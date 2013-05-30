@@ -16,6 +16,7 @@ import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
 import de.csmp.jeiscp.EiscpProtocolHelper;
 import de.csmp.jeiscp.app.gui.OnkyoControllerMainFrame;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 
 public class AppGuiController implements EiscpListener{
 	private static final Log log = LogFactory.getLog(AppGuiController.class);
@@ -35,14 +36,13 @@ public class AppGuiController implements EiscpListener{
 		frm.getTglBtnMute().addActionListener(new ActionListener() {
 			public void actionPerformed( ActionEvent e ) { 
 			    String cmd = "AMT" + (frm.getTglBtnMute().isSelected() ? "01" : "00");
-			    fController.sendCommand(cmd);
+			    fController.sendIscpCommand(cmd);
 			} 
 		});
 		
 		frm.getTglbtnOnoff().addActionListener(new ActionListener() {
 			public void actionPerformed( ActionEvent e ) { 
-			    String cmd = "PWR" + (frm.getTglbtnOnoff().isSelected() ? "01" : "00");
-			    fController.sendCommand(cmd);
+			    fController.sendCommand((frm.getTglbtnOnoff().isSelected() ? SYSTEM_POWER_ON : SYSTEM_POWER_STANDBY));
 			} 
 		});
 		
@@ -51,12 +51,19 @@ public class AppGuiController implements EiscpListener{
 			public void stateChanged(ChangeEvent arg0) {
 				int vol = frm.getVolumeSlider().getValue();
 				String cmd = "MVL" + EiscpProtocolHelper.convertToHexString((byte) vol);
-				fController.sendCommand(cmd);
+				fController.sendIscpCommand(cmd);
 			}
 		});
 	}
 	
 	/** for gui elements */
+	public void sendIscpCommand(String cmd) {
+		try {
+			conn.sendIscpCommand(cmd);
+		} catch (Exception ex) {
+			log.error(ex);
+		}
+	}
 	public void sendCommand(String cmd) {
 		try {
 			conn.sendCommand(cmd);

@@ -14,6 +14,8 @@ import java.net.UnknownHostException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
+
 public class EiscpConnector {
 	
 
@@ -141,11 +143,18 @@ public class EiscpConnector {
 	}
 	
 	
-	public void sendCommand(String command) throws IOException {
-		log.debug("sendCommand: " + command);
+	public void sendIscpCommand(String command) throws IOException {
+		log.debug("sendIscpCommand: " + command);
 		String message = "!1" + command;
 		
 		sendIscpMessage(message);
+	}
+	
+
+	public void sendCommand(String commandId) throws IOException {
+		log.debug("sendCommand: " + commandId);
+		String iscpCommand = EiscpCommandsParser.getIscpCommand(commandId);
+		sendIscpCommand(iscpCommand);
 	}
 	
 	

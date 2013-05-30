@@ -62,7 +62,7 @@ public class BlockingDumbConsoleApp
 
 	public static void sendCommandDisplayResult(EiscpConnector conn,
 			String input) throws IOException, InterruptedException, Exception {
-		conn.sendCommand(input);
+		conn.sendIscpCommand(input);
 		Thread.sleep(200);
 		
 		byte[] message = conn.readMessage();

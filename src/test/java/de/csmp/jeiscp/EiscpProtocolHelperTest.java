@@ -1,4 +1,4 @@
-package de.csmp.onkyo.eiscp;
+package de.csmp.jeiscp;
 
 import org.junit.Test;
 

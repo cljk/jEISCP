@@ -9,8 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
-
-
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 /**
  * Hello world!
  *
@@ -41,10 +40,10 @@ public class ThreadedConsoleApp implements EiscpListener {
             }
             
             // get some infos on start
-            conn.sendCommand("PWRQSTN");
-            conn.sendCommand("MVLQSTN");
-            conn.sendCommand("IFVQSTN");
-            conn.sendCommand("RESQSTN");
+            conn.sendCommand(SYSTEM_POWER_QUERY);
+            conn.sendCommand(MASTER_VOLUME_QUERY);
+            conn.sendCommand(VIDEO_INFOMATION_QUERY);
+            conn.sendCommand(MONITOR_OUT_RESOLUTION_QUERY);
 
             Thread.sleep(500);	// wait for results displayed by background thread
             
@@ -68,7 +67,7 @@ public class ThreadedConsoleApp implements EiscpListener {
             		System.out.println("bye");
             		quit = true;
             	} else {
-            		conn.sendCommand(input);
+            		conn.sendIscpCommand(input);
             	}
             }
             
