@@ -1,0 +1,3 @@
+[submodule "src/main/resources/miracle2k-onkyo-eiscp"]
+	path = src/main/resources/miracle2k-onkyo-eiscp
+	url = https://github.com/miracle2k/onkyo-eiscp
