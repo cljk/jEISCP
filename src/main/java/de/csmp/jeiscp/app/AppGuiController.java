@@ -35,8 +35,7 @@ public class AppGuiController implements EiscpListener{
 		
 		frm.getTglBtnMute().addActionListener(new ActionListener() {
 			public void actionPerformed( ActionEvent e ) { 
-			    String cmd = "AMT" + (frm.getTglBtnMute().isSelected() ? "01" : "00");
-			    fController.sendIscpCommand(cmd);
+			    fController.sendCommand(frm.getTglBtnMute().isSelected() ? AUDIO_MUTING_ON : AUDIO_MUTING_OFF);
 			} 
 		});
 		
@@ -50,7 +49,7 @@ public class AppGuiController implements EiscpListener{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				int vol = frm.getVolumeSlider().getValue();
-				String cmd = "MVL" + EiscpProtocolHelper.convertToHexString((byte) vol);
+				String cmd = MASTER_VOLUME_ISCP + EiscpProtocolHelper.convertToHexString((byte) vol);
 				fController.sendIscpCommand(cmd);
 			}
 		});

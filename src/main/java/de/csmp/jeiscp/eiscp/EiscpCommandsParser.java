@@ -31,29 +31,58 @@ public class EiscpCommandsParser {
 
 	private static final Log log = LogFactory.getLog(EiscpCommandsParser.class);
 
-	static Map<String, List<String>> modelsets = null;
-	static Map<String, Object> ec = null;
+	private static Map<String, List<String>> modelsets = null;
+	private static Map<String, Object> ec = null;
 	
-	static List<CommandBlock> mainCommandBlocks = null;
-	public static Map<String, Command> mainCommands = null;
+	private static List<CommandBlock> mainCommandBlocks = null;
+	private static Map<String, Command> idToCommandMap = null;
+	private static Map<String, CommandBlock> idToCommandBlockMap = null;
+	private static Map<String, Command> iscpToCommandMap = null;
+	private static Map<String, CommandBlock> iscpToCommandBlockMap = null;
 	
-	static Map<String, List<String>> keysetForModel = new HashMap<String, List<String>>();
+	private static Map<String, List<String>> keysetForModel = new HashMap<String, List<String>>();
 	
 
-	public static Map<String, Command> getMainCommands() {
-		if (mainCommands == null) {
-			mainCommands = new HashMap<String, Command>();
+	public static Map<String, Command> getIscpToCommandMap() {
+		if (iscpToCommandMap == null) {
+			HashMap<String, Command> map = new HashMap<String, Command>();
 			for (CommandBlock cmdBlock : getMainCommandBlocks()) {
 				for (Command cmd : cmdBlock.getValues()) {
-					mainCommands.put(cmd.getIdentifier(), cmd);
+					map.put(cmd.getIscpCommand(), cmd);
+				}
+			}
+			iscpToCommandMap = map;
+		}
+		return iscpToCommandMap;
+	}
+	public static Map<String, Command> getIdToCommandMap() {
+		if (idToCommandMap == null) {
+			idToCommandMap = new HashMap<String, Command>();
+			for (CommandBlock cmdBlock : getMainCommandBlocks()) {
+				for (Command cmd : cmdBlock.getValues()) {
+					idToCommandMap.put(cmd.getIdentifier(), cmd);
 				}
 			}
 		}
-		return mainCommands;
+		return idToCommandMap;
+	}
+	
+	public static Map<String, CommandBlock> getIdToCommandBlockMap() {
+		if (idToCommandBlockMap == null) {
+			idToCommandBlockMap = new HashMap<String, CommandBlock>();
+			for (CommandBlock cmdBlock : getMainCommandBlocks()) {
+				idToCommandBlockMap.put(cmdBlock.getName(), cmdBlock);
+			}
+		}
+		return idToCommandBlockMap;
 	}
 	
 	public static Command getCommand(String commandId) {
-		return getMainCommands().get(commandId);
+		return getIdToCommandMap().get(commandId);
+	}
+	
+	public static Command getCommandByIscp(String command) {
+		return getIscpToCommandMap().get(command);
 	}
 	
 	public static String getIscpCommand(String commandId) {

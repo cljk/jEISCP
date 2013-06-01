@@ -7,7 +7,17 @@ ISCP is called the message format used by Onkyo for already previously available
 
 Usage
 =
-You need a working [Maven] installation to run this application. Check out the repository and run
+Check out the repository as usual
+
+    git clone https://github.com/cljk/jEISCP.git
+
+and then checkout the used submodule
+
+    cd jEISCP
+
+    git submodule update --init
+
+You need a working [Maven] installation to run this application.
 
     run.bat
 
@@ -66,7 +76,7 @@ References
 
 For (E)ISCP you can compare to the official Documentation (which this project is mainly based on). Also there are other projects with a comparable topic.
 
-* https://github.com/miracle2k/onkyo-eiscp (Python implementation with further references)
+* https://github.com/miracle2k/onkyo-eiscp (Python implementation with further references). This project is also used as submodule mainly for using the YAML file describing ISCP-command-capabilities of the different receiver models (to be done).
 
 
 
