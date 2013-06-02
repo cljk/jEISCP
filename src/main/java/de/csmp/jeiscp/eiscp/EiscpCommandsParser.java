@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.yaml.snakeyaml.Yaml;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY;
 
 /**
  * parses the YAML-file of git-project
@@ -41,6 +42,9 @@ public class EiscpCommandsParser {
 	private static Map<String, CommandBlock> iscpToCommandBlockMap = null;
 	
 	private static Map<String, List<String>> keysetForModel = new HashMap<String, List<String>>();
+	
+	
+	public static final Command MASTER_VOLUME_QUERY_CMD = getCommand(MASTER_VOLUME_QUERY);
 	
 
 	public static Map<String, Command> getIscpToCommandMap() {
@@ -155,9 +159,32 @@ public class EiscpCommandsParser {
 	
 	public static Map<String, List<String>> getModelsets() {
 		if (modelsets == null) {
-			modelsets = (Map<String, List<String>>) getEiscpCommands().get("modelsets");
-			log.debug("loaded " + modelsets.size() + " modelsets");
+			Map<String, List<String>> yamlModelsets = (Map<String, List<String>>) getEiscpCommands().get("modelsets");
+			log.debug("loaded " + yamlModelsets.size() + " modelsets");
+
+			// rework loaded modelset
+			for (String setId : yamlModelsets.keySet()) {
+				List<String> modelset = yamlModelsets.get(setId);
+				List<String> reworkedModelset = new LinkedList<String>(modelset);
+				
+				
+				for (String model : modelset) {
+					int cDelim = model.indexOf("(");
+					if (cDelim != -1) {
+						String derivedModelName = model.substring(0, cDelim);
+						if (! modelset.contains(derivedModelName)) {
+							log.debug("assign " + model + " as equal to " + derivedModelName);
+							reworkedModelset.add(derivedModelName);
+						}
+					}
+				}
+				
+				yamlModelsets.put(setId, reworkedModelset);
+			}
+			
+			modelsets = yamlModelsets;
 		}
+		
 		return modelsets;
 	}
 	
