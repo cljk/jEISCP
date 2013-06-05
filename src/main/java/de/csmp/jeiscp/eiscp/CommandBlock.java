@@ -1,7 +1,7 @@
 package de.csmp.jeiscp.eiscp;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CommandBlock {
 
@@ -9,9 +9,29 @@ public class CommandBlock {
 	String name;
     String description;
     
-    List<Command> values = new LinkedList<Command>();
+    Set<Command> values = new HashSet<Command>();
     
-    @Override
+    public CommandBlock() {
+    	
+    }
+    
+    public CommandBlock(String command, String name, String description) {
+		super();
+		this.command = command;
+		this.name = name;
+		this.description = description;
+	}
+    
+    public CommandBlock(String command, String name, String description,
+			Set<Command> values) {
+		super();
+		this.command = command;
+		this.name = name;
+		this.description = description;
+		this.values = values;
+	}
+
+	@Override
 	public String toString() {
 		return command + " - " + name + " (" + description + ")";
 	}
@@ -40,11 +60,11 @@ public class CommandBlock {
 		this.description = description;
 	}
 
-	public List<Command> getValues() {
+	public Set<Command> getValues() {
 		return values;
 	}
 
-	public void setValues(List<Command> values) {
+	public void setValues(Set<Command> values) {
 		this.values = values;
 	}
 
