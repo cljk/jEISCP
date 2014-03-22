@@ -62,8 +62,10 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				}
 				
 				byte[] iscpMessage = buffer.toByteArray();
-				String res = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
-				listener.receivedIscpMessage(res);
+				if (iscpMessage.length > 0) {
+					String res = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
+					listener.receivedIscpMessage(res);
+				}
 			} catch (EiscpMessageFormatException ex) {
 				log.warn(ex.getMessage() + " - " + EiscpProtocolHelper.convertToHexString(response));
 				log.debug("skip bytes until EOF/CR");

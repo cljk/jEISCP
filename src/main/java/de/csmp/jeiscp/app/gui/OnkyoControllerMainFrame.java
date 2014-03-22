@@ -2,20 +2,21 @@ package de.csmp.jeiscp.app.gui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JToggleButton;
-import javax.swing.JSlider;
-import javax.swing.JLabel;
-import javax.swing.JTabbedPane;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JComboBox;
+
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 
 public class OnkyoControllerMainFrame extends JFrame {
 
@@ -24,6 +25,9 @@ public class OnkyoControllerMainFrame extends JFrame {
 	private JSlider volumeSlider;
 	private JLabel lblVolume;
 	private JToggleButton tglBtnMute;
+	private JComboBox sourceSelector;
+	private JPanel netPanel;
+	private JList netTextList;
 
 	/**
 	 * Launch the application.
@@ -72,9 +76,9 @@ public class OnkyoControllerMainFrame extends JFrame {
 		tabbedPane.addTab("Main", null, panel_1, null);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_panel_1.rowHeights = new int[]{0, 0, 0, 0};
-		gbl_panel_1.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_1.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gbl_panel_1.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		panel_1.setLayout(gbl_panel_1);
 		
 		JLabel lblNewLabel = new JLabel("Power");
@@ -101,20 +105,35 @@ public class OnkyoControllerMainFrame extends JFrame {
 		gbc_lblNewLabel_2.gridy = 1;
 		panel_1.add(lblNewLabel_2, gbc_lblNewLabel_2);
 		
-		JComboBox comboBox = new JComboBox();
+		sourceSelector = new JComboBox();
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.insets = new Insets(0, 0, 5, 0);
+		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 1;
-		panel_1.add(comboBox, gbc_comboBox);
+		panel_1.add(sourceSelector, gbc_comboBox);
 		
 		JButton btnNewButton = new JButton(">");
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);
 		gbc_btnNewButton.gridx = 2;
 		gbc_btnNewButton.gridy = 1;
 		panel_1.add(btnNewButton, gbc_btnNewButton);
+		
+		netPanel = new JPanel();
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.gridwidth = 3;
+		gbc_panel_2.insets = new Insets(0, 0, 0, 5);
+		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.gridx = 0;
+		gbc_panel_2.gridy = 3;
+		gbc_panel_2.weightx = 1;
+		panel_1.add(netPanel, gbc_panel_2);
+		
+		netTextList = new JList();
+		netTextList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		netPanel.add(netTextList);
 	}
 
 	public JToggleButton getTglbtnOnoff() {
@@ -128,5 +147,16 @@ public class OnkyoControllerMainFrame extends JFrame {
 	}
 	public JToggleButton getTglBtnMute() {
 		return tglBtnMute;
+	}
+	public JComboBox getSourceSelector() {
+		return sourceSelector;
+	}
+
+	public JPanel getNetPanel() {
+		return netPanel;
+	}
+
+	public JList getNetTextList() {
+		return netTextList;
 	}
 }

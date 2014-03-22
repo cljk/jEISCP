@@ -15,7 +15,9 @@ import org.apache.commons.logging.LogFactory;
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
 import de.csmp.jeiscp.eiscp.Command;
+import de.csmp.jeiscp.eiscp.EiscpCommands;
 import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
+import de.csmp.jeiscp.eiscp.EiscpCommmandsConstants;
 
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 /**
@@ -52,8 +54,9 @@ public class ThreadedConsoleApp implements EiscpListener {
             conn.sendCommand(MASTER_VOLUME_QUERY);
             conn.sendCommand(VIDEO_INFOMATION_QUERY);
             conn.sendCommand(MONITOR_OUT_RESOLUTION_QUERY);
-
-            Thread.sleep(500);	// wait for results displayed by background thread
+            conn.sendCommand(EiscpCommmandsConstants.INPUT_SELECTOR_QUERY);
+            
+            Thread.sleep(200);	// wait for results displayed by background thread
             
             if (ENABLE_GUI) {
             	gui.show();

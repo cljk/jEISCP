@@ -105,14 +105,14 @@ public static final String AUDIO_MUTING_ISCP = "AMT";
  * sets Audio Muting Off
  */
 public static final String AUDIO_MUTING_OFF = "audio-muting::off";
-// public static final String AUDIO_MUTING_OFF_ISCP = "AMT00";
+public static final String AUDIO_MUTING_OFF_ISCP = "AMT00";
 
 /**
  * ISCP Command: AMT01
  * sets Audio Muting On
  */
 public static final String AUDIO_MUTING_ON = "audio-muting::on";
-// public static final String AUDIO_MUTING_ON_ISCP = "AMT01";
+public static final String AUDIO_MUTING_ON_ISCP = "AMT01";
 
 /**
  * ISCP Command: AMTQSTN
