@@ -18,9 +18,10 @@ import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.ListModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -70,6 +71,9 @@ public class AppGuiController implements EiscpListener{
 		frm.getSourceSelector().addItem(new CaptionValue("BD/DVD", "10"));
 		frm.getSourceSelector().addItem(new CaptionValue("TV/CD", "23"));
 		frm.getSourceSelector().addItem(new CaptionValue("NET", "2B"));
+		frm.getSourceSelector().addItem(new CaptionValue("PC", "05"));
+		frm.getSourceSelector().addItem(new CaptionValue("AUX", "03"));
+		
 		frm.getSourceSelector().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -81,10 +85,25 @@ public class AppGuiController implements EiscpListener{
 		});
 		
 		frm.getNetTextList().setModel(netTextListModel);
+		frm.getNetTextList().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				boolean adjust = e.getValueIsAdjusting();
+				if (false && ! adjust && netTextListClickEnabled) {
+					int line = e.getFirstIndex();
+					int line2 = e.getLastIndex() + 1;
+					fController.sendIscpCommand("NTC" + line2);
+					netTextListClickEnabled = false;
+				}
+			}
+		});
 	}
+	
+	boolean netTextListClickEnabled = false;
 	
 	DefaultListModel netTextListModel = new DefaultListModel();
 	Map<String, String> lastReceivedValues = new HashMap<String, String>();
+	int vol = 0;
 	
 	/** for gui elements */
 	public void sendIscpCommand(String cmd) {
@@ -123,8 +142,14 @@ public class AppGuiController implements EiscpListener{
 			frm.getTglbtnOnoff().setSelected(false);
 		} else if (message.startsWith("MVL")) {
 			int vol = Integer.parseInt(message3data, 16);
-			frm.getVolumeSlider().setValue(vol);
-			frm.getLblVolume().setText("" + vol);
+			if (frm.getVolumeSlider().getValue() != vol) {
+				frm.getVolumeSlider().setValue(vol);
+			}
+			if (this.vol != vol) {
+				log.info("new vol: " + vol);
+				frm.getLblVolume().setText("" + vol);
+				this.vol = vol;
+			}
 		} else if (message.equals(AUDIO_MUTING_ON_ISCP)) {
 			frm.getTglBtnMute().setSelected(true);
 		} else if (message.equals(AUDIO_MUTING_OFF_ISCP)) {
@@ -196,6 +221,7 @@ public class AppGuiController implements EiscpListener{
 				netCursorPosition = lInt;
 				if ("P".equals(p)) {
 					netLineData.clear();
+					netTextListClickEnabled = false;
 					netTextListModel.removeAllElements();
 				}
 				
@@ -205,6 +231,7 @@ public class AppGuiController implements EiscpListener{
 				netLineData.put(lInt, data);
 				
 				
+				netTextListClickEnabled = false;
 				
 				netTextListModel.removeAllElements();
 				
@@ -213,6 +240,7 @@ public class AppGuiController implements EiscpListener{
 					netTextListModel.addElement(ld);
 				}
 				frm.getNetTextList().setSelectedIndex(netCursorPosition);
+				netTextListClickEnabled = true;
 			} else {
 				unhandled = true;
 			}

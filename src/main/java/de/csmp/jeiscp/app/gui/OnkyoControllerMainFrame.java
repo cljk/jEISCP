@@ -50,7 +50,7 @@ public class OnkyoControllerMainFrame extends JFrame {
 	 */
 	public OnkyoControllerMainFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 400);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -93,13 +93,13 @@ public class OnkyoControllerMainFrame extends JFrame {
 		gbc_tglbtnOnoff.fill = GridBagConstraints.HORIZONTAL;
 		gbc_tglbtnOnoff.gridwidth = 2;
 		gbc_tglbtnOnoff.insets = new Insets(0, 0, 5, 0);
+		gbc_tglbtnOnoff.weightx = 1;
 		gbc_tglbtnOnoff.gridx = 1;
 		gbc_tglbtnOnoff.gridy = 0;
 		panel_1.add(tglbtnOnoff, gbc_tglbtnOnoff);
 		
 		JLabel lblNewLabel_2 = new JLabel("Source");
 		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
-		gbc_lblNewLabel_2.anchor = GridBagConstraints.EAST;
 		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_2.gridx = 0;
 		gbc_lblNewLabel_2.gridy = 1;
@@ -109,12 +109,14 @@ public class OnkyoControllerMainFrame extends JFrame {
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox.weightx = 1;
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 1;
 		panel_1.add(sourceSelector, gbc_comboBox);
 		
 		JButton btnNewButton = new JButton(">");
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);
 		gbc_btnNewButton.gridx = 2;
 		gbc_btnNewButton.gridy = 1;
@@ -122,13 +124,16 @@ public class OnkyoControllerMainFrame extends JFrame {
 		
 		netPanel = new JPanel();
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.anchor = GridBagConstraints.NORTH;
 		gbc_panel_2.gridwidth = 3;
 		gbc_panel_2.insets = new Insets(0, 0, 0, 5);
-		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_panel_2.gridx = 0;
 		gbc_panel_2.gridy = 3;
-		gbc_panel_2.weightx = 1;
+		gbc_panel_2.weightx = 2;
+		gbc_panel_2.weighty = 1;
 		panel_1.add(netPanel, gbc_panel_2);
+		netPanel.setLayout(new BorderLayout(0, 0));
 		
 		netTextList = new JList();
 		netTextList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
