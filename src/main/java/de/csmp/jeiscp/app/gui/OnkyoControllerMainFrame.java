@@ -17,6 +17,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class OnkyoControllerMainFrame extends JFrame {
 
@@ -28,6 +30,25 @@ public class OnkyoControllerMainFrame extends JFrame {
 	private JComboBox sourceSelector;
 	private JPanel netPanel;
 	private JList netTextList;
+	private JPanel netKeysPanel;
+	private JButton netKey7;
+	private JButton netKey9;
+	private JButton netKey8;
+	private JButton netKey4;
+	private JButton netKey5;
+	private JButton netKey6;
+	private JButton netKey1;
+	private JButton netKey2;
+	private JButton netKey3;
+	private JButton netKey0;
+
+	private JButton btnUp;
+	private JButton btnDown;
+	private JButton btnLeft;
+	private JButton btnRight;
+	private JButton btnSelect;
+
+	private JButton btnReturn;
 
 	/**
 	 * Launch the application.
@@ -139,6 +160,140 @@ public class OnkyoControllerMainFrame extends JFrame {
 		netTextList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		netPanel.add(netTextList);
+		
+		netKeysPanel = new JPanel();
+		netPanel.add(netKeysPanel, BorderLayout.EAST);
+		GridBagLayout gbl_netKeysPanel = new GridBagLayout();
+		gbl_netKeysPanel.columnWidths = new int[]{75, 75, 75};
+		gbl_netKeysPanel.rowHeights = new int[]{29, 0, 0, 0};
+		//gbl_netKeysPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_netKeysPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE, 0.0, 0.0};
+		netKeysPanel.setLayout(gbl_netKeysPanel);
+		
+		netKey7 = new JButton("7");
+		GridBagConstraints gbc_netKey7 = new GridBagConstraints();
+		gbc_netKey7.anchor = GridBagConstraints.NORTHWEST;
+		gbc_netKey7.insets = new Insets(0, 0, 5, 5);
+		gbc_netKey7.gridx = 0;
+		gbc_netKey7.gridy = 0;
+		netKeysPanel.add(netKey7, gbc_netKey7);
+		
+		netKey8 = new JButton("8");
+		GridBagConstraints gbc_netKey8 = new GridBagConstraints();
+		gbc_netKey8.anchor = GridBagConstraints.NORTHWEST;
+		gbc_netKey8.insets = new Insets(0, 0, 5, 5);
+		gbc_netKey8.gridx = 1;
+		gbc_netKey8.gridy = 0;
+		netKeysPanel.add(netKey8, gbc_netKey8);
+		
+		netKey9 = new JButton("9");
+		GridBagConstraints gbc_netKey9 = new GridBagConstraints();
+		gbc_netKey9.insets = new Insets(0, 0, 5, 0);
+		gbc_netKey9.anchor = GridBagConstraints.NORTHWEST;
+		gbc_netKey9.gridx = 2;
+		gbc_netKey9.gridy = 0;
+		netKeysPanel.add(netKey9, gbc_netKey9);
+		
+		netKey4 = new JButton("4");
+		netKey4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		GridBagConstraints gbc_button = new GridBagConstraints();
+		gbc_button.insets = new Insets(0, 0, 5, 5);
+		gbc_button.anchor = GridBagConstraints.NORTHWEST;
+		gbc_button.gridx = 0;
+		gbc_button.gridy = 1;
+		netKeysPanel.add(netKey4, gbc_button);
+		
+		netKey5 = new JButton("5");
+		GridBagConstraints gbc_button_1 = new GridBagConstraints();
+		gbc_button_1.insets = new Insets(0, 0, 5, 5);
+		gbc_button_1.gridx = 1;
+		gbc_button_1.gridy = 1;
+		netKeysPanel.add(netKey5, gbc_button_1);
+		
+		netKey6 = new JButton("6");
+		GridBagConstraints gbc_button_2 = new GridBagConstraints();
+		gbc_button_2.insets = new Insets(0, 0, 5, 0);
+		gbc_button_2.gridx = 2;
+		gbc_button_2.gridy = 1;
+		netKeysPanel.add(netKey6, gbc_button_2);
+		
+		netKey1 = new JButton("1");
+		GridBagConstraints gbc_button11 = new GridBagConstraints();
+		gbc_button11.insets = new Insets(0, 0, 5, 5);
+		gbc_button11.gridx = 0;
+		gbc_button11.gridy = 2;
+		netKeysPanel.add(netKey1, gbc_button11);
+		
+		netKey2 = new JButton("2");
+		GridBagConstraints gbc_button_221 = new GridBagConstraints();
+		gbc_button_221.insets = new Insets(0, 0, 5, 5);
+		gbc_button_221.gridx = 1;
+		gbc_button_221.gridy = 2;
+		netKeysPanel.add(netKey2, gbc_button_221);
+		
+		netKey3 = new JButton("3");
+		GridBagConstraints gbc_button_332 = new GridBagConstraints();
+		gbc_button_332.insets = new Insets(0, 0, 5, 0);
+		gbc_button_332.gridx = 2;
+		gbc_button_332.gridy = 2;
+		netKeysPanel.add(netKey3, gbc_button_332);
+		
+		netKey0 = new JButton("0");
+		GridBagConstraints gbc_button_443 = new GridBagConstraints();
+		gbc_button_443.insets = new Insets(0, 0, 0, 5);
+		gbc_button_443.gridx = 0;
+		gbc_button_443.gridy = 3;
+		netKeysPanel.add(netKey0, gbc_button_443);
+		
+		btnUp = new JButton("UP");
+		GridBagConstraints gbc_btnUp = new GridBagConstraints();
+		gbc_btnUp.insets = new Insets(0, 0, 0, 5);
+		gbc_btnUp.gridx = 1;
+		gbc_btnUp.gridy = 4;
+		netKeysPanel.add(btnUp, gbc_btnUp);
+		
+		btnLeft = new JButton("LEFT");
+		GridBagConstraints gbc_btnLeft = new GridBagConstraints();
+		gbc_btnLeft.insets = new Insets(0, 0, 0, 5);
+		gbc_btnLeft.gridx = 0;
+		gbc_btnLeft.gridy = 5;
+		netKeysPanel.add(btnLeft, gbc_btnLeft);
+
+		btnSelect = new JButton("SELECT");
+		GridBagConstraints gbc_btnSelect = new GridBagConstraints();
+		gbc_btnSelect.insets = new Insets(0, 0, 0, 5);
+		gbc_btnSelect.gridx = 1;
+		gbc_btnSelect.gridy = 5;
+		netKeysPanel.add(btnSelect, gbc_btnSelect);
+
+		btnRight = new JButton("RIGHT");
+		GridBagConstraints gbc_btnRight = new GridBagConstraints();
+		gbc_btnRight.insets = new Insets(0, 0, 0, 5);
+		gbc_btnRight.gridx = 2;
+		gbc_btnRight.gridy = 5;
+		netKeysPanel.add(btnRight, gbc_btnRight);
+
+		
+		btnDown = new JButton("DOWN");
+		GridBagConstraints gbc_btnDown = new GridBagConstraints();
+		gbc_btnDown.insets = new Insets(0, 0, 0, 5);
+		gbc_btnDown.gridx = 1;
+		gbc_btnDown.gridy = 6;
+		netKeysPanel.add(btnDown, gbc_btnDown);
+		
+		
+		btnReturn = new JButton("RETURN");
+		GridBagConstraints gbc_btnReturn = new GridBagConstraints();
+		gbc_btnReturn.insets = new Insets(0, 0, 0, 5);
+		gbc_btnReturn.gridx = 2;
+		gbc_btnReturn.gridy = 6;
+		netKeysPanel.add(btnReturn, gbc_btnReturn);
+		
+		
+		
 	}
 
 	public JToggleButton getTglbtnOnoff() {
@@ -163,5 +318,69 @@ public class OnkyoControllerMainFrame extends JFrame {
 
 	public JList getNetTextList() {
 		return netTextList;
+	}
+
+	public JButton getNetKey7() {
+		return netKey7;
+	}
+
+	public JButton getNetKey9() {
+		return netKey9;
+	}
+
+	public JButton getNetKey8() {
+		return netKey8;
+	}
+
+	public JButton getNetKey4() {
+		return netKey4;
+	}
+
+	public JButton getNetKey5() {
+		return netKey5;
+	}
+
+	public JButton getNetKey6() {
+		return netKey6;
+	}
+
+	public JButton getNetKey1() {
+		return netKey1;
+	}
+
+	public JButton getNetKey2() {
+		return netKey2;
+	}
+
+	public JButton getNetKey3() {
+		return netKey3;
+	}
+
+	public JButton getNetKey0() {
+		return netKey0;
+	}
+
+	public JButton getBtnUp() {
+		return btnUp;
+	}
+
+	public JButton getBtnDown() {
+		return btnDown;
+	}
+
+	public JButton getBtnLeft() {
+		return btnLeft;
+	}
+
+	public JButton getBtnRight() {
+		return btnRight;
+	}
+
+	public JButton getBtnSelect() {
+		return btnSelect;
+	}
+
+	public JButton getBtnReturn() {
+		return btnReturn;
 	}
 }

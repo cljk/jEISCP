@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -97,6 +98,35 @@ public class AppGuiController implements EiscpListener{
 				}
 			}
 		});
+		
+		
+		ActionListener netBtnListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JButton btn = (JButton) e.getSource();
+				String lbl = btn.getText();
+				log.debug("net button clicked: " + lbl);
+				
+				fController.sendIscpCommand("NTC" + lbl);
+			}			
+		};
+		frm.getNetKey0().addActionListener(netBtnListener);
+		frm.getNetKey1().addActionListener(netBtnListener);
+		frm.getNetKey2().addActionListener(netBtnListener);
+		frm.getNetKey3().addActionListener(netBtnListener);
+		frm.getNetKey4().addActionListener(netBtnListener);
+		frm.getNetKey5().addActionListener(netBtnListener);
+		frm.getNetKey6().addActionListener(netBtnListener);
+		frm.getNetKey7().addActionListener(netBtnListener);
+		frm.getNetKey8().addActionListener(netBtnListener);
+		frm.getNetKey9().addActionListener(netBtnListener);
+		
+		frm.getBtnUp().addActionListener(netBtnListener);
+		frm.getBtnDown().addActionListener(netBtnListener);
+		frm.getBtnLeft().addActionListener(netBtnListener);
+		frm.getBtnRight().addActionListener(netBtnListener);
+		frm.getBtnSelect().addActionListener(netBtnListener);
+		frm.getBtnReturn().addActionListener(netBtnListener);
 	}
 	
 	boolean netTextListClickEnabled = false;
@@ -219,13 +249,22 @@ public class AppGuiController implements EiscpListener{
 			
 			if (t.equals("C")) {
 				netCursorPosition = lInt;
-				if ("P".equals(p)) {
-					netLineData.clear();
-					netTextListClickEnabled = false;
-					netTextListModel.removeAllElements();
-				}
 				
-				frm.getNetTextList().setSelectedIndex(lInt);
+				if ("P".equals(p)) {
+					// clear page
+					netTextListClickEnabled = false;
+
+					frm.getNetTextList().clearSelection();
+					netTextListModel.removeAllElements();
+
+					netLineData.clear();
+				} else {
+				}
+
+				// just update cursor position
+				if (netTextListModel.size() > netCursorPosition) {
+					frm.getNetTextList().setSelectedIndex(netCursorPosition);
+				}
 			} else if (t.equals("U")) {
 				String data = nlsMessage.substring(3);
 				netLineData.put(lInt, data);
@@ -233,13 +272,16 @@ public class AppGuiController implements EiscpListener{
 				
 				netTextListClickEnabled = false;
 				
+				frm.getNetTextList().clearSelection();
 				netTextListModel.removeAllElements();
 				
 				for (int i=0; i<netLineData.size(); i++) {
 					String ld = netLineData.get(i);
 					netTextListModel.addElement(ld);
 				}
-				frm.getNetTextList().setSelectedIndex(netCursorPosition);
+				if (netTextListModel.size() > netCursorPosition) {
+					frm.getNetTextList().setSelectedIndex(netCursorPosition);
+				}
 				netTextListClickEnabled = true;
 			} else {
 				unhandled = true;
