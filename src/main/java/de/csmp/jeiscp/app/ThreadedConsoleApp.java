@@ -2,6 +2,7 @@ package de.csmp.jeiscp.app;
 
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MONITOR_OUT_RESOLUTION_QUERY;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_JACKET_ART_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_QUERY;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.VIDEO_INFOMATION_QUERY;
 
@@ -9,23 +10,20 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
 import de.csmp.jeiscp.eiscp.Command;
-import de.csmp.jeiscp.eiscp.EiscpCommands;
 import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
 import de.csmp.jeiscp.eiscp.EiscpCommmandsConstants;
-
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 /**
  * Hello world!
  *
  */
 public class ThreadedConsoleApp implements EiscpListener {
-	private static final Log log = LogFactory.getLog(ThreadedConsoleApp.class);
+	private static final Logger log = LoggerFactory.getLogger(ThreadedConsoleApp.class);
 	
 	private static final boolean ENABLE_GUI = true;
 	
@@ -85,7 +83,7 @@ public class ThreadedConsoleApp implements EiscpListener {
             conn.close();
             System.exit(0);
     	} catch (Exception ex) {
-    		log.error(ex);
+    		log.error(ex.getMessage(), ex);
     	}
     }
     
@@ -100,7 +98,7 @@ public class ThreadedConsoleApp implements EiscpListener {
 			if (message.startsWith("NJA00")) {
 				System.out.print(">> NJAxx receive image.");
 			} else if (message.startsWith("NJA01")) {
-				System.out.print(".");
+				//System.out.print(".");
 			} else if (message.startsWith("NJA02")) {
 				System.out.print("done");
 			}

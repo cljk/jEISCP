@@ -25,8 +25,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
@@ -34,7 +34,7 @@ import de.csmp.jeiscp.EiscpProtocolHelper;
 import de.csmp.jeiscp.app.gui.OnkyoControllerMainFrame;
 
 public class AppGuiController implements EiscpListener{
-	private static final Log log = LogFactory.getLog(AppGuiController.class);
+	private static final Logger log = LoggerFactory.getLogger(AppGuiController.class);
 	EiscpConnector conn;
 	
 	OnkyoControllerMainFrame frm;
@@ -69,6 +69,7 @@ public class AppGuiController implements EiscpListener{
 			}
 		});
 		
+		frm.getSourceSelector().addItem(new CaptionValue("Bluetooth", "2E"));
 		frm.getSourceSelector().addItem(new CaptionValue("BD/DVD", "10"));
 		frm.getSourceSelector().addItem(new CaptionValue("TV/CD", "23"));
 		frm.getSourceSelector().addItem(new CaptionValue("NET", "2B"));
@@ -105,7 +106,7 @@ public class AppGuiController implements EiscpListener{
 			public void actionPerformed(ActionEvent e) {
 				JButton btn = (JButton) e.getSource();
 				String lbl = btn.getText();
-				log.debug("net button clicked: " + lbl);
+				log.debug("net button clicked: {}", lbl);
 				
 				fController.sendIscpCommand("NTC" + lbl);
 			}			
@@ -140,14 +141,14 @@ public class AppGuiController implements EiscpListener{
 		try {
 			conn.sendIscpCommand(cmd);
 		} catch (Exception ex) {
-			log.error(ex);
+			log.error(ex.getMessage(), ex);
 		}
 	}
 	public void sendCommand(String cmd) {
 		try {
 			conn.sendCommand(cmd);
 		} catch (Exception ex) {
-			log.error(ex);
+			log.error(ex.getMessage(), ex);
 		}
 	}
 	
@@ -176,7 +177,7 @@ public class AppGuiController implements EiscpListener{
 				frm.getVolumeSlider().setValue(vol);
 			}
 			if (this.vol != vol) {
-				log.info("new vol: " + vol);
+				log.info("new vol:  {}", vol);
 				frm.getLblVolume().setText("" + vol);
 				this.vol = vol;
 			}
@@ -189,8 +190,14 @@ public class AppGuiController implements EiscpListener{
 			frm.setTitle(
 					message3data + 
 					(lastReceivedValues.containsKey("NTI") ? "   " + lastReceivedValues.get("NTI") : "") +
-					(lastReceivedValues.containsKey("NAL") ? " // " + lastReceivedValues.get("NAL") : "")
+					(lastReceivedValues.containsKey("NAL") && ! lastReceivedValues.get("NAL").startsWith("---") ? " // " + lastReceivedValues.get("NAL") : "")
 					);
+		} else if (message.startsWith("NTI")) {
+			if (! StringUtils.isEmpty(message3data)) {
+				frm.setTitle(message3data + 
+						(lastReceivedValues.containsKey("NAL") && ! lastReceivedValues.get("NAL").startsWith("---") ? " // " + lastReceivedValues.get("NAL") : "")
+						);	
+			}
 		} else if (message.startsWith("NJA")) {
 			// receiving image
 			int cmdSkip = "NJA".length();
@@ -209,9 +216,9 @@ public class AppGuiController implements EiscpListener{
 					FileOutputStream os = new FileOutputStream(tmp);
 					os.write(imageBos.toByteArray());
 					os.close();
-					log.info("wrote image to " + tmp.getAbsolutePath());
+					log.info("wrote image to  {}", tmp.getAbsolutePath());
 				} catch (Exception ex) {
-					log.error(ex);
+					log.error(ex.getMessage(), ex);
 				}
 				
 				imageBos = null;
@@ -288,7 +295,10 @@ public class AppGuiController implements EiscpListener{
 			}
 		} else if (message.startsWith("NLT")) {
 			// "NLT" - NET/USB List Title Info(for Network Control Only)
-			String title = message.substring(25);
+			String title = "";
+			if (message.length() > 25) {
+				message.substring(25);
+			}
 			if (! StringUtils.isEmpty(title)) {
 				frm.setTitle(title);
 			}
@@ -297,7 +307,7 @@ public class AppGuiController implements EiscpListener{
 		}
 		
 		if (unhandled) {
-			log.info("unhandled: \"" + message + "\" " + message.length());
+			log.info("unhandled: \"{}\" ({})", message, message.length());
 		}
 	}
 	

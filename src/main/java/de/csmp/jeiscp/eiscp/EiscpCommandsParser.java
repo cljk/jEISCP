@@ -1,5 +1,7 @@
 package de.csmp.jeiscp.eiscp;
 
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,10 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY;
 
 /**
  * parses the YAML-file of git-project
@@ -30,7 +31,7 @@ public class EiscpCommandsParser {
 
 	private static final String EISCP_COMMANDS_YAML = "miracle2k-onkyo-eiscp/eiscp-commands.yaml";
 
-	private static final Log log = LogFactory.getLog(EiscpCommandsParser.class);
+	private static final Logger log = LoggerFactory.getLogger(EiscpCommandsParser.class);
 
 	private static Map<String, List<String>> modelsets = null;
 	private static Map<String, Object> ec = null;

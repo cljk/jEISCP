@@ -4,14 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import static de.csmp.jeiscp.EiscpConstants.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class EiscpConnectorSocketReaderThread implements Runnable {
-	private static final Log log = LogFactory.getLog(EiscpConnectorSocketReaderThread.class);
+	private static final Logger log = LoggerFactory.getLogger(EiscpConnectorSocketReaderThread.class);
 	
 	EiscpConnector conn;
 	BufferedInputStream socketIn;
@@ -38,13 +36,15 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				do {
 					response[0] = (byte) socketIn.read();
 				} while (EiscpProtocolHelper.isEofMarker(response[0]));
-				if (response[0] != 0x49) 
-					throw new EiscpMessageFormatException(
-							"First byte not valid for begin of message: " + 
-										EiscpProtocolHelper.convertToHexString(response[0]));
+				
 				response[1] = (byte) socketIn.read();
 				response[2] = (byte) socketIn.read();
 				response[3] = (byte) socketIn.read();
+				
+//				if (response[0] != 0x49) 
+//					throw new EiscpMessageFormatException(
+//							"First byte not valid for begin of message: " + 
+//										EiscpProtocolHelper.convertToHexString(response));
 				EiscpProtocolHelper.validateIscpSignature(response, 0);
 				
 				blockedReadQuadrupel(response);
@@ -55,7 +55,9 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				
 				blockedReadQuadrupel(response);
 				EiscpProtocolHelper.validateEiscpVersion(response, 0);
-
+				
+				// eISCP header ends here - ISCP begins !1xxx
+				
 				buffer.reset();
 				for (int i=0; i<messageSize; i++) {
 					buffer.write(socketIn.read());
@@ -64,7 +66,11 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				byte[] iscpMessage = buffer.toByteArray();
 				if (iscpMessage.length > 0) {
 					String res = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
-					listener.receivedIscpMessage(res);
+					try {
+						listener.receivedIscpMessage(res);
+					} catch (Throwable ex) {
+						log.error("error in listener {}", ex.getMessage(), ex);
+					}
 				}
 			} catch (EiscpMessageFormatException ex) {
 				log.warn(ex.getMessage() + " - " + EiscpProtocolHelper.convertToHexString(response));
@@ -82,7 +88,7 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 								quit();
 								eofFound = true;
 							} else {
-								log.debug("discard " + EiscpProtocolHelper.convertToHexString(new byte[]{b}));
+								// log.debug("discard " + EiscpProtocolHelper.convertToHexString(new byte[]{b}));
 								eofFound = EiscpProtocolHelper.isEofMarker(b);
 							}
 						};

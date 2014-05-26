@@ -3,19 +3,16 @@ package de.csmp.jeiscp.eiscp;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import de.csmp.jeiscp.eiscp.CommandBlock;
-import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EiscpCommandsParserTest {
 	
-	private static final Log log = LogFactory.getLog(EiscpCommandsParserTest.class);
+	private static final Logger log = LoggerFactory.getLogger(EiscpCommandsParserTest.class);
 
 	EiscpCommandsParser parser = null;
 	

@@ -85,6 +85,7 @@ public class OnkyoControllerMainFrame extends JFrame {
 		panel.add(tglBtnMute, BorderLayout.WEST);
 		
 		volumeSlider = new JSlider();
+		volumeSlider.setMaximum(70);	// 100 would be correct - but most likely irrational
 		panel.add(volumeSlider, BorderLayout.CENTER);
 		
 		lblVolume = new JLabel("?");

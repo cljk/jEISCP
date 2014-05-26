@@ -1,19 +1,20 @@
 package de.csmp.jeiscp;
 
-import static de.csmp.jeiscp.EiscpConstants.CR;
-import static de.csmp.jeiscp.EiscpConstants.LF;
+import static de.csmp.jeiscp.EiscpConstants.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EiscpProtocolHelper {
-	private static final Log log = LogFactory.getLog(EiscpProtocolHelper.class);
+	private static final Logger log = LoggerFactory.getLogger(EiscpProtocolHelper.class);
 
 	
-
+	/*
+	 * ISCP encapsulated in Ethernet (eISCP)
+	 */
 	public static byte[] iscpToEiscpMessage(String message) throws IOException {
 		byte[] messageBytes = message.getBytes();
 		
@@ -50,6 +51,14 @@ public class EiscpProtocolHelper {
 		byte[] eiscpMessage = bos.toByteArray();
 		return eiscpMessage;
 	}
+	
+	/**
+	 * eISCP -> ISCP
+	 * 
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	
 	public static byte[] parseEiscpToIscpMessage(byte[] response) throws Exception {
 		validateIscpSignature(response, 0);

@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.csmp.jeiscp.eiscp.Command;
 import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
@@ -26,7 +26,7 @@ public class EiscpDevice {
 	List<String> capableEiscpParserModelsets;
 	
 	
-	private static final Log log = LogFactory.getLog(EiscpDevice.class);
+	private static final Logger log = LoggerFactory.getLogger(EiscpDevice.class);
 	
 	
 	public EiscpDevice() {
