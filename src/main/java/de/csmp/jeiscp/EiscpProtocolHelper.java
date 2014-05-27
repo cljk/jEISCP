@@ -115,7 +115,14 @@ public class EiscpProtocolHelper {
 
 	public static void validateHeaderLengthSignature(byte[] response, int offset)
 			throws EiscpMessageFormatException {
-		
+		if (
+			 (response[offset++] != 0x00) ||
+			 (response[offset++] != 0x00) ||	
+			 (response[offset++] != 0x00) ||	
+			 (response[offset++] != 0x10)		
+		) {
+			throw new EiscpMessageFormatException("illegal header size != 0x10");
+		}
 	}
 
 	public static void validateIscpSignature(byte[] response, int offset)
