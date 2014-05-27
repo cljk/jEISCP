@@ -14,8 +14,13 @@ import java.net.UnknownHostException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
 
+/**
+ * autodiscover device / aquire connection
+ * 
+ * @author marcelpokrandt
+ *
+ */
 public class EiscpConnector {
 	
 
