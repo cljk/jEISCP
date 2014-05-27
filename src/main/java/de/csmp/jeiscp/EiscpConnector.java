@@ -103,12 +103,14 @@ public class EiscpConnector {
 	
 	public void attachListener(EiscpListener listener) {
 		if (lt == null) {
-			t = new EiscpConnectorSocketReaderThread(this, socketIn, listener);
+			t = new EiscpConnectorSocketReaderThread(this, socketIn);
 			lt = new Thread(t);
 			lt.start();
 		} else {
 			// FIXME implement more than one listener
 		}
+
+		t.addListener(listener);
 	}
 	
 	

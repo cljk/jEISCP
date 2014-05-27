@@ -3,6 +3,9 @@ package de.csmp.jeiscp;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,16 +16,15 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 	
 	EiscpConnector conn;
 	BufferedInputStream socketIn;
-	EiscpListener listener;
+	List<EiscpListener> listenerList = new LinkedList<EiscpListener>();
 	
 	private boolean quit = false;
 	
 	ByteArrayOutputStream buffer = new ByteArrayOutputStream(128);
 	
-	public EiscpConnectorSocketReaderThread(EiscpConnector conn, BufferedInputStream socketIn, EiscpListener listener) {
+	public EiscpConnectorSocketReaderThread(EiscpConnector conn, BufferedInputStream socketIn) {
 		this.conn = conn;
 		this.socketIn = socketIn;
-		this.listener = listener;
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				if (iscpMessage.length > 0) {
 					String iscpResult = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
 					try {
-						listener.receivedIscpMessage(iscpResult);
+						fireReceivedIscpMessage(iscpResult);
 					} catch (Throwable ex) {
 						log.error("error in listener {}", ex.getMessage(), ex);
 					}
@@ -99,6 +101,22 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				quit();
 			}
 		}
+	}
+
+	public void fireReceivedIscpMessage(String iscpResult) {
+		Iterator<EiscpListener> lIt = listenerList.iterator();
+		while(lIt.hasNext()) {
+			EiscpListener listener = lIt.next();
+			listener.receivedIscpMessage(iscpResult);	
+		}
+	}
+	
+	public void addListener(EiscpListener listener) {
+		listenerList.add(listener);
+	}
+	
+	public void removeListener(EiscpListener listener) {
+		listenerList.remove(listener);
 	}
 
 	public boolean isEofMarkerfInArray(byte[] response) {

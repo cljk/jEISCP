@@ -37,22 +37,24 @@ public class ThreadedConsoleApp implements EiscpListener {
             //EiscpConnector conn = new EiscpConnector("192.168.2.15");
             
             conn.attachListener(this);	// starts background thread for blocking reads
+            
+            
             if (ENABLE_GUI) {
             	gui = new AppGuiController(conn);
-            }
-            
-            // get some infos on start
-            conn.sendIscpCommand(SYSTEM_POWER_QUERY_ISCP);
-            conn.sendIscpCommand(MASTER_VOLUME_QUERY_ISCP);
-            conn.sendIscpCommand(VIDEO_INFOMATION_QUERY_ISCP);
-            conn.sendIscpCommand(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
-            conn.sendIscpCommand(INPUT_SELECTOR_QUERY_ISCP);
-            
-            Thread.sleep(200);	// wait for results displayed by background thread
-            
-            if (ENABLE_GUI) {
+            	conn.attachListener(gui);
+            	
+            	// get some infos on start
+            	conn.sendIscpCommand(SYSTEM_POWER_QUERY_ISCP);
+            	conn.sendIscpCommand(MASTER_VOLUME_QUERY_ISCP);
+            	conn.sendIscpCommand(VIDEO_INFOMATION_QUERY_ISCP);
+            	conn.sendIscpCommand(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
+            	conn.sendIscpCommand(INPUT_SELECTOR_QUERY_ISCP);
+
+            	Thread.sleep(200);	// wait for results displayed by background thread
+
             	gui.show();
             }
+            
             
             System.out.println( StringUtils.repeat('-', 60));
             System.out.println("Enter quit or ISCP commands like...");
@@ -94,10 +96,6 @@ public class ThreadedConsoleApp implements EiscpListener {
 			System.out.println(">> " + cmd);
     	} else {
 	    	System.out.println(">> " + message);
-		}
-		
-		if (gui != null) {
-			gui.receivedIscpMessage(message);
-		}
+		}		
 	}
 }
