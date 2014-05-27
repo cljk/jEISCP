@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class EiscpConnector {
-	
-
 	private static final Logger log = LoggerFactory.getLogger(EiscpConnector.class);
 
 	
@@ -32,8 +30,8 @@ public class EiscpConnector {
 	BufferedInputStream socketIn;
 	
 	
-	EiscpConnectorSocketReaderThread t = null;
-	Thread lt = null;
+	EiscpConnectorSocketReaderThread eiscpConnectorReaderThread = null;
+	Thread eiscpConnectorReaderThreadThread = null;
 	
 	boolean closed = false;
 	
@@ -101,16 +99,18 @@ public class EiscpConnector {
 		init(address, port);
 	}
 	
-	public void attachListener(EiscpListener listener) {
-		if (lt == null) {
-			t = new EiscpConnectorSocketReaderThread(this, socketIn);
-			lt = new Thread(t);
-			lt.start();
-		} else {
-			// FIXME implement more than one listener
+	public void addListener(EiscpListener listener) {
+		if (eiscpConnectorReaderThreadThread == null) {
+			eiscpConnectorReaderThread = new EiscpConnectorSocketReaderThread(this, socketIn);
+			eiscpConnectorReaderThreadThread = new Thread(eiscpConnectorReaderThread);
+			eiscpConnectorReaderThreadThread.start();
 		}
-
-		t.addListener(listener);
+		
+		eiscpConnectorReaderThread.addListener(listener);
+	}
+	
+	public void removeListener(EiscpListener listener) {
+		eiscpConnectorReaderThread.removeListener(listener);
 	}
 	
 	
@@ -181,8 +181,8 @@ public class EiscpConnector {
 	public void close() {
 		log.debug("-- close");
 		
-		if (t != null) {
-			t.quit();
+		if (eiscpConnectorReaderThread != null) {
+			eiscpConnectorReaderThread.quit();
 			//lt.notify();
 		}
 		

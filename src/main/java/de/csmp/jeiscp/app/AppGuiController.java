@@ -27,7 +27,7 @@ import de.csmp.jeiscp.EiscpListener;
 import de.csmp.jeiscp.EiscpProtocolHelper;
 import de.csmp.jeiscp.app.gui.OnkyoControllerMainFrame;
 
-public class AppGuiController implements EiscpListener{
+public class AppGuiController implements Runnable, EiscpListener {
 	private static final Logger log = LoggerFactory.getLogger(AppGuiController.class);
 	EiscpConnector conn;
 	
@@ -37,7 +37,36 @@ public class AppGuiController implements EiscpListener{
 	
 	public AppGuiController(EiscpConnector conn) {
 		this.conn = conn;
-		
+	}
+
+	
+	@Override
+	public void run() {
+		try {
+			initialGuiSetup();
+
+			conn.addListener(this);
+			
+
+        	// get some infos on start for display
+        	conn.sendIscpCommand(SYSTEM_POWER_QUERY_ISCP);
+        	conn.sendIscpCommand(MASTER_VOLUME_QUERY_ISCP);
+        	conn.sendIscpCommand(VIDEO_INFOMATION_QUERY_ISCP);
+        	conn.sendIscpCommand(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
+        	conn.sendIscpCommand(INPUT_SELECTOR_QUERY_ISCP);
+
+        	Thread.sleep(200);	// wait for results displayed by background thread
+
+        	show();
+		} catch (Exception ex) {
+    		log.error(ex.getMessage(), ex);
+    		System.exit(1);
+    	}
+	}
+	
+
+
+	public void initialGuiSetup() {
 		frm = new OnkyoControllerMainFrame();
 		
 		final AppGuiController fController = this;
@@ -138,13 +167,7 @@ public class AppGuiController implements EiscpListener{
 			log.error(ex.getMessage(), ex);
 		}
 	}
-	/*public void sendCommand(String cmd) {
-		try {
-			conn.sendCommand(cmd);
-		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
-		}
-	}*/
+	
 	
 	
 	
