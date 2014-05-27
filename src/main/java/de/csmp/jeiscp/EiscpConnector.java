@@ -113,10 +113,6 @@ public class EiscpConnector {
 		eiscpConnectorReaderThread.removeListener(listener);
 	}
 	
-	
-	
-	
-	
 	private void init(String address, int port) throws UnknownHostException, IOException {
 		log.debug("connect to " + address + ":" + port);
 		
@@ -157,33 +153,23 @@ public class EiscpConnector {
 		sendIscpMessage(message);
 	}
 	
-
-	/*public void sendCommand(String commandId) throws IOException {
-		log.debug("sendCommand: " + commandId);
-		String iscpCommand = EiscpCommandsParser.getIscpCommand(commandId);
-		sendIscpCommand(iscpCommand);
-	}*/
-	
-	
 	public void sendIscpMessage(String message) throws IOException {
 		byte[] eiscpMessage = EiscpProtocolHelper.iscpToEiscpMessage(message);
 		
-		if (log.isDebugEnabled()) {
-			log.debug("sendIscpMessage: " + message + 
-					" - eISCP message: " + eiscpMessage.length + " bytes - " + EiscpProtocolHelper.convertToHexString(eiscpMessage));
-		}
+		log.trace("sendIscpMessage: {} - eISCP message: {} bytes - {}",
+					message, 
+					eiscpMessage.length, 
+					EiscpProtocolHelper.convertToHexString(eiscpMessage));
+		
 		socketOut.write(eiscpMessage);
 		socketOut.flush();
 	}
-
-
 
 	public void close() {
 		log.debug("-- close");
 		
 		if (eiscpConnectorReaderThread != null) {
 			eiscpConnectorReaderThread.quit();
-			//lt.notify();
 		}
 		
 		try {
@@ -196,6 +182,4 @@ public class EiscpConnector {
 		
 		closed = true;
 	}
-	
-	
 }

@@ -30,5 +30,4 @@ public class ThreadedConsoleApp {
 		
 		log.debug("controller threads started");
 	}    
-    
 }

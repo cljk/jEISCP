@@ -131,9 +131,13 @@ public class EiscpProtocolHelper {
 	}
 
 	public static String parseIscpMessage(byte[] iscpMessage) throws EiscpMessageFormatException {
-		if ((iscpMessage[0] == 0x21)
-			&& (iscpMessage[1] == 0x31)) {
+		if ((iscpMessage[0] == 0x21)	// !
+			&& (iscpMessage[1] == 0x31)) { 	// 1
+			
+			int SKIP_PREFIX_LEN = 2;	// !1
+			
 			int length = iscpMessage.length;
+			// up to three EOF-marker possible
 			if (EiscpProtocolHelper.isEofMarker(iscpMessage[length-1])) {
 				length -= 1;
 				if (EiscpProtocolHelper.isEofMarker(iscpMessage[length-1])) {
@@ -144,7 +148,7 @@ public class EiscpProtocolHelper {
 				}
 			}
 			
-			String res = new String(iscpMessage, 2, length - 3);
+			String res = new String(iscpMessage, SKIP_PREFIX_LEN, length - SKIP_PREFIX_LEN);
 			return res;
 		} else {
 			throw new EiscpMessageFormatException("wrong ISC signature");
@@ -156,7 +160,7 @@ public class EiscpProtocolHelper {
 		return (
 				(b == CR) ||
 				(b == LF) 
-				//|| (b == EOF)
+				|| (b == EOF)
 			);
 	}
 	

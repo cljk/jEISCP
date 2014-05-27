@@ -1,7 +1,6 @@
 package de.csmp.jeiscp;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,8 +18,6 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 	List<EiscpListener> listenerList = new LinkedList<EiscpListener>();
 	
 	private boolean quit = false;
-	
-	ByteArrayOutputStream buffer = new ByteArrayOutputStream(128);
 	
 	public EiscpConnectorSocketReaderThread(EiscpConnector conn, BufferedInputStream socketIn) {
 		this.conn = conn;
@@ -54,21 +51,18 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				blockedReadQuadrupel(response);
 				EiscpProtocolHelper.validateEiscpVersion(response, 0);
 				
-				// eISCP header ends here - ISCP begins !1xxx
+				// eISCP encapulation-header ends here - ISCP begins !1xxx
 				
-				buffer.reset();
+				byte[] iscpMessage = new byte[messageSize];
 				for (int i=0; i<messageSize; i++) {
-					buffer.write(socketIn.read());
+					iscpMessage[i] = (byte) socketIn.read();
 				}
 				
-				byte[] iscpMessage = buffer.toByteArray();
-				if (iscpMessage.length > 0) {
-					String iscpResult = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
-					try {
-						fireReceivedIscpMessage(iscpResult);
-					} catch (Throwable ex) {
-						log.error("error in listener {}", ex.getMessage(), ex);
-					}
+				String iscpResult = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
+				try {
+					fireReceivedIscpMessage(iscpResult);
+				} catch (Throwable ex) {
+					log.error("error in listener {}", ex.getMessage(), ex);
 				}
 			} catch (EiscpMessageFormatException ex) {
 				log.warn(ex.getMessage() + " - " + EiscpProtocolHelper.convertToHexString(response));
