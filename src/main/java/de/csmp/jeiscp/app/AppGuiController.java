@@ -1,12 +1,6 @@
 package de.csmp.jeiscp.app;
 
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_OFF;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_OFF_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_ON;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_ON_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_ON;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_STANDBY;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,13 +44,13 @@ public class AppGuiController implements EiscpListener{
 		
 		frm.getTglBtnMute().addActionListener(new ActionListener() {
 			public void actionPerformed( ActionEvent e ) { 
-			    fController.sendCommand(frm.getTglBtnMute().isSelected() ? AUDIO_MUTING_ON : AUDIO_MUTING_OFF);
+			    fController.sendIscpCommand(frm.getTglBtnMute().isSelected() ? AUDIO_MUTING_ON_ISCP : AUDIO_MUTING_OFF_ISCP);
 			} 
 		});
 		
 		frm.getTglbtnOnoff().addActionListener(new ActionListener() {
 			public void actionPerformed( ActionEvent e ) { 
-			    fController.sendCommand((frm.getTglbtnOnoff().isSelected() ? SYSTEM_POWER_ON : SYSTEM_POWER_STANDBY));
+			    fController.sendIscpCommand((frm.getTglbtnOnoff().isSelected() ? SYSTEM_POWER_ON_ISCP : SYSTEM_POWER_STANDBY_ISCP));
 			} 
 		});
 		
@@ -144,13 +138,13 @@ public class AppGuiController implements EiscpListener{
 			log.error(ex.getMessage(), ex);
 		}
 	}
-	public void sendCommand(String cmd) {
+	/*public void sendCommand(String cmd) {
 		try {
 			conn.sendCommand(cmd);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
-	}
+	}*/
 	
 	
 	

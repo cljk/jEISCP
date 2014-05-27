@@ -1,10 +1,6 @@
 package de.csmp.jeiscp.app;
 
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MONITOR_OUT_RESOLUTION_QUERY;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_JACKET_ART_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_QUERY;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.VIDEO_INFOMATION_QUERY;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -34,7 +30,7 @@ public class ThreadedConsoleApp implements EiscpListener {
     
     public void start() {
     	try {
-            System.out.println( ThreadedConsoleApp.class.getName() );
+    		System.out.println( ThreadedConsoleApp.class.getName() );
             System.out.println( StringUtils.repeat('=', 60));
             
             EiscpConnector conn = EiscpConnector.autodiscover();
@@ -46,11 +42,11 @@ public class ThreadedConsoleApp implements EiscpListener {
             }
             
             // get some infos on start
-            conn.sendCommand(SYSTEM_POWER_QUERY);
-            conn.sendCommand(MASTER_VOLUME_QUERY);
-            conn.sendCommand(VIDEO_INFOMATION_QUERY);
-            conn.sendCommand(MONITOR_OUT_RESOLUTION_QUERY);
-            conn.sendCommand(EiscpCommmandsConstants.INPUT_SELECTOR_QUERY);
+            conn.sendIscpCommand(SYSTEM_POWER_QUERY_ISCP);
+            conn.sendIscpCommand(MASTER_VOLUME_QUERY_ISCP);
+            conn.sendIscpCommand(VIDEO_INFOMATION_QUERY_ISCP);
+            conn.sendIscpCommand(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
+            conn.sendIscpCommand(INPUT_SELECTOR_QUERY_ISCP);
             
             Thread.sleep(200);	// wait for results displayed by background thread
             
@@ -92,14 +88,8 @@ public class ThreadedConsoleApp implements EiscpListener {
     @Override
 	public void receivedIscpMessage(String message) {
     	Command cmd = EiscpCommandsParser.getCommandByIscp(message);
-    	if (message.startsWith(NET_USB_JACKET_ART_ISCP)) {
-			if (message.startsWith("NJA00")) {
-				System.out.print(">> NJAxx receive image");
-			} else if (message.startsWith("NJA01")) {
-				//System.out.print(".");
-			} else if (message.startsWith("NJA02")) {
-				System.out.print(">> NJAxx image done");
-			}
+    	if (message.length() > 50) {
+			System.out.println(">> " + message.substring(0, 47) + " [...]");
 		} else if (cmd != null) {
 			System.out.println(">> " + cmd);
     	} else {

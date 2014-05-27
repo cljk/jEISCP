@@ -1,7 +1,5 @@
 package de.csmp.jeiscp.eiscp;
 
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,12 +38,10 @@ public class EiscpCommandsParser {
 	private static Map<String, Command> idToCommandMap = null;
 	private static Map<String, CommandBlock> idToCommandBlockMap = null;
 	private static Map<String, Command> iscpToCommandMap = null;
-	private static Map<String, CommandBlock> iscpToCommandBlockMap = null;
+	// private static Map<String, CommandBlock> iscpToCommandBlockMap = null;
 	
 	private static Map<String, List<String>> keysetForModel = new HashMap<String, List<String>>();
 	
-	
-	public static final Command MASTER_VOLUME_QUERY_CMD = getCommand(MASTER_VOLUME_QUERY);
 	
 
 	public static Map<String, Command> getIscpToCommandMap() {
@@ -153,7 +149,7 @@ public class EiscpCommandsParser {
 			
 			Yaml y = new Yaml();
 			ec = (Map<String, Object>) y.load(is);
-			log.debug("parsed YAML");
+			log.debug("parsed YAML @ " + EISCP_COMMANDS_YAML);
 		}
 		return ec;
 	}

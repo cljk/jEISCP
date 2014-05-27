@@ -151,11 +151,11 @@ public class EiscpConnector {
 	}
 	
 
-	public void sendCommand(String commandId) throws IOException {
+	/*public void sendCommand(String commandId) throws IOException {
 		log.debug("sendCommand: " + commandId);
 		String iscpCommand = EiscpCommandsParser.getIscpCommand(commandId);
 		sendIscpCommand(iscpCommand);
-	}
+	}*/
 	
 	
 	public void sendIscpMessage(String message) throws IOException {
