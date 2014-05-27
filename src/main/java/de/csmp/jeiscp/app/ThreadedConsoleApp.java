@@ -18,10 +18,8 @@ import de.csmp.jeiscp.EiscpListener;
 import de.csmp.jeiscp.eiscp.Command;
 import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
 import de.csmp.jeiscp.eiscp.EiscpCommmandsConstants;
-/**
- * Hello world!
- *
- */
+
+
 public class ThreadedConsoleApp implements EiscpListener {
 	private static final Logger log = LoggerFactory.getLogger(ThreadedConsoleApp.class);
 	

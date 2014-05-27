@@ -31,10 +31,7 @@ public class EiscpProtocolHelper {
 		bos.write(0x10);
 		
 		// dataSize - always < 255
-		bos.write(0);
-		bos.write(0);
-		bos.write(0);
-		bos.write(dataSize);
+		bos.write(intToByteArray(dataSize));
 		
 		// begin eISCP block
 		bos.write(1);	// eISCP version 1
@@ -50,6 +47,24 @@ public class EiscpProtocolHelper {
 		
 		byte[] eiscpMessage = bos.toByteArray();
 		return eiscpMessage;
+	}
+	
+	public static byte[] intToByteArray(int a)
+	{
+	    byte[] ret = new byte[4];
+	    ret[3] = (byte) (a & 0xFF);   
+	    ret[2] = (byte) ((a >> 8) & 0xFF);   
+	    ret[1] = (byte) ((a >> 16) & 0xFF);   
+	    ret[0] = (byte) ((a >> 24) & 0xFF);
+	    return ret;
+	}
+	
+	public static int byteArrayToInt(byte[] b) 
+	{
+	    return   b[3] & 0xFF |
+	            (b[2] & 0xFF) << 8 |
+	            (b[1] & 0xFF) << 16 |
+	            (b[0] & 0xFF) << 24;
 	}
 	
 	/**
@@ -87,28 +102,20 @@ public class EiscpProtocolHelper {
 		}
 	}
 
-	public static int readMessageSize(byte[] response, int offset)
+	public static int readMessageSize(byte[] b, int offset)
 			throws EiscpMessageFormatException {
-		if (
-				(response[offset++] != 0x00) ||
-				(response[offset++] != 0x00) 
-				) {
-			throw new EiscpMessageFormatException("illegal message size > 0x0000ffff");
-		}
-		int messageSize = response[offset++] * 256 + response[offset++];
+		int messageSize =
+				b[offset + 3] & 0xFF |
+	            (b[offset + 2] & 0xFF) << 8 |
+	            (b[offset + 1] & 0xFF) << 16 |
+	            (b[offset + 0] & 0xFF) << 24;
+		offset += 4;
 		return messageSize;
 	}
 
 	public static void validateHeaderLengthSignature(byte[] response, int offset)
 			throws EiscpMessageFormatException {
-		if (
-				(response[offset++] != 0x00) ||
-				(response[offset++] != 0x00) ||	
-				(response[offset++] != 0x00) ||	
-				(response[offset++] != 0x10)		
-				) {
-			throw new EiscpMessageFormatException("illegal header size != 0x10");
-		}
+		
 	}
 
 	public static void validateIscpSignature(byte[] response, int offset)
