@@ -94,11 +94,11 @@ public class ThreadedConsoleApp implements EiscpListener {
     	Command cmd = EiscpCommandsParser.getCommandByIscp(message);
     	if (message.startsWith(NET_USB_JACKET_ART_ISCP)) {
 			if (message.startsWith("NJA00")) {
-				System.out.print(">> NJAxx receive image.");
+				System.out.print(">> NJAxx receive image");
 			} else if (message.startsWith("NJA01")) {
 				//System.out.print(".");
 			} else if (message.startsWith("NJA02")) {
-				System.out.print("done");
+				System.out.print(">> NJAxx image done");
 			}
 		} else if (cmd != null) {
 			System.out.println(">> " + cmd);

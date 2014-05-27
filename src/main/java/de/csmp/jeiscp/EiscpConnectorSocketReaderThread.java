@@ -41,10 +41,6 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				response[2] = (byte) socketIn.read();
 				response[3] = (byte) socketIn.read();
 				
-//				if (response[0] != 0x49) 
-//					throw new EiscpMessageFormatException(
-//							"First byte not valid for begin of message: " + 
-//										EiscpProtocolHelper.convertToHexString(response));
 				EiscpProtocolHelper.validateIscpSignature(response, 0);
 				
 				blockedReadQuadrupel(response);
@@ -65,9 +61,9 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				
 				byte[] iscpMessage = buffer.toByteArray();
 				if (iscpMessage.length > 0) {
-					String res = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
+					String iscpResult = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
 					try {
-						listener.receivedIscpMessage(res);
+						listener.receivedIscpMessage(iscpResult);
 					} catch (Throwable ex) {
 						log.error("error in listener {}", ex.getMessage(), ex);
 					}
