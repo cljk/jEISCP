@@ -55,7 +55,7 @@ public class AppGuiController implements Runnable, EiscpListener {
         	conn.sendIscpCommand(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
         	conn.sendIscpCommand(INPUT_SELECTOR_QUERY_ISCP);
 
-        	Thread.sleep(200);	// wait for results displayed by background thread
+        	// Thread.sleep(200);	// wait for results displayed by background thread
 
         	show();
 		} catch (Exception ex) {
