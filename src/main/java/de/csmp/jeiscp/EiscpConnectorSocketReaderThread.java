@@ -2,9 +2,8 @@ package de.csmp.jeiscp;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +14,10 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 	
 	EiscpConnector conn;
 	BufferedInputStream socketIn;
-	List<EiscpListener> listenerList = new LinkedList<EiscpListener>();
+	/** use thread safe implementation of collection for supporting concurrent adding/removing of listener */
+	Collection<EiscpListener> listenerList = new ConcurrentLinkedQueue<EiscpListener>();
 	
-	private boolean quit = false;
+	private volatile boolean quit = false;
 	
 	public EiscpConnectorSocketReaderThread(EiscpConnector conn, BufferedInputStream socketIn) {
 		this.conn = conn;
@@ -31,15 +31,7 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 		while (! quit) {
 			log.trace("readLoop");
 			try {
-				// read first block manually to skip EOFs in buffer
-				do {
-					response[0] = (byte) socketIn.read();
-				} while (EiscpProtocolHelper.isEofMarker(response[0]));
-				
-				response[1] = (byte) socketIn.read();
-				response[2] = (byte) socketIn.read();
-				response[3] = (byte) socketIn.read();
-				
+				blockedReadQuadrupel(response);
 				EiscpProtocolHelper.validateIscpSignature(response, 0);
 				
 				blockedReadQuadrupel(response);
@@ -98,9 +90,7 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 	}
 
 	public void fireReceivedIscpMessage(String iscpResult) {
-		Iterator<EiscpListener> lIt = listenerList.iterator();
-		while(lIt.hasNext()) {
-			EiscpListener listener = lIt.next();
+		for (EiscpListener listener : listenerList) {
 			listener.receivedIscpMessage(iscpResult);	
 		}
 	}
