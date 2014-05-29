@@ -5,6 +5,20 @@ jEISCP is a Java implementation of Onkyo (E)ISCP-protocol used by various networ
 
 ISCP is called the message format used by Onkyo for already previously available serial connections to the devices. EISCP is the ethernet (TCP/IP) encapsulation of ISCP - used for WLAN and LAN.
 
+
+Screenshots
+=
+**Console**
+
+![Screenshot of console](https://raw.githubusercontent.com/cljk/jEISCP/master/src/main/img/screenshot_console.png)
+
+**GUI**
+
+![Screenshot of GUI](https://raw.githubusercontent.com/cljk/jEISCP/master/src/main/img/screenshot_gui.png)
+
+
+
+
 Usage
 =
 Check out the repository as usual
@@ -60,6 +74,8 @@ Asking for power status (PWRQSTN), main volume (MVLQSTN) and so on. Answere PWR0
 After initialization you have the possibility to enter ISCP-commands on the console - like MVL20 to change volume - and see the response. The application will build the datagram with checksum encapsulate it in EISCP and send it to the receiver.
 
 Also a basic GUI with a volumeslider will show up.
+
+
 
 Status/Version
 =
