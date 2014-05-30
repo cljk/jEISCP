@@ -44,6 +44,9 @@ on Windows(TM) or
     ./run.sh
     
 on nearly every other OS like Linux/OS X.
+To skip the autodiscovery process you can add the IP-address of your AV-receiver with the "-a" parameter like
+
+    run.bat -a 192.168.2.29
 
 Both just call "mvn exec:java" with the main class.
 

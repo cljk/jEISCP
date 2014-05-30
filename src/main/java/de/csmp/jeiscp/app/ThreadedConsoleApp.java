@@ -14,9 +14,24 @@ public class ThreadedConsoleApp {
 	
 	public static void main(String[] args) throws Exception {
 		// init connection
-		EiscpConnector conn = EiscpConnector.autodiscover();
-        //EiscpConnector conn = new EiscpConnector("192.168.2.15");
-        
+		
+		
+		String address = null;
+		EiscpConnector conn = null;
+		
+		for (int i=0; i<args.length; i++) {
+			if ("-a".equals(args[i])) {
+				i++;
+				address = args[i];
+			}
+		}
+		
+		if (address == null) {
+			conn = EiscpConnector.autodiscover();
+		} else {
+			conn = new EiscpConnector(address);
+		}
+		
 		
 		ConsoleController consoleController = new ConsoleController(conn);
 		Thread consoleThread = new Thread(consoleController);
