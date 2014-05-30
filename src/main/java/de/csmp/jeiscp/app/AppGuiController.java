@@ -218,18 +218,25 @@ public class AppGuiController implements Runnable, EiscpListener {
 		} else if (message.startsWith("NJA")) {
 			// receiving image
 			int cmdSkip = "NJA".length();
-			String flag = message.substring(cmdSkip, cmdSkip+2);
-			if (flag.equals("00")) {
+			String imageType = message.substring(cmdSkip, cmdSkip+1);
+			String flag = message.substring(cmdSkip+1, cmdSkip+2);
+			if (flag.equals("0")) {
 				imageBos = new ByteArrayOutputStream();
 				writeHexAsBytes(imageBos, message.substring(cmdSkip+2));
-			} else if (flag.equals("01")) {
+			} else if (flag.equals("1")) {
 				writeHexAsBytes(imageBos, message.substring(cmdSkip+2));
-			} else if (flag.equals("02")) {	
+			} else if (flag.equals("2")) {	
 				writeHexAsBytes(imageBos, message.substring(cmdSkip+2));
 				
 				// imageBosIsComplete
 				try {
-					File tmp = File.createTempFile(this.getClass().getSimpleName(), ".bmp");
+					String ext = "unknown.tmp";
+					if ("0".equals(imageType)) {
+						ext = "bmp";
+					} else if ("1".equals(imageType)) {
+						ext = "jpg";
+					}
+					File tmp = File.createTempFile(this.getClass().getSimpleName(), "." + ext);
 					FileOutputStream os = new FileOutputStream(tmp);
 					os.write(imageBos.toByteArray());
 					os.close();
