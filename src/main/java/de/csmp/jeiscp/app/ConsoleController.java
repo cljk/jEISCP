@@ -70,13 +70,17 @@ public class ConsoleController implements Runnable, EiscpListener {
     @Override
 	public void receivedIscpMessage(String message) {
     	Command cmd = EiscpCommandsParser.getCommandByIscp(message);
+    	String command = message.substring(0, 3);
+    	String parameter = message.substring(3);
+    	
     	System.out.print( ansi().fg(GREEN).bold().a(">> ").fg(YELLOW).boldOff() );
-    	if (message.length() > 50) {
-			System.out.print( message.substring(0, 47) + ansi().a(" [...]") );
+    	System.out.print( ansi().bold().a(command).boldOff().fg(GREEN) );
+    	if (parameter.length() > 50) {
+			System.out.print( parameter.substring(0, 47) + " [...]" );
 		} else if (cmd != null) {
-			System.out.print( cmd );
+			System.out.print( parameter + ansi().fg(YELLOW) + " \t" + cmd.getIdentifier() + " \t" + cmd.getDescription()  );
     	} else {
-	    	System.out.print( message );
+	    	System.out.print( parameter );
 		}		
     	System.out.println( ansi().fg(WHITE).a("") );
 	}
