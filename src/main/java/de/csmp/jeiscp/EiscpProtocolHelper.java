@@ -4,6 +4,7 @@ import static de.csmp.jeiscp.EiscpConstants.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 public class EiscpProtocolHelper {
 	private static final Logger log = LoggerFactory.getLogger(EiscpProtocolHelper.class);
 
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
 	
 	/*
 	 * ISCP encapsulated in Ethernet (eISCP)
@@ -155,7 +157,7 @@ public class EiscpProtocolHelper {
 				}
 			}
 			
-			String res = new String(iscpMessage, SKIP_PREFIX_LEN, length - SKIP_PREFIX_LEN);
+			String res = new String(iscpMessage, SKIP_PREFIX_LEN, length - SKIP_PREFIX_LEN, UTF_8);
 			return res;
 		} else {
 			throw new EiscpMessageFormatException("wrong ISC signature");
