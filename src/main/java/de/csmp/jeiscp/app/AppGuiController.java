@@ -87,8 +87,16 @@ public class AppGuiController implements Runnable, EiscpListener {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				int vol = frm.getVolumeSlider().getValue();
-				String cmd = MASTER_VOLUME_ISCP + EiscpProtocolHelper.convertToHexString((byte) vol);
-				fController.sendIscpCommand(cmd);
+				frm.getLblVolume().setText("" + vol);
+				
+				String parm = EiscpProtocolHelper.convertToHexString((byte) vol);
+				String cmd = MASTER_VOLUME_ISCP + parm;
+				
+				if (! lastReceivedValues.containsKey(MASTER_VOLUME_ISCP) || ! lastReceivedValues.get(MASTER_VOLUME_ISCP).equals(parm)) {
+					// not yet received or not same value
+					log.info("send because last was: " + lastReceivedValues.get(MASTER_VOLUME_ISCP));
+					fController.sendIscpCommand(cmd);
+				}
 			}
 		});
 		
@@ -178,55 +186,53 @@ public class AppGuiController implements Runnable, EiscpListener {
 	@Override
 	public void receivedIscpMessage(String message) {
 		boolean unhandled = false;
-		String message3 = message.substring(0, 3);
-		String message3data = message.substring(3);
-		lastReceivedValues.put(message3, message3data);
+		// message = command (3 letters) + parameter
+		String command = message.substring(0, 3);
+		String parameter = message.substring(3);
+		lastReceivedValues.put(command, parameter);
 		
-		if (message.equals("PWR01")) {
+		if (message.equals(SYSTEM_POWER_ON_ISCP)) {
 			frm.getTglbtnOnoff().setText("ON");
 			frm.getTglbtnOnoff().setSelected(true);
-		} else if (message.equals("PWR00")) {
+		} else if (message.equals(SYSTEM_POWER_STANDBY_ISCP)) {
 			frm.getTglbtnOnoff().setText("Off");
 			frm.getTglbtnOnoff().setSelected(false);
-		} else if (message.startsWith("MVL")) {
-			int vol = Integer.parseInt(message3data, 16);
+		} else if (command.equals(MASTER_VOLUME_ISCP)) {
+			int vol = Integer.parseInt(parameter, 16);
 			if (frm.getVolumeSlider().getValue() != vol) {
-				frm.getVolumeSlider().setValue(vol);
-			}
-			if (this.vol != vol) {
 				log.info("new vol:  {}", vol);
 				frm.getLblVolume().setText("" + vol);
-				this.vol = vol;
+				frm.getVolumeSlider().setValue(vol);
 			}
+			
 		} else if (message.equals(AUDIO_MUTING_ON_ISCP)) {
 			frm.getTglBtnMute().setSelected(true);
 		} else if (message.equals(AUDIO_MUTING_OFF_ISCP)) {
 			frm.getTglBtnMute().setSelected(false);
-		} else if (message.startsWith("NTM")) {
+		} else if (command.equals(NET_USB_TIME_INFO_ISCP)) {
 			// net time
 			frm.setTitle(
-					message3data + 
-					(lastReceivedValues.containsKey("NTI") ? "   " + lastReceivedValues.get("NTI") : "") +
-					(lastReceivedValues.containsKey("NAL") && ! lastReceivedValues.get("NAL").startsWith("---") ? " // " + lastReceivedValues.get("NAL") : "")
+					parameter + 
+					(lastReceivedValues.containsKey(NET_USB_TITLE_NAME_ISCP) ? "   " + lastReceivedValues.get(NET_USB_TITLE_NAME_ISCP) : "") +
+					(lastReceivedValues.containsKey(NET_USB_ALBUM_NAME_INFO_ISCP) && ! lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP).startsWith("---") ? " // " + lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP) : "")
 					);
-		} else if (message.startsWith("NTI")) {
-			if (! StringUtils.isEmpty(message3data)) {
-				frm.setTitle(message3data + 
-						(lastReceivedValues.containsKey("NAL") && ! lastReceivedValues.get("NAL").startsWith("---") ? " // " + lastReceivedValues.get("NAL") : "")
+		} else if (message.startsWith(NET_USB_TITLE_NAME_ISCP)) {
+			if (! StringUtils.isEmpty(parameter)) {
+				frm.setTitle(parameter + 
+						(lastReceivedValues.containsKey(NET_USB_ALBUM_NAME_INFO_ISCP) && ! lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP).startsWith("---") ? " // " + lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP) : "")
 						);	
 			}
-		} else if (message.startsWith("NJA")) {
+		} else if (command.equals(NET_USB_JACKET_ART_ISCP)) {
 			// receiving image
-			int cmdSkip = "NJA".length();
-			String imageType = message.substring(cmdSkip, cmdSkip+1);
-			String flag = message.substring(cmdSkip+1, cmdSkip+2);
+			String imageType = parameter.substring(0, 1);
+			String flag = parameter.substring(1, 2);
 			if (flag.equals("0")) {
 				imageBos = new ByteArrayOutputStream();
-				writeHexAsBytes(imageBos, message.substring(cmdSkip+2));
+				writeHexAsBytes(imageBos, parameter.substring(2));
 			} else if (flag.equals("1")) {
-				writeHexAsBytes(imageBos, message.substring(cmdSkip+2));
+				writeHexAsBytes(imageBos, parameter.substring(2));
 			} else if (flag.equals("2")) {	
-				writeHexAsBytes(imageBos, message.substring(cmdSkip+2));
+				writeHexAsBytes(imageBos, parameter.substring(2));
 				
 				// imageBosIsComplete
 				try {
@@ -249,9 +255,9 @@ public class AppGuiController implements Runnable, EiscpListener {
 			} else {
 				unhandled = true;
 			}
-		} else if (message.startsWith("SLI")) {
+		} else if (command.equals(INPUT_SELECTOR_ISCP)) {
 			// InputSelection
-			String input = message3data;
+			String input = parameter;
 			int items = frm.getSourceSelector().getItemCount();
 			for (int i = 0; i<items; i++) {
 				CaptionValue vc = (CaptionValue) frm.getSourceSelector().getItemAt(i);
@@ -263,10 +269,9 @@ public class AppGuiController implements Runnable, EiscpListener {
 					break;
 				}
 			}
-		} else if (message.startsWith("NLS")) {
-			String nlsMessage = message3data;
-			String t = nlsMessage.substring(0, 1);
-			String l = nlsMessage.substring(1, 2);
+		} else if (command.equals(NET_USB_LIST_INFO_ISCP)) {
+			String t = parameter.substring(0, 1);
+			String l = parameter.substring(1, 2);
 			
 			int lInt = -1;
 			if (! "-".equals(l)) {
@@ -274,8 +279,8 @@ public class AppGuiController implements Runnable, EiscpListener {
 			}
 			
 			String p = null;
-			if (nlsMessage.length() > 2) {
-				p = nlsMessage.substring(2, 3);
+			if (parameter.length() > 2) {
+				p = parameter.substring(2, 3);
 			}
 			
 			if (t.equals("C")) {
@@ -297,7 +302,7 @@ public class AppGuiController implements Runnable, EiscpListener {
 					frm.getNetTextList().setSelectedIndex(netCursorPosition);
 				}
 			} else if (t.equals("U")) {
-				String data = nlsMessage.substring(3);
+				String data = parameter.substring(3);
 				netLineData.put(lInt, data);
 				
 				
@@ -317,11 +322,11 @@ public class AppGuiController implements Runnable, EiscpListener {
 			} else {
 				unhandled = true;
 			}
-		} else if (message.startsWith("NLT")) {
+		} else if (command.equals("NLT")) {
 			// "NLT" - NET/USB List Title Info(for Network Control Only)
 			String title = "";
 			if (message.length() > 25) {
-				message.substring(25);
+				title = message.substring(25);
 			}
 			if (! StringUtils.isEmpty(title)) {
 				frm.setTitle(title);
