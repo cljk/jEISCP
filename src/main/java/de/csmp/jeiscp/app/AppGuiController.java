@@ -28,6 +28,8 @@ import de.csmp.jeiscp.EiscpProtocolHelper;
 import de.csmp.jeiscp.app.gui.OnkyoControllerMainFrame;
 
 public class AppGuiController implements Runnable, EiscpListener {
+	private static final String FILE_EXT_JPEG = "jpg";
+	private static final String FILE_EXT_BMP = "bmp";
 	private static final Logger log = LoggerFactory.getLogger(AppGuiController.class);
 	EiscpConnector conn;
 	
@@ -94,7 +96,6 @@ public class AppGuiController implements Runnable, EiscpListener {
 				
 				if (! lastReceivedValues.containsKey(MASTER_VOLUME_ISCP) || ! lastReceivedValues.get(MASTER_VOLUME_ISCP).equals(parm)) {
 					// not yet received or not same value
-					log.info("send because last was: " + lastReceivedValues.get(MASTER_VOLUME_ISCP));
 					fController.sendIscpCommand(cmd);
 				}
 			}
@@ -226,21 +227,26 @@ public class AppGuiController implements Runnable, EiscpListener {
 			// receiving image
 			String imageType = parameter.substring(0, 1);
 			String flag = parameter.substring(1, 2);
+			String imageData = parameter.substring(2);
+			
 			if (flag.equals("0")) {
+				// begin sending image (new)
 				imageBos = new ByteArrayOutputStream();
-				writeHexAsBytes(imageBos, parameter.substring(2));
+				writeHexAsBytes(imageBos, imageData);
 			} else if (flag.equals("1")) {
-				writeHexAsBytes(imageBos, parameter.substring(2));
-			} else if (flag.equals("2")) {	
-				writeHexAsBytes(imageBos, parameter.substring(2));
+				// continue sending image
+				writeHexAsBytes(imageBos, imageData);
+			} else if (flag.equals("2")) {
+				// last image data block - finished
+				writeHexAsBytes(imageBos, imageData);
 				
 				// imageBosIsComplete
 				try {
 					String ext = "unknown.tmp";
 					if ("0".equals(imageType)) {
-						ext = "bmp";
+						ext = FILE_EXT_BMP;
 					} else if ("1".equals(imageType)) {
-						ext = "jpg";
+						ext = FILE_EXT_JPEG;
 					}
 					File tmp = File.createTempFile(this.getClass().getSimpleName(), "." + ext);
 					FileOutputStream os = new FileOutputStream(tmp);
@@ -270,23 +276,25 @@ public class AppGuiController implements Runnable, EiscpListener {
 				}
 			}
 		} else if (command.equals(NET_USB_LIST_INFO_ISCP)) {
-			String t = parameter.substring(0, 1);
-			String l = parameter.substring(1, 2);
+			String informationType = parameter.substring(0, 1);
+			String lineInfo = parameter.substring(1, 2);
 			
-			int lInt = -1;
-			if (! "-".equals(l)) {
-				lInt = Integer.parseInt(l);	
+			int lineInt = -1;
+			if (! "-".equals(lineInfo)) {
+				lineInt = Integer.parseInt(lineInfo);	
 			}
 			
-			String p = null;
+			String property = null;
 			if (parameter.length() > 2) {
-				p = parameter.substring(2, 3);
+				property = parameter.substring(2, 3);
 			}
 			
-			if (t.equals("C")) {
-				netCursorPosition = lInt;
+			if (informationType.equals("C")) {
+				// cursor info
+				netCursorPosition = lineInt;
 				
-				if ("P".equals(p)) {
+				if ("P".equals(property)) {
+					// page information update
 					// clear page
 					netTextListClickEnabled = false;
 
@@ -301,9 +309,10 @@ public class AppGuiController implements Runnable, EiscpListener {
 				if (netTextListModel.size() > netCursorPosition) {
 					frm.getNetTextList().setSelectedIndex(netCursorPosition);
 				}
-			} else if (t.equals("U")) {
+			} else if (informationType.equals("U") || informationType.equals("A")) {
+				// unicode letter or ascii letter
 				String data = parameter.substring(3);
-				netLineData.put(lInt, data);
+				netLineData.put(lineInt, data);
 				
 				
 				netTextListClickEnabled = false;
@@ -336,7 +345,7 @@ public class AppGuiController implements Runnable, EiscpListener {
 		}
 		
 		if (unhandled) {
-			log.info("unhandled: \"{}\" ({})", message, message.length());
+			log.debug("unhandled: \"{}\" ({})", command, message.length());
 		}
 	}
 	
