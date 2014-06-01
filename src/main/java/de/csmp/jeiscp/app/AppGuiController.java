@@ -17,6 +17,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.xml.transform.Source;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -212,17 +213,11 @@ public class AppGuiController implements Runnable, EiscpListener {
 			frm.getTglBtnMute().setSelected(false);
 		} else if (command.equals(NET_USB_TIME_INFO_ISCP)) {
 			// net time
-			frm.setTitle(
-					parameter + 
-					(lastReceivedValues.containsKey(NET_USB_TITLE_NAME_ISCP) ? "   " + lastReceivedValues.get(NET_USB_TITLE_NAME_ISCP) : "") +
-					(lastReceivedValues.containsKey(NET_USB_ALBUM_NAME_INFO_ISCP) && ! lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP).startsWith("---") ? " // " + lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP) : "")
-					);
+			updateTitle();
 		} else if (message.startsWith(NET_USB_TITLE_NAME_ISCP)) {
-			if (! StringUtils.isEmpty(parameter)) {
-				frm.setTitle(parameter + 
-						(lastReceivedValues.containsKey(NET_USB_ALBUM_NAME_INFO_ISCP) && ! lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP).startsWith("---") ? " // " + lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP) : "")
-						);	
-			}
+			updateTitle();
+		} else if (message.startsWith(NET_USB_ARTIST_NAME_INFO_ISCP)) {
+			updateTitle();
 		} else if (command.equals(NET_USB_JACKET_ART_ISCP)) {
 			// receiving image
 			String imageType = parameter.substring(0, 1);
@@ -271,10 +266,11 @@ public class AppGuiController implements Runnable, EiscpListener {
 					if (frm.getSourceSelector().getSelectedIndex() != i) {
 						frm.getSourceSelector().setSelectedIndex(i);
 					}
-					frm.setTitle(vc.getCaption());
 					break;
 				}
 			}
+			
+			updateTitle();
 		} else if (command.equals(NET_USB_LIST_INFO_ISCP)) {
 			String informationType = parameter.substring(0, 1);
 			String lineInfo = parameter.substring(1, 2);
@@ -333,13 +329,7 @@ public class AppGuiController implements Runnable, EiscpListener {
 			}
 		} else if (command.equals("NLT")) {
 			// "NLT" - NET/USB List Title Info(for Network Control Only)
-			String title = "";
-			if (message.length() > 25) {
-				title = message.substring(25);
-			}
-			if (! StringUtils.isEmpty(title)) {
-				frm.setTitle(title);
-			}
+			updateTitle();
 		} else {
 			unhandled = true;
 		}
@@ -351,6 +341,33 @@ public class AppGuiController implements Runnable, EiscpListener {
 	
 	Integer netCursorPosition = null;
 	Map<Integer, String> netLineData = new HashMap<Integer, String>();
+	
+	
+	public void updateTitle() {
+		String title = "" + frm.getSourceSelector().getSelectedItem();
+		
+		String currentInput = lastReceivedValues.get(INPUT_SELECTOR_ISCP);
+		if (INPUT_SELECTOR_NETWORK_ISCP.equals(INPUT_SELECTOR_ISCP + currentInput)) {
+			title += " :: ";
+			
+			String lastNLT = lastReceivedValues.get("NLT");
+			if ((! StringUtils.isEmpty(lastNLT)) && lastNLT.length() > 22) {
+				title += lastNLT.substring(22);
+			} else {
+				title +=
+						(lastReceivedValues.containsKey(NET_USB_TIME_INFO_ISCP) ? lastReceivedValues.get(NET_USB_TIME_INFO_ISCP) : "") + 
+						(lastReceivedValues.containsKey(NET_USB_ARTIST_NAME_INFO_ISCP) ? "   " + lastReceivedValues.get(NET_USB_ARTIST_NAME_INFO_ISCP) : "") +
+						(lastReceivedValues.containsKey(NET_USB_TITLE_NAME_ISCP) ? "   " + lastReceivedValues.get(NET_USB_TITLE_NAME_ISCP) : "")
+						//(lastReceivedValues.containsKey(NET_USB_ALBUM_NAME_INFO_ISCP) && ! lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP).startsWith("---") ? " // " + lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP) : "")
+						;
+			}
+		} else {
+			
+		}
+		title += " - jEISCP";
+		
+		frm.setTitle(title);
+	}
 	
 	
 
