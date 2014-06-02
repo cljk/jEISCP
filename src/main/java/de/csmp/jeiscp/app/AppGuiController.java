@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -115,7 +116,10 @@ public class AppGuiController implements Runnable, EiscpListener {
 				JComboBox c = (JComboBox) e.getSource();
 				CaptionValue vc = (CaptionValue) c.getSelectedItem();
 				String value = vc.getValue();
-				fController.sendIscpCommand("SLI" + value);
+				
+				if (! value.equals(lastReceivedValues.get(INPUT_SELECTOR_ISCP))) {
+					fController.sendIscpCommand(INPUT_SELECTOR_ISCP + value);
+				}
 			}
 		});
 		
@@ -270,6 +274,24 @@ public class AppGuiController implements Runnable, EiscpListener {
 				}
 			}
 			
+			
+			String currentInput = lastReceivedValues.get(INPUT_SELECTOR_ISCP);
+			if (INPUT_SELECTOR_NETWORK_ISCP.equals(INPUT_SELECTOR_ISCP + currentInput) ||
+					"2E".equals(currentInput)) {
+				try {
+					if (! lastReceivedValues.containsKey(NET_USB_ARTIST_NAME_INFO_ISCP)) {
+						conn.sendIscpCommand(NET_USB_ARTIST_NAME_INFO_QUERY_ISCP);
+					}
+
+					if (! lastReceivedValues.containsKey(NET_USB_TITLE_NAME_ISCP)) {
+						conn.sendIscpCommand(NET_USB_TITLE_NAME_QUERY_ISCP);
+					}
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
+				}
+			}
+			
+			
 			updateTitle();
 		} else if (command.equals(NET_USB_LIST_INFO_ISCP)) {
 			String informationType = parameter.substring(0, 1);
@@ -347,7 +369,8 @@ public class AppGuiController implements Runnable, EiscpListener {
 		String title = "" + frm.getSourceSelector().getSelectedItem();
 		
 		String currentInput = lastReceivedValues.get(INPUT_SELECTOR_ISCP);
-		if (INPUT_SELECTOR_NETWORK_ISCP.equals(INPUT_SELECTOR_ISCP + currentInput)) {
+		if (INPUT_SELECTOR_NETWORK_ISCP.equals(INPUT_SELECTOR_ISCP + currentInput) ||
+				"2E".equals(currentInput)) {
 			title += " :: ";
 			
 			String lastNLT = lastReceivedValues.get("NLT");
@@ -355,9 +378,9 @@ public class AppGuiController implements Runnable, EiscpListener {
 				title += lastNLT.substring(22);
 			} else {
 				title +=
-						(lastReceivedValues.containsKey(NET_USB_TIME_INFO_ISCP) ? lastReceivedValues.get(NET_USB_TIME_INFO_ISCP) : "") + 
-						(lastReceivedValues.containsKey(NET_USB_ARTIST_NAME_INFO_ISCP) ? "   " + lastReceivedValues.get(NET_USB_ARTIST_NAME_INFO_ISCP) : "") +
-						(lastReceivedValues.containsKey(NET_USB_TITLE_NAME_ISCP) ? "   " + lastReceivedValues.get(NET_USB_TITLE_NAME_ISCP) : "")
+						(! StringUtils.isEmpty(lastReceivedValues.get(NET_USB_TIME_INFO_ISCP)) ? lastReceivedValues.get(NET_USB_TIME_INFO_ISCP) : "") + 
+						(! StringUtils.isEmpty(lastReceivedValues.get(NET_USB_ARTIST_NAME_INFO_ISCP)) ? "   " + lastReceivedValues.get(NET_USB_ARTIST_NAME_INFO_ISCP) : "") +
+						(! StringUtils.isEmpty(lastReceivedValues.get(NET_USB_TITLE_NAME_ISCP)) ? "   " + lastReceivedValues.get(NET_USB_TITLE_NAME_ISCP) : "")
 						//(lastReceivedValues.containsKey(NET_USB_ALBUM_NAME_INFO_ISCP) && ! lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP).startsWith("---") ? " // " + lastReceivedValues.get(NET_USB_ALBUM_NAME_INFO_ISCP) : "")
 						;
 			}
@@ -366,7 +389,7 @@ public class AppGuiController implements Runnable, EiscpListener {
 		}
 		title += " - jEISCP";
 		
-		frm.setTitle(title);
+		frm.setTitle(title);		
 	}
 	
 	

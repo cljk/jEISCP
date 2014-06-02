@@ -153,6 +153,11 @@ public class EiscpConnector {
 		sendIscpMessage(message);
 	}
 	
+	/**
+	 * 
+	 * @param message already has prepended !1
+	 * @throws IOException
+	 */
 	public void sendIscpMessage(String message) throws IOException {
 		byte[] eiscpMessage = EiscpProtocolHelper.iscpToEiscpMessage(message);
 		
