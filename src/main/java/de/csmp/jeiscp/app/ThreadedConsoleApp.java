@@ -32,14 +32,14 @@ public class ThreadedConsoleApp {
 			} else if ("-noconsole".equals(args[i])){
 				ENABLE_CONSOLE = false;
 			} else if ("-?".equals(args[i])){
-				System.out.println("available parameters:");
-				System.out.println("\t-a {ip-address}\t\tspecify ip-adress, no autodiscovery");
-				System.out.println("\t-nogui         \t\tdisable gui");
-				System.out.println("\t-noconsole     \t\tdisable console (manual ISCP in-/output)");
+				displayParameterHelp();
 				
 				System.exit(0);
 			} else {
-				System.err.println("unrecognized parameter " + args[i]);
+				System.err.println("unrecognized parameter " + args[i] + "\n");
+				
+				displayParameterHelp();
+				
 				System.exit(1);
 			}
 		}
@@ -65,5 +65,16 @@ public class ThreadedConsoleApp {
         }
 		
 		log.debug("controller threads started");
+	}
+
+
+
+
+	private static void displayParameterHelp() {
+		System.out.println("available parameters:");
+		System.out.println("\t-?             \t\tdisplay parameter help (this page)");
+		System.out.println("\t-a {ip-address}\t\tspecify ip-adress, no autodiscovery");
+		System.out.println("\t-nogui         \t\tdisable gui");
+		System.out.println("\t-noconsole     \t\tdisable console (manual ISCP in-/output)");
 	}    
 }
