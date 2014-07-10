@@ -100,7 +100,11 @@ public class EiscpCommandsParser {
 				
 				CommandBlock cmdBlock = new CommandBlock();
 				cmdBlock.setCommand(mainCommand);
-				cmdBlock.setName((String) cmdMap.get(YAML_NAME));
+				Object yamlNameValue = cmdMap.get(YAML_NAME);
+				if (yamlNameValue instanceof ArrayList) {
+					yamlNameValue = ((ArrayList) yamlNameValue).get(0);	// choose first
+				}
+				cmdBlock.setName((String) yamlNameValue);
 				cmdBlock.setDescription((String) cmdMap.get(YAML_DESCRIPTION));
 				mc.add(cmdBlock);
 				//log.info(cmdBlock);
