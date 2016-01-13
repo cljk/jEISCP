@@ -17,6 +17,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -49,7 +50,8 @@ public class OnkyoControllerMainFrame extends JFrame {
 	private JButton btnSelect;
 
 	private JButton btnReturn;
-
+	ImageImplement imagePanel = null;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -159,7 +161,7 @@ public class OnkyoControllerMainFrame extends JFrame {
 		
 		netTextList = new JList();
 		netTextList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		
 		netPanel.add(netTextList);
 		
 		netKeysPanel = new JPanel();
@@ -383,5 +385,13 @@ public class OnkyoControllerMainFrame extends JFrame {
 
 	public JButton getBtnReturn() {
 		return btnReturn;
+	}
+
+	public ImageImplement getImagePanel() {
+		return imagePanel;
+	}
+
+	public void setImagePanel(ImageImplement imagePanel) {
+		this.imagePanel = imagePanel;
 	}
 }

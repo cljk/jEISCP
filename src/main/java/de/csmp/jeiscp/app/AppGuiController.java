@@ -1,24 +1,45 @@
 package de.csmp.jeiscp.app;
 
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_OFF_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_ON_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.INPUT_SELECTOR_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.INPUT_SELECTOR_NETWORK_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.INPUT_SELECTOR_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MONITOR_OUT_RESOLUTION_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_ARTIST_NAME_INFO_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_ARTIST_NAME_INFO_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_JACKET_ART_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_LIST_INFO_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TIME_INFO_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TITLE_NAME_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TITLE_NAME_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_ON_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_STANDBY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.VIDEO_INFOMATION_QUERY_ISCP;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.xml.transform.Source;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
 import de.csmp.jeiscp.EiscpProtocolHelper;
+import de.csmp.jeiscp.app.gui.ImageImplement;
 import de.csmp.jeiscp.app.gui.OnkyoControllerMainFrame;
 
 public class AppGuiController implements Runnable, EiscpListener {
@@ -252,6 +274,20 @@ public class AppGuiController implements Runnable, EiscpListener {
 					os.write(imageBos.toByteArray());
 					os.close();
 					log.info("wrote image to  {}", tmp.getAbsolutePath());
+					
+					// switch netPanel from displayed list to image
+					if (frm.getImagePanel() != null) {
+						frm.getNetPanel().remove(frm.getImagePanel());
+					}
+					
+					//frm.getNetPanel().remove(frm.getNetTextList());
+					frm.getNetTextList().setVisible(false);
+			        
+			        ImageImplement imagePanel = new ImageImplement(ImageIO.read(tmp));
+			        frm.getNetPanel().add(imagePanel, BorderLayout.CENTER);
+			        frm.setImagePanel(imagePanel);
+			        
+			        frm.repaint();
 				} catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
 				}
@@ -318,7 +354,13 @@ public class AppGuiController implements Runnable, EiscpListener {
 
 					frm.getNetTextList().clearSelection();
 					netTextListModel.removeAllElements();
-
+					
+					// hide image, show lsit
+					if (frm.getImagePanel() != null) {
+						frm.getImagePanel().setVisible(false);
+					}
+					frm.getNetTextList().setVisible(true);
+					
 					netLineData.clear();
 				} else {
 				}
