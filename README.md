@@ -5,7 +5,8 @@ jEISCP is a Java implementation of the eISCP-protocol used by various network en
 
 _ISCP_ (Integra Serial Control Protocol) is called the message format for serial connections to the devices. _eISCP_ (ISCP over ethernet) is the ethernet (TCP/IP) encapsulation of ISCP - used for WLAN and LAN (default port 60128). _ISCP_ and _eISCP_ are described in a technical documentation maintained by Onkyo (google for "onkyo iscp technical documentation").
 
-
+### Status
+[![Build Status](https://travis-ci.org/cljk/jEISCP.png)](https://travis-ci.org/cljk/jEISCP)
 
 Screenshots
 ===========
