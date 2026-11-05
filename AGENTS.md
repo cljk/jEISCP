@@ -61,12 +61,16 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
   - version `01 00 00 00`,
   - the `!1…` payload, terminated by CR LF.
 
-  `EiscpConnector` owns the TCP socket. `sendIscpCommand("MVL20")` prepends `!1` itself; `sendIscpMessage` expects the `!1` to be there already.
+  `EiscpConnector` owns the TCP socket.
+  - The constructor only stores host and port. `connect()` makes the first connection and throws if it fails (5 s timeout).
+  - When the connection is lost later, the connector reconnects in the background, pausing 1 s, doubling up to 30 s, until `close()`.
+  - `ConnectionState` (`DISCONNECTED`, `CONNECTING`, `CONNECTED`, `LOST`, `CLOSED`) goes to `addStateListener` listeners. Message listeners stay registered across reconnects.
+  - `sendIscpCommand("MVL20")` prepends `!1` itself; `sendIscpMessage` expects the `!1` to be there already. Both throw `IOException` while the connection is lost.
 - **Autodiscovery** (`EiscpAutodiscovery`, used by `EiscpConnector.autodiscover()`):
   - It sends `!xECNQSTN` by UDP to every interface's directed broadcast address plus 255.255.255.255. Windows sends the limited broadcast out of one interface only, and that can be a Hyper-V, WSL or VPN adapter.
   - It resends every second and gives up with a `SocketTimeoutException` after 30 s. Answers that are not `ECN…` are ignored.
   - The constructor with targets, port, interval and timeout exists for tests.
-- **Receiving is listener-based.** The first `addListener` call starts `EiscpConnectorSocketReaderThread`, which blocks on the socket. On a malformed frame it resyncs by skipping to the next CR/LF/EOF byte; garbage ending in CR LF can therefore still swallow the following frame. Listeners get the message without the `!1` prefix and without trailing terminators (e.g. `MVL16`). Callbacks run on this reader thread, not on the JavaFX thread. `sendIscpMessage` is synchronized because the console, the GUI and listener callbacks all send.
+- **Receiving is listener-based.** Every connection gets its own daemon `EiscpConnectorSocketReaderThread`, which blocks on the socket and reports an end of stream or I/O error back to the connector; the connector passes messages on to its listeners. On a malformed frame it resyncs by skipping to the next CR/LF/EOF byte; garbage ending in CR LF can therefore still swallow the following frame. Listeners get the message without the `!1` prefix and without trailing terminators (e.g. `MVL16`). Callbacks run on this reader thread, not on the JavaFX thread. Sending is synchronized because the console, the GUI and listener callbacks all send.
 - **Command catalogue** (`de.csmp.jeiscp.eiscp`): `EiscpCommandsParser` lazily parses the YAML zones `main` and `dock` into static maps. Upstream keeps the NET/USB commands (`NTC`, `NLS`, `NJA`, …) in `dock`; `zone2`–`zone4` are ignored. The maps are:
   - `CommandBlock`: the 3-letter prefix, e.g. `MVL`.
   - `Command`: prefix + value, with the id `block-name::value-name`.
@@ -88,7 +92,10 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
     - It keeps the last value of every 3-letter command (`getLastValue`).
     - It notifies its listeners with an `Aspect`, on the reader thread. Messages without a dedicated aspect fire `OTHER`.
   - `DeviceFunctions`: GUI-independent. It lists the command blocks a model supports (`EiscpDevice.isCapable`), reduced to literal values without `QSTN` or placeholders. The YAML's model sets are coarse: `set1` covers almost everything, so a TX-NR626 is offered Sirius/XM/HD Radio as well.
-  - `fx/FxGuiController`: starts JavaFX with `Platform.startup`, so `ThreadedConsoleApp` does not extend `Application`. It sends the initial queries and marshals state changes to the FX thread with `Platform.runLater`. The stage is `StageStyle.TRANSPARENT`, i.e. borderless. Its close request exits the JVM.
+  - `fx/FxGuiController`: starts JavaFX with `Platform.startup`, so `ThreadedConsoleApp` does not extend `Application`.
+    - It sends the initial queries, and sends them again after every reconnect.
+    - It mirrors the connection state into `ReceiverState`, so the display shows OFFLINE or CONNECTING.
+    - It marshals state changes to the FX thread with `Platform.runLater`. The stage is `StageStyle.TRANSPARENT`, i.e. borderless. Its close request exits the JVM.
   - `fx/RemoteControlView`: the remote-control UI, built in code with no FXML and styled by `src/main/resources/de/csmp/jeiscp/app/fx/remote.css`. Icons are SVG paths on a 24×24 grid.
     - It has its own window keys: minimize, and a close cross that fires the stage's close request. Dragging on any non-interactive area moves the window.
     - The header shows the model and `EiscpConnector.getAddress()` as a link. The link opens `http://<ip>/` via `Browser`, which uses the platform launcher (`rundll32`, `open` or `xdg-open`) instead of AWT.
@@ -105,4 +112,3 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
   - `fx/FunctionsPage`: opened by the "⋯" key. A searchable list of `DeviceFunctions`; selecting a function sends its `QSTN` and shows the current value.
   - The app icon PNGs in `src/main/resources/de/csmp/jeiscp/app/fx/icons/` are rendered by `src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java`, which is a standalone `java` program, not a test.
 
-  `BlockingDumbConsoleApp` is an old polling prototype with a hard-coded IP.

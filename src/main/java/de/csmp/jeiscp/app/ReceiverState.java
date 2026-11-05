@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.csmp.jeiscp.EiscpConnector.ConnectionState;
 import de.csmp.jeiscp.EiscpListener;
 
 /**
@@ -34,7 +35,7 @@ public class ReceiverState implements EiscpListener {
 	private static final Logger log = LoggerFactory.getLogger(ReceiverState.class);
 
 	/** {@code OTHER}: a message without a dedicated aspect; see {@link #getLastValue(String)}. */
-	public enum Aspect { POWER, VOLUME, MUTE, INPUT, NOW_PLAYING, NET_LIST, COVER_ART, POPUP, OTHER }
+	public enum Aspect { CONNECTION, POWER, VOLUME, MUTE, INPUT, NOW_PLAYING, NET_LIST, COVER_ART, POPUP, OTHER }
 
 	/** NET popup (NPU), e.g. a service's connection error, as the receiver shows it on the TV. */
 	public record Popup(String topTitle, String title, String message, List<String> buttons) {
@@ -62,6 +63,7 @@ public class ReceiverState implements EiscpListener {
 	private volatile byte[] coverArt;
 	private volatile boolean coverArtCurrent;
 	private volatile Popup popup;
+	private volatile ConnectionState connection = ConnectionState.CONNECTED;
 	private final Map<String, String> lastValues = new ConcurrentHashMap<>();
 
 	// only touched by the reader thread
@@ -308,6 +310,20 @@ public class ReceiverState implements EiscpListener {
 	}
 
 	/** True between a completed cover image and the next list page. */
+	/** Mirrors the connector's state, so views can show a lost connection. */
+	public void setConnectionState(ConnectionState next) {
+		connection = next;
+		fire(Aspect.CONNECTION);
+	}
+
+	public ConnectionState getConnectionState() {
+		return connection;
+	}
+
+	public boolean isConnected() {
+		return connection == ConnectionState.CONNECTED;
+	}
+
 	/** @return {@code null} if no popup is open, as far as the receiver told us */
 	public Popup getPopup() {
 		return popup;

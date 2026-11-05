@@ -248,7 +248,7 @@ public class RemoteControlView {
 
 	public void refresh(Aspect aspect) {
 		switch (aspect) {
-			case POWER -> {
+			case CONNECTION, POWER -> {
 				refreshPower();
 				refreshText();
 			}
@@ -545,7 +545,7 @@ public class RemoteControlView {
 
 	private void refreshPower() {
 		powerButton.pseudoClassStateChanged(ON, Boolean.TRUE.equals(state.getPower()));
-		lcd.pseudoClassStateChanged(STANDBY, Boolean.FALSE.equals(state.getPower()));
+		lcd.pseudoClassStateChanged(STANDBY, Boolean.FALSE.equals(state.getPower()) || !state.isConnected());
 	}
 
 	private void refreshVolume() {
@@ -574,7 +574,11 @@ public class RemoteControlView {
 
 	private void refreshText() {
 		String input = state.getInput();
-		String source = Boolean.FALSE.equals(state.getPower()) ? "STANDBY" : sourceLabel(input);
+		String source = switch (state.getConnectionState()) {
+			case CONNECTED -> Boolean.FALSE.equals(state.getPower()) ? "STANDBY" : sourceLabel(input);
+			case CONNECTING -> "CONNECTING";
+			default -> "OFFLINE";
+		};
 		lcdSource.setText(source);
 		sourceButtons.forEach((code, button) -> button.pseudoClassStateChanged(SELECTED, code.equals(input)));
 

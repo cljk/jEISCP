@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.csmp.jeiscp.EiscpConnector;
+import de.csmp.jeiscp.EiscpConnector.ConnectionState;
 import de.csmp.jeiscp.EiscpDevice;
 import de.csmp.jeiscp.app.ReceiverState;
 import de.csmp.jeiscp.app.ReceiverState.Aspect;
@@ -40,9 +41,21 @@ public class FxGuiController {
 	/** Starts the JavaFX runtime and returns without waiting for the window. */
 	public void start() {
 		state.addListener(this::queryNowPlayingOnNetworkInput);
+		state.setConnectionState(conn.getState());
+		conn.addStateListener(this::connectionChanged);
 		Platform.startup(this::showWindow);
 		conn.addListener(state);
+		queryState();
+	}
 
+	private void connectionChanged(ConnectionState next) {
+		state.setConnectionState(next);
+		if (next == ConnectionState.CONNECTED) {
+			queryState();	// after a reconnect the receiver may have changed meanwhile
+		}
+	}
+
+	private void queryState() {
 		send(SYSTEM_POWER_QUERY_ISCP);
 		send(MASTER_VOLUME_QUERY_ISCP);
 		send(AUDIO_MUTING_QUERY_ISCP);
@@ -84,7 +97,7 @@ public class FxGuiController {
 		try {
 			conn.sendIscpCommand(command);
 		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
+			log.warn("not sent: {} ({})", command, ex.getMessage());
 		}
 	}
 }

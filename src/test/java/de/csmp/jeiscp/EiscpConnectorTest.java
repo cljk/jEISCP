@@ -2,6 +2,7 @@ package de.csmp.jeiscp;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -10,15 +11,21 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import de.csmp.jeiscp.EiscpConnector.ConnectionState;
 
 /** Connector and reader thread against a receiver simulated on a loopback TCP socket. */
 public class EiscpConnectorTest {
@@ -27,11 +34,15 @@ public class EiscpConnectorTest {
 	Socket receiverSide;
 	EiscpConnector conn;
 	final BlockingQueue<String> received = new LinkedBlockingQueue<>();
+	final List<ConnectionState> states = new CopyOnWriteArrayList<>();
 
 	@Before
 	public void connect() throws Exception {
 		server = new ServerSocket(0, 1, InetAddress.getLoopbackAddress());
 		conn = new EiscpConnector("127.0.0.1", server.getLocalPort());
+		conn.setRetryDelays(Duration.ofMillis(50), Duration.ofMillis(200));
+		conn.addStateListener(states::add);
+		conn.connect();
 		receiverSide = server.accept();
 	}
 
@@ -40,6 +51,60 @@ public class EiscpConnectorTest {
 		conn.close();
 		receiverSide.close();
 		server.close();
+	}
+
+	@Test
+	public void reconnectsAfterTheReceiverDroppedTheConnection() throws Exception {
+		conn.addListener(received::add);
+
+		receiverSide.close();
+		server.setSoTimeout(3000);
+		receiverSide = server.accept();
+		awaitState(ConnectionState.CONNECTED);
+		send(frame("!1PWR01\r\n"));
+
+		assertEquals("PWR01", next());
+		assertEquals(List.of(ConnectionState.CONNECTING, ConnectionState.CONNECTED,
+				ConnectionState.LOST, ConnectionState.CONNECTING, ConnectionState.CONNECTED), states);
+	}
+
+	@Test
+	public void sendingWhileOfflineFails() throws Exception {
+		server.close();	// nothing to reconnect to
+		receiverSide.close();
+		awaitState(ConnectionState.LOST);
+
+		assertThrows(IOException.class, () -> conn.sendIscpCommand("PWRQSTN"));
+	}
+
+	@Test
+	public void closeEndsTheConnectionForGood() throws Exception {
+		conn.close();
+
+		assertEquals(-1, receiverSide.getInputStream().read());
+		server.setSoTimeout(500);
+		assertThrows(SocketTimeoutException.class, () -> server.accept());
+		assertEquals(ConnectionState.CLOSED, conn.getState());
+	}
+
+	@Test
+	public void firstConnectFailureIsThrown() throws Exception {
+		int unused;
+		try (ServerSocket probe = new ServerSocket(0, 1, InetAddress.getLoopbackAddress())) {
+			unused = probe.getLocalPort();
+		}
+		EiscpConnector offline = new EiscpConnector("127.0.0.1", unused);
+
+		assertThrows(IOException.class, offline::connect);
+		assertEquals(ConnectionState.DISCONNECTED, offline.getState());
+	}
+
+	private void awaitState(ConnectionState expected) throws InterruptedException {
+		long deadline = System.currentTimeMillis() + 3000;
+		while (conn.getState() != expected && System.currentTimeMillis() < deadline) {
+			Thread.sleep(20);
+		}
+		assertEquals(expected, conn.getState());
 	}
 
 	@Test

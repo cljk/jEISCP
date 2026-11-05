@@ -1,5 +1,6 @@
 package de.csmp.jeiscp.app;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 import org.slf4j.Logger;
@@ -70,7 +71,13 @@ public class ThreadedConsoleApp {
 				device = EiscpAutodiscovery.identify(address);
 			}
 		}
-		
+		try {
+			conn.connect();	// later losses are reconnected in the background
+		} catch (IOException ex) {
+			System.err.println("Cannot connect to " + conn.getAddress() + ": " + ex.getMessage());
+			System.exit(1);
+		}
+
 		
 		if (ENABLE_CONSOLE) {
 			ConsoleController consoleController = new ConsoleController(conn, !ENABLE_GUI);

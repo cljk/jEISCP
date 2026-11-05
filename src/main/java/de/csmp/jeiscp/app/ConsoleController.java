@@ -1,6 +1,7 @@
 package de.csmp.jeiscp.app;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +68,12 @@ public class ConsoleController implements Runnable, EiscpListener {
             		break;
             	}
             	if (!input.isEmpty()) {
-            		conn.sendIscpCommand(input);
+            		try {
+            			conn.sendIscpCommand(input);
+            		} catch (IOException ex) {
+            			// e.g. while the connector reconnects; the console stays usable
+            			System.out.println("not sent: " + ex.getMessage());
+            		}
             	}
             }
             

@@ -1,27 +1,31 @@
 package de.csmp.jeiscp;
 
 import java.io.BufferedInputStream;
+import java.io.EOFException;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * Reads the eISCP frames of one connection and hands their ISCP messages to {@code sink}.
+ * If reading ends without {@link #quit()} (end of stream, I/O error), {@code onLost} learns about it.
+ */
 public class EiscpConnectorSocketReaderThread implements Runnable {
 	private static final Logger log = LoggerFactory.getLogger(EiscpConnectorSocketReaderThread.class);
-	
-	EiscpConnector conn;
-	BufferedInputStream socketIn;
-	/** use thread safe implementation of collection for supporting concurrent adding/removing of listener */
-	Collection<EiscpListener> listenerList = new ConcurrentLinkedQueue<EiscpListener>();
-	
+
+	private final BufferedInputStream socketIn;
+	private final EiscpListener sink;
+	private final BiConsumer<EiscpConnectorSocketReaderThread, Exception> onLost;
+
 	private volatile boolean quit = false;
-	
-	public EiscpConnectorSocketReaderThread(EiscpConnector conn, BufferedInputStream socketIn) {
-		this.conn = conn;
+
+	public EiscpConnectorSocketReaderThread(BufferedInputStream socketIn, EiscpListener sink,
+			BiConsumer<EiscpConnectorSocketReaderThread, Exception> onLost) {
 		this.socketIn = socketIn;
+		this.sink = sink;
+		this.onLost = onLost;
 	}
 
 	@Override
@@ -31,63 +35,54 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 		while (! quit) {
 			log.trace("readLoop");
 			try {
-				blockedReadQuadrupel(response);
+				readFully(response);
 				EiscpProtocolHelper.validateIscpSignature(response, 0);
-				
-				blockedReadQuadrupel(response);
+
+				readFully(response);
 				EiscpProtocolHelper.validateHeaderLengthSignature(response, 0);
-				
-				blockedReadQuadrupel(response);
+
+				readFully(response);
 				int messageSize = EiscpProtocolHelper.readMessageSize(response, 0);
-				
-				blockedReadQuadrupel(response);
+
+				readFully(response);
 				EiscpProtocolHelper.validateEiscpVersion(response, 0);
-				
+
 				// eISCP encapulation-header ends here - ISCP begins !1xxx
-				
+
 				byte[] iscpMessage = new byte[messageSize];
-				for (int i=0; i<messageSize; i++) {
-					iscpMessage[i] = (byte) socketIn.read();
-				}
-				
+				readFully(iscpMessage);
+
 				String iscpResult = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
 				if (log.isDebugEnabled()) {
 					log.debug("received: {}", abbreviate(iscpResult));
 				}
-				fireReceivedIscpMessage(iscpResult);
+				sink.receivedIscpMessage(iscpResult);
 			} catch (EiscpMessageFormatException ex) {
 				log.warn(ex.getMessage() + " - " + EiscpProtocolHelper.convertToHexString(response));
 				log.debug("skip bytes until EOF/CR");
-				
+
 				if (isEofMarkerfInArray(response)) {
 					log.debug("found eof in response block");
 				} else {
-					boolean eofFound = false;
 					try {
-						while (! eofFound) {
-							byte b = (byte) socketIn.read();
-							if (b == -1) {
-								log.debug("end of stream");
-								quit();
-								eofFound = true;
-							} else {
-								// log.debug("discard " + EiscpProtocolHelper.convertToHexString(new byte[]{b}));
-								eofFound = EiscpProtocolHelper.isEofMarker(b);
-							}
-						};
+						skipToTerminator();
 						log.trace("found EOF");
-					} catch (Exception ex2) {
-						log.error("not handled", ex2);
+					} catch (IOException ex2) {
+						stopped(ex2);
 					}
 				}
 			} catch (Exception ex) {
-				if (quit) {
-					log.debug("reader stopped: {}", ex.getMessage());	// connection closed on purpose
-				} else {
-					log.warn("connection lost: {}", ex.getMessage(), ex);
-				}
-				quit();
+				stopped(ex);
 			}
+		}
+	}
+
+	private void stopped(Exception cause) {
+		if (quit) {
+			log.debug("reader stopped: {}", cause.getMessage());	// connection closed on purpose
+		} else {
+			quit = true;
+			onLost.accept(this, cause);
 		}
 	}
 
@@ -95,25 +90,6 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 	static String abbreviate(String message) {
 		int max = 120;
 		return message.length() <= max ? message : message.substring(0, max) + "... (" + message.length() + " chars)";
-	}
-
-	/** A failing listener is logged and does not keep the message from the others. */
-	public void fireReceivedIscpMessage(String iscpResult) {
-		for (EiscpListener listener : listenerList) {
-			try {
-				listener.receivedIscpMessage(iscpResult);
-			} catch (RuntimeException ex) {
-				log.error("error in listener {}", ex.getMessage(), ex);
-			}
-		}
-	}
-	
-	public void addListener(EiscpListener listener) {
-		listenerList.add(listener);
-	}
-	
-	public void removeListener(EiscpListener listener) {
-		listenerList.remove(listener);
 	}
 
 	public boolean isEofMarkerfInArray(byte[] response) {
@@ -124,13 +100,29 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 		return eofFound;
 	}
 
-	private void blockedReadQuadrupel(byte[] bb) throws IOException {
-		bb[0] = (byte) socketIn.read();
-		bb[1] = (byte) socketIn.read();
-		bb[2] = (byte) socketIn.read();
-		bb[3] = (byte) socketIn.read();
+	private void skipToTerminator() throws IOException {
+		while (true) {
+			int b = socketIn.read();
+			if (b == -1) {
+				throw new EOFException("end of stream");
+			}
+			if (EiscpProtocolHelper.isEofMarker((byte) b)) {
+				return;
+			}
+		}
 	}
-	
+
+	private void readFully(byte[] buffer) throws IOException {
+		int read = 0;
+		while (read < buffer.length) {
+			int n = socketIn.read(buffer, read, buffer.length - read);
+			if (n == -1) {
+				throw new EOFException("end of stream");
+			}
+			read += n;
+		}
+	}
+
 	public void quit() {
 		quit = true;
 	}

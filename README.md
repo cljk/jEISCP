@@ -56,7 +56,7 @@ Remote control
 --------------
 The GUI looks like a remote control in a borderless window: drag it to move it; the keys at its top right minimize or quit.
 
-* **Display:** input, volume (drag the bar), title, artist, album and time, the NET/USB list with its cursor, and cover art. Messages of NET services, such as a TuneIn connection error, appear here too; a click, OK or Return closes them.
+* **Display:** input, volume (drag the bar), title, artist, album and time, the NET/USB list with its cursor, and cover art. Messages of NET services, such as a TuneIn connection error, appear here too; a click, OK or Return closes them. If the connection to the receiver is lost, the display shows OFFLINE while jEISCP reconnects in the background.
 * **Keys:** power, inputs, volume rocker and mute, playback, number keys, and SETUP / QUICK, which open the receiver's menus on the TV.
 * **Direction pad:** the small NET and TV keys at its top corners decide what it controls: the NET/USB lists or the receiver's menus on the TV. The OK key shows the current target; it follows the input until you switch it.
 * **"⋯" key:** all functions the connected model supports according to the command catalogue, e.g. listening mode, dimmer or late night. They are searchable and show their current value.

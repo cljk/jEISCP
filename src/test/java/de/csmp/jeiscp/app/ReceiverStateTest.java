@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.csmp.jeiscp.EiscpConnector.ConnectionState;
 import de.csmp.jeiscp.app.ReceiverState.Aspect;
 
 public class ReceiverStateTest {
@@ -49,6 +50,16 @@ public class ReceiverStateTest {
 		assertEquals("01", state.getLastValue("PWR"));
 		assertNull(state.getLastValue("DIM"));
 		assertEquals(List.of(Aspect.OTHER, Aspect.POWER), fired);
+	}
+
+	@Test
+	public void mirrorsConnectionState() {
+		assertTrue(state.isConnected());
+
+		state.setConnectionState(ConnectionState.LOST);
+
+		assertFalse(state.isConnected());
+		assertEquals(List.of(Aspect.CONNECTION), fired);
 	}
 
 	@Test
