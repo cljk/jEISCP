@@ -22,7 +22,6 @@ import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -35,7 +34,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -75,8 +73,6 @@ final class LogWindow {
 	private final Queue<Entry> pending = new ConcurrentLinkedQueue<>();
 	private final AtomicBoolean flushScheduled = new AtomicBoolean();
 	private final Consumer<Entry> listener = this::enqueue;
-	private double dragX;
-	private double dragY;
 
 	/** Shows the log window next to {@code owner}, or brings the open one to the front. */
 	static void show(Window owner, LogBuffer buffer) {
@@ -110,8 +106,7 @@ final class LogWindow {
 				iconButton(ICON_CLEAR, "Clear the window", lines::clear),
 				iconButton(ICON_CLOSE, "Close", this::close));
 		header.setAlignment(Pos.CENTER_LEFT);
-		header.addEventHandler(MouseEvent.MOUSE_PRESSED, this::startDrag);
-		header.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::drag);
+		WindowDrag.install(header);
 
 		list.getStyleClass().add("log-list");
 		list.setFixedCellSize(18);
@@ -229,24 +224,12 @@ final class LogWindow {
 
 	private Button iconButton(String iconPath, String tooltip, Runnable action) {
 		Button button = new Button();
-		button.setGraphic(RemoteControlView.icon(14, RemoteControlView.line(iconPath)));
+		button.setGraphic(Ui.icon(14, Ui.line(iconPath)));
 		button.getStyleClass().setAll("button", "window-key");
 		button.setFocusTraversable(false);
 		button.setTooltip(new Tooltip(tooltip));
 		button.setOnAction(e -> action.run());
 		return button;
-	}
-
-	private void startDrag(MouseEvent event) {
-		dragX = event.getScreenX() - stage.getX();
-		dragY = event.getScreenY() - stage.getY();
-	}
-
-	private void drag(MouseEvent event) {
-		if (!(event.getTarget() instanceof Node node) || !RemoteControlView.isInteractive(node)) {
-			stage.setX(event.getScreenX() - dragX);
-			stage.setY(event.getScreenY() - dragY);
-		}
 	}
 
 	private static final class LogCell extends ListCell<Entry> {

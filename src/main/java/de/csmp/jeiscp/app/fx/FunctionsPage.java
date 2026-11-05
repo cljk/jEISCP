@@ -57,7 +57,7 @@ final class FunctionsPage {
 		Label scope = new Label(filtered.size() + (device != null ? " for " + device.getDeviceType() : ", model unknown"));
 		scope.getStyleClass().add("fn-scope");
 		Button closeButton = new Button();
-		closeButton.setGraphic(RemoteControlView.icon(16, RemoteControlView.line(ICON_CLOSE)));
+		closeButton.setGraphic(Ui.icon(16, Ui.line(ICON_CLOSE)));
 		closeButton.getStyleClass().addAll("key", "round-small");
 		closeButton.setFocusTraversable(false);
 		closeButton.setTooltip(new Tooltip("Back to the remote"));

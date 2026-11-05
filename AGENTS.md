@@ -99,15 +99,21 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
     - It sends the initial queries, and sends them again after every reconnect.
     - It mirrors the connection state into `ReceiverState`, so the display shows OFFLINE or CONNECTING.
     - It marshals state changes to the FX thread with `Platform.runLater`. The stage is `StageStyle.TRANSPARENT`, i.e. borderless. Its close request exits the JVM.
-  - `fx/RemoteControlView`: the remote-control UI, built in code with no FXML and styled by `src/main/resources/de/csmp/jeiscp/app/fx/remote.css`. Icons are SVG paths on a 24×24 grid.
-    - It has its own window keys: minimize, and a close cross that fires the stage's close request. Dragging on any non-interactive area moves the window.
-    - The header shows the model and `EiscpConnector.getAddress()` as a link. The link opens `http://<ip>/` via `Browser`, which uses the platform launcher (`rundll32`, `open` or `xdg-open`) instead of AWT.
-    - The power, mute and volume keys send a command and then wait for the receiver's echo to update the UI. The `updatingVolume` flag stops the slider from sending that echo back.
-    - The current `ReceiverControl.Target` NET/TV decides whether the direction pad, OK, return and home keys (and the keyboard shortcuts) act on `NTC…` or `OSD…`.
-      - The switch is two small keys in the pad's top corners; the OK key shows the target.
-      - A new input switches the mode. SETUP (`OSDMENU`) and QUICK switch to TV.
+  - `fx/RemoteControlView`: the remote-control UI, built in code with no FXML and styled by `src/main/resources/de/csmp/jeiscp/app/fx/remote.css`.
+    - It only assembles the parts and owns the borderless scene.
+    - It maps each `ReceiverState.Aspect` to the parts' `refresh…` methods and holds the keyboard shortcuts.
+    - Its parts, all package-private in `fx`:
+    - `HeaderBar`: power key, the traffic LED (flashes on every `ReceiverControl` command, opens the log), model, the address link, and the minimize and close keys. The close key fires the stage's close request. The link opens `http://<ip>/` via `Browser`, which uses the platform launcher (`rundll32`, `open` or `xdg-open`) instead of AWT.
+    - `DisplayPanel`: the LCD with input, volume bar, now playing, NET list or cover art. It also builds the window title.
+      - The `updatingVolume` flag stops the slider from sending the receiver's echo back.
+      - NET popups (`NPU`, parsed in `ReceiverState.parsePopup`, NUL-separated) cover the list. They close on click, on OK/Return, on a new list page or input, or after 30 s.
+    - `KeyPad`: all keys below the display, the input list (`SOURCES`) and the current `ReceiverControl.Target` NET/TV.
+      - The target decides whether the direction pad, OK, return and home keys (and the keyboard shortcuts) act on `NTC…` or `OSD…`. Its switch is two small keys in the pad's top corners; the OK key shows the target.
+      - A new input switches the target. SETUP (`OSDMENU`) and QUICK switch to TV.
       - The `OSD` commands are plain key presses: the receiver neither answers them nor reports its TV menus.
-    - NET popups (`NPU`, parsed in `ReceiverState.parsePopup`, NUL-separated) cover the list in the display. They close on click, on OK/Return, on a new list page or input, or after 30 s.
+    - `WindowDrag`: moves a borderless window while it is dragged on a non-control area; also used by `LogWindow`.
+    - `Ui`: key, icon and spacer helpers. Icons are SVG paths on a 24×24 grid.
+    - Power, mute and volume send a command and then wait for the receiver's echo to update the UI.
   - `LogBuffer`: a log4j appender on the root logger that keeps the last 5000 entries for the GUI. `ThreadedConsoleApp` installs it before autodiscovery when the GUI is on.
     - It recognizes ISCP traffic by the message prefixes `sendIscpCommand: ` (from `EiscpConnector`) and `received: ` (from the reader thread). Changing those log texts breaks the →/← marking.
     - `subscribe` returns the history and passes on later entries, with no gap between the two.
