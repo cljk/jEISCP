@@ -1,20 +1,12 @@
 package de.csmp.jeiscp.app.fx;
 
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_QUERY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.INPUT_SELECTOR_QUERY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_QUERY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MONITOR_OUT_RESOLUTION_QUERY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_ARTIST_NAME_INFO_QUERY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TITLE_NAME_QUERY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_QUERY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.VIDEO_INFORMATION_QUERY_ISCP;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpConnector.ConnectionState;
 import de.csmp.jeiscp.EiscpDevice;
+import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.ReceiverState;
 import de.csmp.jeiscp.app.ReceiverState.Aspect;
 import javafx.application.Platform;
@@ -30,6 +22,7 @@ public class FxGuiController {
 	private final EiscpConnector conn;
 	private final EiscpDevice device;
 	private final ReceiverState state = new ReceiverState();
+	private final ReceiverControl control = new ReceiverControl(this::send, state);
 	private RemoteControlView view;
 
 	/** @param device the connected model, {@code null} if unknown */
@@ -40,34 +33,29 @@ public class FxGuiController {
 
 	/** Starts the JavaFX runtime and returns without waiting for the window. */
 	public void start() {
-		state.addListener(this::queryNowPlayingOnNetworkInput);
+		state.addListener(aspect -> {
+			if (aspect == Aspect.INPUT) {
+				control.queryNowPlayingIfMissing();
+			}
+		});
 		state.setConnectionState(conn.getState());
 		conn.addStateListener(this::connectionChanged);
 		Platform.startup(this::showWindow);
 		conn.addListener(state);
-		queryState();
+		control.queryStatus();
 	}
 
 	private void connectionChanged(ConnectionState next) {
 		state.setConnectionState(next);
 		if (next == ConnectionState.CONNECTED) {
-			queryState();	// after a reconnect the receiver may have changed meanwhile
+			control.queryStatus();	// after a reconnect the receiver may have changed meanwhile
 		}
-	}
-
-	private void queryState() {
-		send(SYSTEM_POWER_QUERY_ISCP);
-		send(MASTER_VOLUME_QUERY_ISCP);
-		send(AUDIO_MUTING_QUERY_ISCP);
-		send(VIDEO_INFORMATION_QUERY_ISCP);
-		send(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
-		send(INPUT_SELECTOR_QUERY_ISCP);
 	}
 
 	private void showWindow() {
 		// queued via runLater, so the first refresh runs after the view below exists
 		state.addListener(aspect -> Platform.runLater(() -> view.refresh(aspect)));
-		view = new RemoteControlView(state, this::send, device, conn.getAddress());
+		view = new RemoteControlView(state, control, device, conn.getAddress());
 
 		// borderless; the view brings its own close and minimize keys
 		Stage stage = new Stage(StageStyle.TRANSPARENT);
@@ -80,17 +68,6 @@ public class FxGuiController {
 			System.exit(0);
 		});
 		stage.show();
-	}
-
-	private void queryNowPlayingOnNetworkInput(Aspect aspect) {
-		if (aspect == Aspect.INPUT && state.isNetworkInput()) {
-			if (state.getArtist() == null) {
-				send(NET_USB_ARTIST_NAME_INFO_QUERY_ISCP);
-			}
-			if (state.getTitle() == null) {
-				send(NET_USB_TITLE_NAME_QUERY_ISCP);
-			}
-		}
 	}
 
 	private void send(String command) {

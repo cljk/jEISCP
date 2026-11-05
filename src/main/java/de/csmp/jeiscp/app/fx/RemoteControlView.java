@@ -1,41 +1,9 @@
 package de.csmp.jeiscp.app.fx;
 
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_OFF_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.AUDIO_MUTING_ON_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.INPUT_SELECTOR_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_LEVEL_DOWN_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.MASTER_VOLUME_LEVEL_UP_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_DOWN_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_LEFT_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_PAUSE_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_PLAY_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_RETURN_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_RIGHT_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_SELECT_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_STOP_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_TOP_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_TRDN_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_TRUP_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_UP_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_DOWN_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_ENTER_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_EXIT_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_HOME_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_LEFT_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_MENU_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_QUICK_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_RIGHT_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_UP_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_ON_ISCP;
-import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_STANDBY_ISCP;
-
 import java.io.ByteArrayInputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -43,12 +11,17 @@ import java.util.stream.Stream;
 import de.csmp.jeiscp.EiscpDevice;
 import de.csmp.jeiscp.app.Browser;
 import de.csmp.jeiscp.app.LogBuffer;
+import de.csmp.jeiscp.app.ReceiverControl;
+import de.csmp.jeiscp.app.ReceiverControl.Direction;
+import de.csmp.jeiscp.app.ReceiverControl.Playback;
+import de.csmp.jeiscp.app.ReceiverControl.Target;
 import de.csmp.jeiscp.app.ReceiverState;
 import de.csmp.jeiscp.app.ReceiverState.Aspect;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -139,9 +112,6 @@ public class RemoteControlView {
 	private static final String ICON_CLOSE = "M7 7l10 10M17 7L7 17";
 	private static final String ICON_MORE = "M4.5 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M15.5 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0";
 
-	/** Target of the direction pad, OK, return and home keys: NET/USB lists or the receiver's menus on the TV. */
-	enum Mode { NET, TV }
-
 	private static final PseudoClass ON = PseudoClass.getPseudoClass("on");
 	private static final PseudoClass SELECTED = PseudoClass.getPseudoClass("selected");
 	private static final PseudoClass CURSOR = PseudoClass.getPseudoClass("cursor");
@@ -149,7 +119,7 @@ public class RemoteControlView {
 	private static final PseudoClass LIT = PseudoClass.getPseudoClass("lit");
 
 	private final ReceiverState state;
-	private final Consumer<String> sender;
+	private final ReceiverControl control;
 	private final EiscpDevice device;
 	private final String receiverAddress;
 	private final StringProperty windowTitle = new SimpleStringProperty("jEISCP");
@@ -160,8 +130,8 @@ public class RemoteControlView {
 	private final Map<String, Button> sourceButtons = new LinkedHashMap<>();
 	private Button powerButton;
 	private Button muteButton;
-	private final Map<Mode, Button> modeButtons = new LinkedHashMap<>();
-	private Mode mode = Mode.NET;
+	private final Map<Target, Button> modeButtons = new LinkedHashMap<>();
+	private Target mode = Target.NET;
 	private final Label okMode = label("dpad-ok-mode");
 	private String followedInput;
 	private Node keys;
@@ -192,20 +162,20 @@ public class RemoteControlView {
 	private double dragOffsetY;
 
 	/** @param device the connected model, {@code null} if unknown; decides which functions are offered */
-	public RemoteControlView(ReceiverState state, Consumer<String> sender, EiscpDevice device) {
-		this(state, sender, device, device != null ? device.getIpAddress() : null);
+	public RemoteControlView(ReceiverState state, ReceiverControl control, EiscpDevice device) {
+		this(state, control, device, device != null ? device.getIpAddress() : null);
 	}
 
 	/** @param receiverAddress IP of the connected receiver, shown as a link to its web interface; {@code null} hides it */
-	public RemoteControlView(ReceiverState state, Consumer<String> sender, EiscpDevice device, String receiverAddress) {
+	public RemoteControlView(ReceiverState state, ReceiverControl control, EiscpDevice device, String receiverAddress) {
 		this.state = state;
-		this.sender = sender;
+		this.control = control;
 		this.device = device;
 		this.receiverAddress = receiverAddress;
 
 		VBox keyPage = new VBox(14, sourceKeys(), functionKeys(), controlCluster(), transportKeys(), numberKeys());
 		keys = keyPage;
-		functionsPage = new FunctionsPage(state, device, this::send, () -> showFunctions(false));
+		functionsPage = new FunctionsPage(state, device, control, () -> showFunctions(false));
 		functionsPage.getRoot().setVisible(false);
 		StackPane pages = new StackPane(keyPage, functionsPage.getRoot());
 
@@ -220,6 +190,13 @@ public class RemoteControlView {
 		remote.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::drag);
 
 		ledOff.setOnFinished(e -> led.pseudoClassStateChanged(LIT, false));
+		control.addSentListener(command -> {
+			if (Platform.isFxApplicationThread()) {
+				flashLed();
+			} else {
+				Platform.runLater(this::flashLed);
+			}
+		});
 		refreshAll();
 	}
 
@@ -296,8 +273,7 @@ public class RemoteControlView {
 		Label brand = new Label("jEISCP");
 		brand.getStyleClass().add("brand");
 
-		powerButton = iconKey(icon(22, line(ICON_POWER)), "Power", e -> send(
-				Boolean.TRUE.equals(state.getPower()) ? SYSTEM_POWER_STANDBY_ISCP : SYSTEM_POWER_ON_ISCP));
+		powerButton = iconKey(icon(22, line(ICON_POWER)), "Power", e -> control.togglePower());
 		powerButton.getStyleClass().addAll("round", "power");
 
 		Label model = new Label(device != null ? device.getDeviceType() : "");
@@ -399,7 +375,7 @@ public class RemoteControlView {
 		}
 		for (int i = 0; i < SOURCES.size(); i++) {
 			Source source = SOURCES.get(i);
-			Button button = key(source.label(), e -> send(INPUT_SELECTOR_ISCP + source.code()));
+			Button button = key(source.label(), e -> control.selectInput(source.code()));
 			button.getStyleClass().add("source");
 			button.setMaxWidth(Double.MAX_VALUE);
 			grid.add(button, i % 3, i / 3);
@@ -409,8 +385,8 @@ public class RemoteControlView {
 	}
 
 	private Node controlCluster() {
-		Button volumeUp = rockerKey("+", MASTER_VOLUME_LEVEL_UP_ISCP, "Volume up");
-		Button volumeDown = rockerKey("−", MASTER_VOLUME_LEVEL_DOWN_ISCP, "Volume down");
+		Button volumeUp = rockerKey("+", control::volumeUp, "Volume up");
+		Button volumeDown = rockerKey("−", control::volumeDown, "Volume down");
 		Label volumeLabel = new Label("VOL");
 		volumeLabel.getStyleClass().add("rocker-label");
 		VBox rocker = new VBox(volumeUp, vspacer(), volumeLabel, vspacer(), volumeDown);
@@ -418,11 +394,11 @@ public class RemoteControlView {
 		rocker.setPrefHeight(DPAD_SIZE);
 		rocker.setMaxHeight(DPAD_SIZE);
 
-		Button top = iconKey(icon(20, line(ICON_HOME)), "Home (NET: top menu)", e -> send(byMode(NETWORK_USB_TOP_ISCP, SETUP_HOME_ISCP)));
+		Button top = iconKey(icon(20, line(ICON_HOME)), "Home (NET: top menu)", e -> control.home(mode));
 		top.getStyleClass().add("round");
-		Button back = iconKey(icon(20, line(ICON_RETURN)), "Return (TV: exit)", e -> send(byMode(NETWORK_USB_RETURN_ISCP, SETUP_EXIT_ISCP)));
+		Button back = iconKey(icon(20, line(ICON_RETURN)), "Return (TV: exit)", e -> pressBack());
 		back.getStyleClass().add("round");
-		muteButton = iconKey(icon(20, solid(ICON_SPEAKER), line(ICON_CROSS)), "Mute", e -> send(muteCommand()));
+		muteButton = iconKey(icon(20, solid(ICON_SPEAKER), line(ICON_CROSS)), "Mute", e -> control.toggleMute());
 		muteButton.getStyleClass().addAll("round", "mute");
 		VBox right = new VBox(18, top, back, muteButton);
 		right.setAlignment(Pos.CENTER);
@@ -436,7 +412,7 @@ public class RemoteControlView {
 		Region ring = new Region();
 		ring.getStyleClass().add("dpad-ring");
 
-		Button ok = key(null, e -> send(byMode(NETWORK_USB_SELECT_ISCP, SETUP_ENTER_ISCP)));
+		Button ok = key(null, e -> pressOk());
 		ok.getStyleClass().setAll("button", "dpad-ok");
 		VBox okLabel = new VBox(-2, label("dpad-ok-label"), okMode);
 		((Label) okLabel.getChildren().get(0)).setText("OK");
@@ -444,18 +420,18 @@ public class RemoteControlView {
 		ok.setGraphic(okLabel);
 
 		// the switch sits in the pad's top corners, outside the ring, so it reads as part of the pad
-		Button net = modeKey(Mode.NET, "Direction keys control the NET/USB lists");
-		Button tv = modeKey(Mode.TV, "Direction keys control the receiver's menus on the TV");
+		Button net = modeKey(Target.NET, "Direction keys control the NET/USB lists");
+		Button tv = modeKey(Target.TV, "Direction keys control the receiver's menus on the TV");
 		StackPane.setAlignment(net, Pos.TOP_LEFT);
 		StackPane.setAlignment(tv, Pos.TOP_RIGHT);
 		StackPane.setMargin(net, new Insets(-6, 0, 0, -10));
 		StackPane.setMargin(tv, new Insets(-6, -10, 0, 0));
 
 		StackPane pad = new StackPane(ring,
-				dpadKey(ICON_UP, NETWORK_USB_UP_ISCP, SETUP_UP_ISCP, Pos.TOP_CENTER),
-				dpadKey(ICON_DOWN, NETWORK_USB_DOWN_ISCP, SETUP_DOWN_ISCP, Pos.BOTTOM_CENTER),
-				dpadKey(ICON_LEFT, NETWORK_USB_LEFT_ISCP, SETUP_LEFT_ISCP, Pos.CENTER_LEFT),
-				dpadKey(ICON_RIGHT, NETWORK_USB_RIGHT_ISCP, SETUP_RIGHT_ISCP, Pos.CENTER_RIGHT),
+				dpadKey(ICON_UP, Direction.UP, Pos.TOP_CENTER),
+				dpadKey(ICON_DOWN, Direction.DOWN, Pos.BOTTOM_CENTER),
+				dpadKey(ICON_LEFT, Direction.LEFT, Pos.CENTER_LEFT),
+				dpadKey(ICON_RIGHT, Direction.RIGHT, Pos.CENTER_RIGHT),
 				ok, net, tv);
 		pad.setMinSize(DPAD_SIZE, DPAD_SIZE);
 		pad.setPrefSize(DPAD_SIZE, DPAD_SIZE);
@@ -463,8 +439,8 @@ public class RemoteControlView {
 		return pad;
 	}
 
-	private Button dpadKey(String iconPath, String netCommand, String menuCommand, Pos position) {
-		Button button = key(null, e -> send(byMode(netCommand, menuCommand)));
+	private Button dpadKey(String iconPath, Direction direction, Pos position) {
+		Button button = key(null, e -> control.navigate(mode, direction));
 		button.getStyleClass().setAll("button", "dpad-key");
 		button.setGraphic(icon(22, line(iconPath)));
 		StackPane.setAlignment(button, position);
@@ -474,13 +450,13 @@ public class RemoteControlView {
 	/** SETUP and QUICK open the receiver's menus on the TV and switch the direction pad there; "more" opens all functions. */
 	private Node functionKeys() {
 		Button setup = key("SETUP", e -> {
-			setMode(Mode.TV);
-			send(SETUP_MENU_ISCP);
+			setMode(Target.TV);
+			control.openSetupMenu();
 		});
 		setup.setTooltip(new Tooltip("Setup menu on the TV"));
 		Button quick = key("QUICK", e -> {
-			setMode(Mode.TV);
-			send(SETUP_QUICK_ISCP);
+			setMode(Target.TV);
+			control.openQuickMenu();
 		});
 		quick.setTooltip(new Tooltip("Quick setup on the TV"));
 		Button more = iconKey(icon(18, solid(ICON_MORE)), "All functions of this model", e -> showFunctions(true));
@@ -496,7 +472,7 @@ public class RemoteControlView {
 	}
 
 	/** Small key in a corner of the direction pad; the selected one is lit. */
-	private Button modeKey(Mode target, String tooltip) {
+	private Button modeKey(Target target, String tooltip) {
 		Button button = key(target.name(), e -> setMode(target));
 		button.getStyleClass().setAll("button", "key", "mode");
 		button.setTooltip(new Tooltip(tooltip));
@@ -506,16 +482,16 @@ public class RemoteControlView {
 
 	private Node transportKeys() {
 		HBox row = new HBox(8,
-				transportKey(ICON_PREV, NETWORK_USB_TRDN_ISCP, "Previous"),
-				transportKey(ICON_PLAY, NETWORK_USB_PLAY_ISCP, "Play"),
-				transportKey(ICON_PAUSE, NETWORK_USB_PAUSE_ISCP, "Pause"),
-				transportKey(ICON_STOP, NETWORK_USB_STOP_ISCP, "Stop"),
-				transportKey(ICON_NEXT, NETWORK_USB_TRUP_ISCP, "Next"));
+				transportKey(ICON_PREV, Playback.PREVIOUS, "Previous"),
+				transportKey(ICON_PLAY, Playback.PLAY, "Play"),
+				transportKey(ICON_PAUSE, Playback.PAUSE, "Pause"),
+				transportKey(ICON_STOP, Playback.STOP, "Stop"),
+				transportKey(ICON_NEXT, Playback.NEXT, "Next"));
 		return row;
 	}
 
-	private Button transportKey(String iconPath, String command, String tooltip) {
-		Button button = iconKey(icon(16, solid(iconPath)), tooltip, e -> send(command));
+	private Button transportKey(String iconPath, Playback playback, String tooltip) {
+		Button button = iconKey(icon(16, solid(iconPath)), tooltip, e -> control.playback(playback));
 		button.getStyleClass().add("transport");
 		button.setMaxWidth(Double.MAX_VALUE);
 		HBox.setHgrow(button, Priority.ALWAYS);
@@ -532,8 +508,8 @@ public class RemoteControlView {
 			grid.getColumnConstraints().add(column);
 		}
 		for (int i = 0; i < 10; i++) {
-			String digit = String.valueOf((i + 1) % 10);
-			Button button = key(digit, e -> send(NETWORK_USB_ISCP + digit));
+			int digit = (i + 1) % 10;
+			Button button = key(String.valueOf(digit), e -> control.numberKey(digit));
 			button.getStyleClass().add("num");
 			button.setMaxWidth(Double.MAX_VALUE);
 			grid.add(button, i % 5, i / 5);
@@ -629,11 +605,7 @@ public class RemoteControlView {
 
 	// ---- modes and pages
 
-	private String byMode(String netCommand, String menuCommand) {
-		return mode == Mode.NET ? netCommand : menuCommand;
-	}
-
-	private void setMode(Mode target) {
+	private void setMode(Target target) {
 		mode = target;
 		modeButtons.forEach((m, button) -> button.pseudoClassStateChanged(SELECTED, m == mode));
 		okMode.setText(target.name());
@@ -644,7 +616,7 @@ public class RemoteControlView {
 		String input = state.getInput();
 		if (input != null && !input.equals(followedInput)) {
 			followedInput = input;
-			setMode(state.isNetworkInput() ? Mode.NET : Mode.TV);
+			setMode(state.isNetworkInput() ? Target.NET : Target.TV);
 		} else {
 			setMode(mode);
 		}
@@ -703,12 +675,24 @@ public class RemoteControlView {
 
 	// ---- view -> receiver
 
-	private void send(String command) {
+	private void flashLed() {
 		led.pseudoClassStateChanged(LIT, true);
 		ledOff.playFromStart();
-		sender.accept(command);
-		// OK and return also close the popup on the receiver
-		if (popup.isVisible() && (command.equals(NETWORK_USB_SELECT_ISCP) || command.equals(NETWORK_USB_RETURN_ISCP))) {
+	}
+
+	/** OK and return also close a popup on the receiver. */
+	private void pressOk() {
+		control.ok(mode);
+		dismissPopupIfShown();
+	}
+
+	private void pressBack() {
+		control.back(mode);
+		dismissPopupIfShown();
+	}
+
+	private void dismissPopupIfShown() {
+		if (popup.isVisible()) {
 			dismissPopup();
 		}
 	}
@@ -742,15 +726,7 @@ public class RemoteControlView {
 	}
 
 	private void sendVolume() {
-		int volume = (int) Math.round(volumeSlider.getValue());
-		Integer current = state.getVolume();
-		if (current == null || current != volume) {
-			send(MASTER_VOLUME_ISCP + String.format("%02X", volume));
-		}
-	}
-
-	private String muteCommand() {
-		return Boolean.TRUE.equals(state.getMuted()) ? AUDIO_MUTING_OFF_ISCP : AUDIO_MUTING_ON_ISCP;
+		control.setVolume((int) Math.round(volumeSlider.getValue()));
 	}
 
 	private void onKeyPressed(KeyEvent event) {
@@ -767,22 +743,28 @@ public class RemoteControlView {
 			event.consume();
 			return;
 		}
-		String command = switch (code) {
-			case UP -> byMode(NETWORK_USB_UP_ISCP, SETUP_UP_ISCP);
-			case DOWN -> byMode(NETWORK_USB_DOWN_ISCP, SETUP_DOWN_ISCP);
-			case LEFT -> byMode(NETWORK_USB_LEFT_ISCP, SETUP_LEFT_ISCP);
-			case RIGHT -> byMode(NETWORK_USB_RIGHT_ISCP, SETUP_RIGHT_ISCP);
-			case ENTER -> byMode(NETWORK_USB_SELECT_ISCP, SETUP_ENTER_ISCP);
-			case BACK_SPACE, ESCAPE -> byMode(NETWORK_USB_RETURN_ISCP, SETUP_EXIT_ISCP);
-			case PLUS, ADD, PAGE_UP -> MASTER_VOLUME_LEVEL_UP_ISCP;
-			case MINUS, SUBTRACT, PAGE_DOWN -> MASTER_VOLUME_LEVEL_DOWN_ISCP;
-			case M -> muteCommand();
-			default -> code.isDigitKey() ? NETWORK_USB_ISCP + code.getName().charAt(code.getName().length() - 1) : null;
+		Runnable action = switch (code) {
+			case UP -> () -> control.navigate(mode, Direction.UP);
+			case DOWN -> () -> control.navigate(mode, Direction.DOWN);
+			case LEFT -> () -> control.navigate(mode, Direction.LEFT);
+			case RIGHT -> () -> control.navigate(mode, Direction.RIGHT);
+			case ENTER -> this::pressOk;
+			case BACK_SPACE, ESCAPE -> this::pressBack;
+			case PLUS, ADD, PAGE_UP -> control::volumeUp;
+			case MINUS, SUBTRACT, PAGE_DOWN -> control::volumeDown;
+			case M -> control::toggleMute;
+			default -> code.isDigitKey() ? digitKey(code) : null;
 		};
-		if (command != null) {
-			send(command);
+		if (action != null) {
+			action.run();
 			event.consume();
 		}
+	}
+
+	/** DIGIT1 is named "1", NUMPAD1 "Numpad 1". */
+	private Runnable digitKey(KeyCode code) {
+		int digit = Character.digit(code.getName().charAt(code.getName().length() - 1), 10);
+		return () -> control.numberKey(digit);
 	}
 
 	// ---- helpers
@@ -834,20 +816,20 @@ public class RemoteControlView {
 	}
 
 	/** Sends once on press and repeats while the key is held. */
-	private Button rockerKey(String text, String command, String tooltip) {
+	private Button rockerKey(String text, Runnable action, String tooltip) {
 		Button button = new Button(text);
 		button.getStyleClass().setAll("button", "rocker-key");
 		button.setFocusTraversable(false);
 		button.setTooltip(new Tooltip(tooltip));
 
-		Timeline repeat = new Timeline(new KeyFrame(Duration.millis(180), e -> send(command)));
+		Timeline repeat = new Timeline(new KeyFrame(Duration.millis(180), e -> action.run()));
 		repeat.setCycleCount(Animation.INDEFINITE);
 		PauseTransition delay = new PauseTransition(Duration.millis(450));
 		delay.setOnFinished(e -> repeat.play());
 
 		button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
 			if (e.isPrimaryButtonDown()) {
-				send(command);
+				action.run();
 				delay.playFromStart();
 			}
 		});

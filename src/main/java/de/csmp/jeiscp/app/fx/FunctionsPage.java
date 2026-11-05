@@ -1,11 +1,11 @@
 package de.csmp.jeiscp.app.fx;
 
 import java.util.Locale;
-import java.util.function.Consumer;
 
 import de.csmp.jeiscp.EiscpDevice;
 import de.csmp.jeiscp.app.DeviceFunctions;
 import de.csmp.jeiscp.app.DeviceFunctions.Function;
+import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.ReceiverState;
 import de.csmp.jeiscp.eiscp.Command;
 import javafx.collections.FXCollections;
@@ -37,7 +37,7 @@ final class FunctionsPage {
 	private static final String ICON_CLOSE = "M6 6l12 12M18 6L6 18";
 
 	private final ReceiverState state;
-	private final Consumer<String> sender;
+	private final ReceiverControl control;
 	private final VBox root;
 	private final TextField search = new TextField();
 	private final ListView<Function> list = new ListView<>();
@@ -46,9 +46,9 @@ final class FunctionsPage {
 	private final Label current = new Label();
 	private final FlowPane actions = new FlowPane(6, 6);
 
-	FunctionsPage(ReceiverState state, EiscpDevice device, Consumer<String> sender, Runnable close) {
+	FunctionsPage(ReceiverState state, EiscpDevice device, ReceiverControl control, Runnable close) {
 		this.state = state;
-		this.sender = sender;
+		this.control = control;
 
 		FilteredList<Function> filtered = new FilteredList<>(FXCollections.observableArrayList(DeviceFunctions.forDevice(device)));
 
@@ -133,12 +133,12 @@ final class FunctionsPage {
 			button.setFocusTraversable(false);
 			button.setUserData(cmd.getCommand());
 			button.setTooltip(new Tooltip(cmd.getIscpCommand() + (cmd.getDescription() != null ? ": " + cmd.getDescription() : "")));
-			button.setOnAction(e -> sender.accept(cmd.getIscpCommand()));
+			button.setOnAction(e -> control.send(cmd.getIscpCommand()));
 			actions.getChildren().add(button);
 		}
 		showCurrent(function);
 		if (function.queryable()) {
-			sender.accept(function.prefix() + "QSTN");
+			control.query(function.prefix());
 		}
 	}
 

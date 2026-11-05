@@ -91,6 +91,9 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
   - `ReceiverState`: a GUI-independent model. It is an `EiscpListener` that turns incoming messages into power, volume, mute, input, now playing, the NET list and cover art.
     - It keeps the last value of every 3-letter command (`getLastValue`).
     - It notifies its listeners with an `Aspect`, on the reader thread. Messages without a dedicated aspect fire `OTHER`.
+  - `ReceiverControl`: GUI-independent. It holds the remote's operations as ISCP commands, so views never build command strings or import `EiscpCommmandsConstants`.
+    - Operations: power/mute toggles from `ReceiverState`, volume as hex with an echo check, direction keys/OK/return/home per `Target` NET (`NTC…`) or TV (`OSD…`), playback, number keys and queries.
+    - Sent-listeners see every command; the header LED uses them.
   - `DeviceFunctions`: GUI-independent. It lists the command blocks a model supports (`EiscpDevice.isCapable`), reduced to literal values without `QSTN` or placeholders. The YAML's model sets are coarse: `set1` covers almost everything, so a TX-NR626 is offered Sirius/XM/HD Radio as well.
   - `fx/FxGuiController`: starts JavaFX with `Platform.startup`, so `ThreadedConsoleApp` does not extend `Application`.
     - It sends the initial queries, and sends them again after every reconnect.
@@ -100,7 +103,7 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
     - It has its own window keys: minimize, and a close cross that fires the stage's close request. Dragging on any non-interactive area moves the window.
     - The header shows the model and `EiscpConnector.getAddress()` as a link. The link opens `http://<ip>/` via `Browser`, which uses the platform launcher (`rundll32`, `open` or `xdg-open`) instead of AWT.
     - The power, mute and volume keys send a command and then wait for the receiver's echo to update the UI. The `updatingVolume` flag stops the slider from sending that echo back.
-    - `Mode` NET/TV decides whether the direction pad, OK, return and home keys (and the keyboard shortcuts) send `NTC…` or `OSD…`.
+    - The current `ReceiverControl.Target` NET/TV decides whether the direction pad, OK, return and home keys (and the keyboard shortcuts) act on `NTC…` or `OSD…`.
       - The switch is two small keys in the pad's top corners; the OK key shows the target.
       - A new input switches the mode. SETUP (`OSDMENU`) and QUICK switch to TV.
       - The `OSD` commands are plain key presses: the receiver neither answers them nor reports its TV menus.
