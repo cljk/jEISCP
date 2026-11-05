@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents working with code in this reposi
 
 ## Project
 
-jEISCP is a Java client for Onkyo/Integra AV receivers using eISCP (ISCP over Ethernet, port 60128). It is a single-module Maven project on Java 21, using JavaFX 21 (OpenJFX from Maven Central), JUnit 4 and slf4j with log4j 1.2.
+jEISCP is a Java client for Onkyo/Integra AV receivers using eISCP (ISCP over Ethernet, port 60128). It is a single-module Maven project on Java 21, using JavaFX 21 (OpenJFX from Maven Central), JUnit 4 and slf4j 2 with reload4j, the maintained drop-in for log4j 1.2 (same `org.apache.log4j` API).
 
 ## Build & run
 

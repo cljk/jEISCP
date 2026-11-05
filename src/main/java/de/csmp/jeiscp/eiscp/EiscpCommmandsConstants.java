@@ -1606,6 +1606,13 @@ public static final String DIMMER_LEVEL_BRIGHT_ID = "dimmer-level::bright";
 public static final String DIMMER_LEVEL_BRIGHT_ISCP = "DIM00";
 
 /**
+ * ISCP Command: DIM08
+ * sets Dimmer Level "Bright & LED OFF"
+ */
+public static final String DIMMER_LEVEL_BRIGHT_LED_OFF_ID = "dimmer-level::bright-led-off";
+public static final String DIMMER_LEVEL_BRIGHT_LED_OFF_ISCP = "DIM08";
+
+/**
  * ISCP Command: DIM02
  * sets Dimmer Level "Dark"
  */
@@ -2507,6 +2514,20 @@ public static final String INPUT_SELECTOR_07_ID = "input-selector::07";
 public static final String INPUT_SELECTOR_07_ISCP = "SLI07";
 
 /**
+ * ISCP Command: SLI08
+ * Hidden2     EXTRA2
+ */
+public static final String INPUT_SELECTOR_08_ID = "input-selector::08";
+public static final String INPUT_SELECTOR_08_ISCP = "SLI08";
+
+/**
+ * ISCP Command: SLI09
+ * Hidden3     EXTRA3
+ */
+public static final String INPUT_SELECTOR_09_ID = "input-selector::09";
+public static final String INPUT_SELECTOR_09_ISCP = "SLI09";
+
+/**
  * ISCP Command: SLI2D
  * sets Aiplay
  */
@@ -3319,6 +3340,13 @@ public static final String LISTENING_MODE_NEURAL_THX_MUSIC_ID = "listening-mode:
 public static final String LISTENING_MODE_NEURAL_THX_MUSIC_ISCP = "LMD8E";
 
 /**
+ * ISCP Command: LMD08
+ * sets ORCHESTRA
+ */
+public static final String LISTENING_MODE_ORCHESTRA_ID = "listening-mode::orchestra";
+public static final String LISTENING_MODE_ORCHESTRA_ISCP = "LMD08";
+
+/**
  * ISCP Command: LMD84
  * sets PLII/PLIIx THX Cinema, Dolby Surround THX Cinema
  */
@@ -3499,6 +3527,13 @@ public static final String LISTENING_MODE_THX_U2_ISCP = "LMD50";
  */
 public static final String LISTENING_MODE_TV_LOGIC_ID = "listening-mode::tv-logic";
 public static final String LISTENING_MODE_TV_LOGIC_ISCP = "LMD0B";
+
+/**
+ * ISCP Command: LMD09
+ * sets UNPLUGGED
+ */
+public static final String LISTENING_MODE_UNPLUGGED_ID = "listening-mode::unplugged";
+public static final String LISTENING_MODE_UNPLUGGED_ISCP = "LMD09";
 
 /**
  * ISCP Command: LMDUP
@@ -3800,6 +3835,13 @@ public static final String MONITOR_OUT_RESOLUTION_2560X1080P_ISCP = "RES15";
  */
 public static final String MONITOR_OUT_RESOLUTION_480P_ID = "monitor-out-resolution::480p";
 public static final String MONITOR_OUT_RESOLUTION_480P_ISCP = "RES02";
+
+/**
+ * ISCP Command: RES08
+ * sets 4K Upcaling(HDMI Output Only) 4K(HDMI Output Only)
+ */
+public static final String MONITOR_OUT_RESOLUTION_4K_UPCALING_ID = "monitor-out-resolution::4k-upcaling";
+public static final String MONITOR_OUT_RESOLUTION_4K_UPCALING_ISCP = "RES08";
 
 /**
  * ISCP Command: RES03
@@ -7089,6 +7131,13 @@ public static final String VIDEO_PICTURE_MODE_CINEMA_ISCP = "VPM02";
  */
 public static final String VIDEO_PICTURE_MODE_CUSTOM_ID = "video-picture-mode::custom";
 public static final String VIDEO_PICTURE_MODE_CUSTOM_ISCP = "VPM01";
+
+/**
+ * ISCP Command: VPM08
+ * sets Direct, Bypass
+ */
+public static final String VIDEO_PICTURE_MODE_DIRECT_ID = "video-picture-mode::direct";
+public static final String VIDEO_PICTURE_MODE_DIRECT_ISCP = "VPM08";
 
 /**
  * ISCP Command: VPM03
