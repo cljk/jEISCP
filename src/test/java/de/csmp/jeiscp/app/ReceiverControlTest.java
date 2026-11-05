@@ -20,12 +20,14 @@ public class ReceiverControlTest {
 	ReceiverState state;
 	List<String> sent;
 	ReceiverControl control;
+	List<Runnable> later;
 
 	@Before
 	public void setup() {
 		state = new ReceiverState();
 		sent = new ArrayList<>();
-		control = new ReceiverControl(sent::add, state);
+		later = new ArrayList<>();
+		control = new ReceiverControl(sent::add, state, ReceiverProfile.DEFAULT, (task, delay) -> later.add(task));
 	}
 
 	@Test
@@ -38,6 +40,25 @@ public class ReceiverControlTest {
 		control.toggleMute();
 
 		assertEquals(List.of("PWR01", "AMT01", "PWR00", "AMT00"), sent);
+	}
+
+	/** As logged from a TX-NR626: switched off, it sent the NET menu instead of PWR00. */
+	@Test
+	public void powerKeyAlternatesUntilTheReceiverReports() {
+		state.receivedIscpMessage("PWR01");
+		control.togglePower();
+		state.receivedIscpMessage("NLSC-P");
+		control.togglePower();	// no PWR00 came: the second press switches on again
+		assertEquals(List.of("PWR00", "PWR01"), sent);
+
+		sent.clear();
+		later.forEach(Runnable::run);
+		assertEquals("each press asks for the state afterwards", List.of("PWRQSTN", "PWRQSTN"), sent);
+
+		sent.clear();
+		state.receivedIscpMessage("PWR00");	// the receiver's answer counts again
+		control.togglePower();
+		assertEquals(List.of("PWR01"), sent);
 	}
 
 	@Test

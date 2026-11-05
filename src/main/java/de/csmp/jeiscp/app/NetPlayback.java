@@ -47,11 +47,8 @@ public final class NetPlayback {
 		artist = value;
 	}
 
-	/** @return whether it is another title than the one before */
-	boolean title(String value) {
-		String before = title;
+	void title(String value) {
 		title = value;
-		return before != null && !before.equals(value);
 	}
 
 	void album(String value) {

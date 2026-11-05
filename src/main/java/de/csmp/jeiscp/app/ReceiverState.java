@@ -109,9 +109,11 @@ public class ReceiverState implements EiscpListener {
 				fire(Aspect.NOW_PLAYING);
 			}
 			case NET_USB_TITLE_NAME_ISCP -> {
-				if (playback.title(parameter)) {
-					cover.titleChanged();
+				String before = playback.getTitle();
+				if (before != null && !before.equals(parameter)) {
+					cover.titleChanged();	// first, so no reader sees the new title with the old cover as current
 				}
+				playback.title(parameter);
 				fire(Aspect.NOW_PLAYING);
 			}
 			case NET_USB_ALBUM_NAME_INFO_ISCP -> {

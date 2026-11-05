@@ -46,8 +46,13 @@ import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_QUERY_IS
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_STANDBY_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.VIDEO_INFORMATION_QUERY_ISCP;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -74,6 +79,11 @@ public class ReceiverControl {
 	private final ReceiverProfile profile;
 	private final List<Consumer<String>> sentListeners = new CopyOnWriteArrayList<>();
 	private volatile String coverRequestedFor;
+	private final BiConsumer<Runnable, Duration> later;
+	/** The power state last asked for, until the receiver reports one; {@code null} then. */
+	private volatile Boolean requestedPower;
+
+	static final Duration POWER_CONFIRMATION = Duration.ofSeconds(3);
 
 	/** @param sender passes an ISCP command (without {@code !1}) to the receiver */
 	public ReceiverControl(Consumer<String> sender, ReceiverState state) {
@@ -82,10 +92,34 @@ public class ReceiverControl {
 
 	/** @param profile leaves out the queries the model does not answer */
 	public ReceiverControl(Consumer<String> sender, ReceiverState state, ReceiverProfile profile) {
+		this(sender, state, profile, ReceiverControl::runLater);
+	}
+
+	/** @param later runs a task after a delay, e.g. the power confirmation */
+	ReceiverControl(Consumer<String> sender, ReceiverState state, ReceiverProfile profile, BiConsumer<Runnable, Duration> later) {
 		this.sender = sender;
 		this.state = state;
 		this.playback = state.playback();
 		this.profile = profile;
+		this.later = later;
+		state.addListener(aspect -> {
+			if (aspect == ReceiverState.Aspect.POWER) {
+				requestedPower = null;	// the receiver told its state
+			}
+		});
+	}
+
+	private static ScheduledExecutorService scheduler;
+
+	private static synchronized void runLater(Runnable task, Duration delay) {
+		if (scheduler == null) {
+			scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+				Thread thread = new Thread(runnable, "receiver-control-later");
+				thread.setDaemon(true);
+				return thread;
+			});
+		}
+		scheduler.schedule(task, delay.toMillis(), TimeUnit.MILLISECONDS);
 	}
 
 	/** Notified after every command sent through this control, on the sending thread. */
@@ -93,8 +127,16 @@ public class ReceiverControl {
 		sentListeners.add(listener);
 	}
 
+	/**
+	 * Switching off, the TX-NR626 sometimes restarts its network part and does not confirm with PWR00. Until the
+	 * receiver reports, the key goes by the last request, and a query after {@link #POWER_CONFIRMATION} asks for the state.
+	 */
 	public void togglePower() {
-		send(Boolean.TRUE.equals(state.getPower()) ? SYSTEM_POWER_STANDBY_ISCP : SYSTEM_POWER_ON_ISCP);
+		Boolean believed = requestedPower != null ? requestedPower : state.getPower();
+		boolean on = !Boolean.TRUE.equals(believed);
+		requestedPower = on;
+		send(on ? SYSTEM_POWER_ON_ISCP : SYSTEM_POWER_STANDBY_ISCP);
+		later.accept(() -> send(SYSTEM_POWER_QUERY_ISCP), POWER_CONFIRMATION);
 	}
 
 	public void toggleMute() {

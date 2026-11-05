@@ -42,7 +42,7 @@ public class ReceiverEmulatorTest {
 
 	@Test
 	public void answersTheAutodiscovery() {
-		EiscpDevice device = EiscpAutodiscovery.identify("127.0.0.1", emulator.port());
+		EiscpDevice device = EiscpAutodiscovery.identify("127.0.0.1", emulator.port(), Duration.ofSeconds(10));
 
 		assertNotNull(device);
 		assertEquals(ReceiverEmulator.MODEL, device.getDeviceType());
