@@ -52,6 +52,12 @@ Without `-a`, the autodiscovery broadcasts on every network interface and repeat
 
     .\run.ps1 -a 192.168.0.97
 
+### Starter without Java and console
+
+    mvn -Pdist -DskipTests package
+
+builds `target/dist/jEISCP`, a folder with its own Java runtime: start `jEISCP.exe` on Windows or `bin/jEISCP` on Linux, without a console window and without an installed Java. Copy or zip the whole folder. It is built for the system it is built on, so build the Windows starter on Windows and the Linux one on Linux. The log `eiscp.log` is written to the working directory.
+
 Remote control
 --------------
 The GUI looks like a remote control in a borderless window: drag it to move it; the keys at its top right minimize or quit.

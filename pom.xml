@@ -131,4 +131,171 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<!--
+			mvn -Pdist -DskipTests package: target/dist/jEISCP, a native launcher with its own Java runtime and no
+			console window (jpackage). Builds for the platform it runs on. See README.
+		-->
+		<profile>
+			<id>dist</id>
+			<properties>
+				<!-- jpackage wants numbers only -->
+				<dist.version>2.0</dist.version>
+				<!-- what the app needs (jdeps), plus what JavaFX needs; JavaFX itself stays on the module path -->
+				<dist.modules>java.base,java.desktop,java.logging,java.naming,java.sql,jdk.unsupported</dist.modules>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>3.4.1</version>
+						<executions>
+							<execution>
+								<!-- jpackage refuses an existing image -->
+								<id>dist-clean</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>clean</goal>
+								</goals>
+								<configuration>
+									<excludeDefaultDirectories>true</excludeDefaultDirectories>
+									<filesets>
+										<fileset>
+											<directory>${project.build.directory}/dist</directory>
+										</fileset>
+									</filesets>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>3.4.2</version>
+						<executions>
+							<execution>
+								<id>dist-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/dist/input</outputDirectory>
+									<finalName>jeiscp</finalName>
+									<!-- a second jar of the classes needs its own classifier: jeiscp-app.jar -->
+									<classifier>app</classifier>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<!-- on the class path: every jar below the input directory -->
+								<id>dist-libs</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeScope>runtime</includeScope>
+									<excludeGroupIds>org.openjfx</excludeGroupIds>
+									<outputDirectory>${project.build.directory}/dist/input/lib</outputDirectory>
+								</configuration>
+							</execution>
+							<execution>
+								<!-- outside the input, so not on the class path; the launcher puts it on the module path -->
+								<id>dist-javafx</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeScope>runtime</includeScope>
+									<includeGroupIds>org.openjfx</includeGroupIds>
+									<outputDirectory>${project.build.directory}/dist/javafx</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.5.0</version>
+						<executions>
+							<execution>
+								<id>jpackage</id>
+								<phase>package</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${java.home}/bin/jpackage</executable>
+									<arguments>
+										<argument>--type</argument>
+										<argument>app-image</argument>
+										<argument>--name</argument>
+										<argument>jEISCP</argument>
+										<argument>--app-version</argument>
+										<argument>${dist.version}</argument>
+										<argument>--vendor</argument>
+										<argument>csmp</argument>
+										<argument>--description</argument>
+										<argument>Remote control for Onkyo and Integra AV receivers</argument>
+										<argument>--icon</argument>
+										<argument>${dist.icon}</argument>
+										<argument>--input</argument>
+										<argument>${project.build.directory}/dist/input</argument>
+										<argument>--main-jar</argument>
+										<argument>jeiscp-app.jar</argument>
+										<argument>--main-class</argument>
+										<argument>${mainClass}</argument>
+										<!-- Windows: next to the exe; Linux: in lib/. Both are $APPDIR/.. -->
+										<argument>--app-content</argument>
+										<argument>${project.build.directory}/dist/javafx</argument>
+										<argument>--java-options</argument>
+										<argument>--module-path $APPDIR/../javafx --add-modules javafx.controls</argument>
+										<!-- without arguments: no console reader, there is no console -->
+										<argument>--arguments</argument>
+										<argument>-noconsole</argument>
+										<argument>--add-modules</argument>
+										<argument>${dist.modules}</argument>
+										<argument>--jlink-options</argument>
+										<argument>--strip-debug --no-man-pages --no-header-files --strip-native-commands --compress=zip-6</argument>
+										<argument>--dest</argument>
+										<argument>${project.build.directory}/dist</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>dist-windows</id>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<dist.icon>${project.basedir}/src/main/jpackage/jeiscp.ico</dist.icon>
+			</properties>
+		</profile>
+		<profile>
+			<id>dist-unix</id>
+			<activation>
+				<os>
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<dist.icon>${project.basedir}/src/main/resources/de/csmp/jeiscp/app/fx/icons/icon-256.png</dist.icon>
+			</properties>
+		</profile>
+	</profiles>
 </project>

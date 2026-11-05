@@ -10,13 +10,21 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 /**
- * Renders the app icon PNGs that {@link FxGuiController} puts on the stage.
- * Run: {@code java src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java src/main/resources/de/csmp/jeiscp/app/fx/icons [preview.png]}
+ * Renders the app icon PNGs that {@link FxGuiController} puts on the stage, and the .ico of the Windows launcher.
+ * Run: {@code java src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java src/main/resources/de/csmp/jeiscp/app/fx/icons [src/main/jpackage/jeiscp.ico] [preview.png]}
  */
 public class IconGenerator {
 
@@ -30,8 +38,39 @@ public class IconGenerator {
 		for (int size : SIZES) {
 			ImageIO.write(render(size), "png", new File(dir, "icon-" + size + ".png"));
 		}
-		if (args.length > 1) {
-			ImageIO.write(previewSheet(), "png", new File(args[1]));
+		for (int i = 1; i < args.length; i++) {
+			if (args[i].endsWith(".ico")) {
+				writeIco(new File(args[i]));
+			} else {
+				ImageIO.write(previewSheet(), "png", new File(args[i]));
+			}
+		}
+	}
+
+	/** An .ico with one PNG per size, as Windows reads it since Vista. */
+	static void writeIco(File file) throws IOException {
+		List<byte[]> images = new ArrayList<>();
+		for (int size : SIZES) {
+			ByteArrayOutputStream png = new ByteArrayOutputStream();
+			ImageIO.write(render(size), "png", png);
+			images.add(png.toByteArray());
+		}
+		ByteBuffer directory = ByteBuffer.allocate(6 + 16 * SIZES.length).order(ByteOrder.LITTLE_ENDIAN);
+		directory.putShort((short) 0).putShort((short) 1).putShort((short) SIZES.length);
+		int offset = directory.capacity();
+		for (int i = 0; i < SIZES.length; i++) {
+			int size = SIZES[i];
+			directory.put((byte) (size >= 256 ? 0 : size)).put((byte) (size >= 256 ? 0 : size))	// 0 means 256
+					.put((byte) 0).put((byte) 0).putShort((short) 1).putShort((short) 32)
+					.putInt(images.get(i).length).putInt(offset);
+			offset += images.get(i).length;
+		}
+		file.getParentFile().mkdirs();
+		try (OutputStream out = new FileOutputStream(file)) {
+			out.write(directory.array());
+			for (byte[] image : images) {
+				out.write(image);
+			}
 		}
 	}
 

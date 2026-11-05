@@ -58,6 +58,17 @@ java src/test/java/de/csmp/jeiscp/ReceiverEmulator.java 0
 
 `0` picks a port that is free for both TCP and UDP; the emulator prints it. On Windows, other port ranges are excluded for UDP than for TCP (`netsh interface ipv4 show excludedportrange protocol=udp`), and 60128 may be one of them. `ReceiverEmulatorTest` drives it through the real connector and `ReceiverState`.
 
+The `dist` profile builds a native starter with `jpackage` (app image, no installer tools needed) for the platform Maven runs on:
+
+```bash
+mvn -Pdist -DskipTests package
+```
+
+- The JavaFX jars go next to the image via `--app-content`, not into `--input`: jpackage puts every jar below the input on the class path. The launcher's `--module-path $APPDIR/../javafx` finds them on Windows (image root) and Linux (`lib/`).
+- `dist.modules` is what `jdeps` reports for the app, plus `jdk.unsupported` and `java.logging` for JavaFX. `dist.version` must be numbers only; keep it in step with the project version.
+- Without arguments the launcher passes `-noconsole`. The Windows `.ico` comes from `IconGenerator`, Linux uses `icon-256.png`.
+- A GraalVM JDK always links its JIT (`jdk.internal.vm.ci`, about 40 MB) into the runtime; Temurin and other OpenJDKs do not.
+
 ## Architecture
 
 - **Transport** (`de.csmp.jeiscp`): `EiscpProtocolHelper` wraps an ISCP string in an eISCP frame and parses it back. The frame consists of:
@@ -129,5 +140,5 @@ java src/test/java/de/csmp/jeiscp/ReceiverEmulator.java 0
     - `subscribe` returns the history and passes on later entries, with no gap between the two.
   - `fx/LogWindow`: borderless, owned by the remote. Clicking the header LED or pressing L opens it. It batches entries from the logging thread into one `runLater` and offers FOLLOW, ISCP ONLY, copy (Ctrl+C for the selection), clear and a resize grip. Below the log is a command line: Enter sends through `ReceiverControl.sendTyped` (drops a leading `!1`), up/down browse the earlier commands of this run, the first Escape empties the line.
   - `fx/FunctionsPage`: opened by the "⋯" key. A searchable list of `DeviceFunctions`; selecting a function sends its `QSTN` and shows the current value.
-  - The app icon PNGs in `src/main/resources/de/csmp/jeiscp/app/fx/icons/` are rendered by `src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java`, which is a standalone `java` program, not a test.
+  - The app icon PNGs in `src/main/resources/de/csmp/jeiscp/app/fx/icons/` are rendered by `src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java`, which is a standalone `java` program, not a test. It also writes `src/main/jpackage/jeiscp.ico` for the Windows starter.
 
