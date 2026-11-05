@@ -10,6 +10,7 @@ import static de.csmp.jeiscp.app.fx.Ui.solid;
 import static de.csmp.jeiscp.app.fx.Ui.spacer;
 import static de.csmp.jeiscp.app.fx.Ui.vspacer;
 
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,9 @@ import java.util.Map;
 import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.ReceiverControl.Direction;
 import de.csmp.jeiscp.app.ReceiverControl.Playback;
+import de.csmp.jeiscp.app.ReceiverState.PlayStatus;
+import de.csmp.jeiscp.app.ReceiverState.Repeat;
+import de.csmp.jeiscp.app.ReceiverState.Shuffle;
 import de.csmp.jeiscp.app.ReceiverControl.Target;
 import de.csmp.jeiscp.app.ReceiverState;
 import javafx.css.PseudoClass;
@@ -33,6 +37,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 
 /**
  * Keys below the display: inputs, SETUP/QUICK/more, volume rocker, direction pad with its NET/TV switch,
@@ -64,6 +69,10 @@ final class KeyPad {
 	private static final String ICON_PLAY = "M8 5.5v13l11-6.5z";
 	private static final String ICON_PAUSE = "M6.5 5.5h3.5v13H6.5zM14 5.5h3.5v13H14z";
 	private static final String ICON_STOP = "M6.5 6.5h11v11h-11z";
+	private static final String ICON_REPEAT = "M17 2l4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3";
+	private static final String ICON_REPEAT_ONE = "M11 10h1v4";
+	private static final String ICON_SHUFFLE = "M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22M18 2l4 4-4 4"
+			+ "M2 6h1.9c1.5 0 2.9.9 3.6 2.2M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8M18 14l4 4-4 4";
 	private static final String ICON_PREV = "M6 6h2.2v12H6zM9.5 12l9 6V6z";
 	private static final String ICON_NEXT = "M15.8 6H18v12h-2.2zM5.5 18l9-6-9-6z";
 	private static final String ICON_MORE = "M4.5 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M15.5 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0";
@@ -79,6 +88,10 @@ final class KeyPad {
 
 	private final Map<String, Button> sourceButtons = new LinkedHashMap<>();
 	private final Map<Target, Button> modeButtons = new LinkedHashMap<>();
+	private final Map<PlayStatus, Button> playStatusKeys = new EnumMap<>(PlayStatus.class);
+	private final SVGPath repeatOne = line(ICON_REPEAT_ONE);
+	private Button repeatKey;
+	private Button shuffleKey;
 	private final Label okMode = label("dpad-ok-mode");
 	private Button muteButton;
 	private Target mode = Target.NET;
@@ -133,12 +146,31 @@ final class KeyPad {
 		muteButton.pseudoClassStateChanged(ON, Boolean.TRUE.equals(state.getMuted()));
 	}
 
-	/** A new input picks the fitting target; the NET/TV keys override it until the input changes again. */
+	/** Play, pause or stop is lit while a NET input reports it; repeat and shuffle are lit while on and usable only on NET. */
+	void refreshPlayStatus() {
+		boolean net = state.isNetworkInput() && state.isConnected() && !Boolean.FALSE.equals(state.getPower());
+		PlayStatus status = net ? state.getPlayStatus() : null;
+		playStatusKeys.forEach((shown, key) -> key.pseudoClassStateChanged(ON, shown == status));
+
+		Repeat repeat = net ? state.getRepeat() : null;
+		refreshModeKey(repeatKey, "Repeat", repeat, net && repeat != Repeat.UNAVAILABLE, repeat != null && repeat.isOn());
+		repeatOne.setVisible(repeat == Repeat.ONE);
+		Shuffle shuffle = net ? state.getShuffle() : null;
+		refreshModeKey(shuffleKey, "Shuffle", shuffle, net && shuffle != Shuffle.UNAVAILABLE, shuffle != null && shuffle.isOn());
+	}
+
+	private static void refreshModeKey(Button key, String name, Enum<?> mode, boolean usable, boolean on) {
+		key.setDisable(!usable);
+		key.pseudoClassStateChanged(ON, on);
+		key.getTooltip().setText(mode == null ? name : name + ": " + mode.name().toLowerCase());
+	}
+
+	/** NET is the default and returns with every new input; SETUP, QUICK and the TV key switch to TV. */
 	void followInput() {
 		String input = state.getInput();
 		if (input != null && !input.equals(followedInput)) {
 			followedInput = input;
-			setMode(state.isNetworkInput() ? Target.NET : Target.TV);
+			setMode(Target.NET);
 		} else {
 			setMode(mode);
 		}
@@ -272,14 +304,38 @@ final class KeyPad {
 	private Node transportKeys() {
 		return new HBox(8,
 				transportKey(ICON_PREV, Playback.PREVIOUS, "Previous"),
-				transportKey(ICON_PLAY, Playback.PLAY, "Play"),
-				transportKey(ICON_PAUSE, Playback.PAUSE, "Pause"),
-				transportKey(ICON_STOP, Playback.STOP, "Stop"),
-				transportKey(ICON_NEXT, Playback.NEXT, "Next"));
+				statusKey(PlayStatus.PLAY, transportKey(ICON_PLAY, Playback.PLAY, "Play")),
+				statusKey(PlayStatus.PAUSE, transportKey(ICON_PAUSE, Playback.PAUSE, "Pause")),
+				statusKey(PlayStatus.STOP, transportKey(ICON_STOP, Playback.STOP, "Stop")),
+				transportKey(ICON_NEXT, Playback.NEXT, "Next"),
+				repeatKey(),
+				shuffleKey());
+	}
+
+	private Button statusKey(PlayStatus status, Button key) {
+		playStatusKeys.put(status, key);
+		return key;
+	}
+
+	private Button repeatKey() {
+		repeatOne.setVisible(false);
+		repeatKey = transportKey(icon(16, line(ICON_REPEAT), repeatOne), "Repeat", control::toggleRepeat);
+		repeatKey.getStyleClass().add("repeat");
+		return repeatKey;
+	}
+
+	private Button shuffleKey() {
+		shuffleKey = transportKey(icon(16, line(ICON_SHUFFLE)), "Shuffle", control::toggleShuffle);
+		shuffleKey.getStyleClass().add("shuffle");
+		return shuffleKey;
 	}
 
 	private Button transportKey(String iconPath, Playback playback, String tooltip) {
-		Button button = iconKey(icon(16, solid(iconPath)), tooltip, e -> control.playback(playback));
+		return transportKey(icon(16, solid(iconPath)), tooltip, () -> control.playback(playback));
+	}
+
+	private static Button transportKey(Node icon, String tooltip, Runnable action) {
+		Button button = iconKey(icon, tooltip, e -> action.run());
 		button.getStyleClass().add("transport");
 		button.setMaxWidth(Double.MAX_VALUE);
 		HBox.setHgrow(button, Priority.ALWAYS);

@@ -56,9 +56,9 @@ Remote control
 --------------
 The GUI looks like a remote control in a borderless window: drag it to move it; the keys at its top right minimize or quit.
 
-* **Display:** input, volume (drag the bar), title, artist, album and time, the NET/USB list with its cursor, and cover art. Messages of NET services, such as a TuneIn connection error, appear here too; a click, OK or Return closes them. If the connection to the receiver is lost, the display shows OFFLINE while jEISCP reconnects in the background.
-* **Keys:** power, inputs, volume rocker and mute, playback, number keys, and SETUP / QUICK, which open the receiver's menus on the TV.
-* **Direction pad:** the small NET and TV keys at its top corners decide what it controls: the NET/USB lists or the receiver's menus on the TV. The OK key shows the current target; it follows the input until you switch it.
+* **Display:** input and NET service (e.g. Spotify, TuneIn), volume (drag the bar), title, artist and album, the NET/USB list with its cursor, cover art, and the playing time above a thin position bar. Clicking or dragging the bar jumps within the track, as far as the source allows it (USB and music servers usually do, radio streams don't). Album, time and cover are requested when jEISCP starts during playback. Messages of NET services, such as a TuneIn connection error, appear here too; a click, OK or Return closes them. If the connection to the receiver is lost, the display shows OFFLINE while jEISCP reconnects in the background.
+* **Keys:** power, inputs, volume rocker and mute, playback with repeat and shuffle (they light up, like play, pause and stop, as the receiver reports them), number keys, and SETUP / QUICK, which open the receiver's menus on the TV.
+* **Direction pad:** the small NET and TV keys at its top corners decide what it controls: the NET/USB lists or the receiver's menus on the TV. The OK key shows the current target. NET is the default and returns with every input change; SETUP and QUICK switch to TV.
 * **"⋯" key:** all functions the connected model supports according to the command catalogue, e.g. listening mode, dimmer or late night. They are searchable and show their current value.
 * **Header:** the receiver's model and IP address. Clicking the address opens the receiver's web interface, e.g. http://192.168.0.97/.
 * **LED:** blinks with every command sent. Clicking it (or pressing L) opens the log window. It shows the complete log live, with commands sent (→) and received (←) highlighted, and can be filtered to ISCP traffic and copied.

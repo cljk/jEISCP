@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.css.PseudoClass;
 import javafx.event.Event;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -45,7 +46,9 @@ final class DisplayPanel {
 	static final int MAX_VOLUME = 70;
 
 	private static final double NET_LINE_HEIGHT = 19;
-	private static final int NET_LINES_SHOWN = 5;
+	private static final int NET_LINES_SHOWN = 7;	// also leaves room for a 128 px cover
+	/** Covers up to this size show unscaled; the TX-NR626 sends 128x128, larger ones are fitted. */
+	private static final double COVER_SIZE = 128;
 
 	private static final PseudoClass CURSOR = PseudoClass.getPseudoClass("cursor");
 	private static final PseudoClass STANDBY = PseudoClass.getPseudoClass("standby");
@@ -59,9 +62,14 @@ final class DisplayPanel {
 	private final Label lcdVolume = label("lcd-volume");
 	private final Label lcdPrimary = label("lcd-primary");
 	private final Label lcdSecondary = label("lcd-secondary");
-	private final Label lcdTime = label("lcd-time");
+	private final Label lcdService = label("lcd-service");
+	private final Label lcdElapsed = label("lcd-time");
+	private final Label lcdTotal = label("lcd-time");
 	private final Slider volumeSlider = new Slider(0, MAX_VOLUME, 0);
 	private final ProgressBar volumeBar = new ProgressBar(0);
+	private final ProgressBar playProgress = new ProgressBar(0);
+	private final Slider seekSlider = new Slider(0, 1, 0);
+	private final StackPane seekBar = new StackPane(playProgress, seekSlider);
 	private final ListView<String> netList = new ListView<>();
 	private final Region cover = new Region();
 	private final Label popupTop = label("lcd-popup-top");
@@ -74,12 +82,14 @@ final class DisplayPanel {
 	private byte[] shownCoverArt;
 	private boolean hasCover;
 	private boolean updatingVolume;
+	private boolean updatingSeek;
+	private boolean seeking;
 
 	DisplayPanel(ReceiverState state, ReceiverControl control) {
 		this.state = state;
 		this.control = control;
 
-		HBox top = new HBox(lcdSource, spacer(), lcdVolume);
+		HBox top = new HBox(8, lcdSource, lcdService, spacer(), lcdVolume);
 		top.setAlignment(Pos.BASELINE_LEFT);
 
 		volumeSlider.setFocusTraversable(false);
@@ -105,10 +115,6 @@ final class DisplayPanel {
 
 		lcdPrimary.setMaxWidth(Double.MAX_VALUE);
 		lcdSecondary.setMaxWidth(Double.MAX_VALUE);
-		lcdTime.setMinWidth(Region.USE_PREF_SIZE);
-		HBox.setHgrow(lcdSecondary, Priority.ALWAYS);
-		HBox bottom = new HBox(8, lcdSecondary, lcdTime);
-		bottom.setAlignment(Pos.BASELINE_LEFT);
 
 		netList.setCellFactory(list -> new NetListCell());
 		netList.setFocusTraversable(false);
@@ -134,7 +140,35 @@ final class DisplayPanel {
 		screen.getStyleClass().add("lcd-screen");
 		VBox.setVgrow(screen, Priority.ALWAYS);
 
-		lcd = new VBox(top, volume, lcdPrimary, bottom, screen);
+		// playback position under the list or cover; a click or drag seeks (NTS). Its space stays reserved,
+		// so the display does not jump
+		playProgress.getStyleClass().add("lcd-play-progress");
+		playProgress.setMaxWidth(Double.MAX_VALUE);
+		playProgress.setMouseTransparent(true);
+		seekSlider.getStyleClass().add("lcd-seek");
+		seekSlider.setFocusTraversable(false);
+		// press and drag only preview the target; one NTS goes out on release (dragging along the track would
+		// otherwise change the value, and send, on every mouse move)
+		seekSlider.valueProperty().addListener((obs, old, value) -> {
+			if (!updatingSeek) {
+				showSeekTarget();
+			}
+		});
+		seekSlider.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> seeking = true);
+		seekSlider.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
+			if (seeking) {
+				seeking = false;
+				seek();
+			}
+		});
+		seekBar.getStyleClass().add("lcd-seek-bar");
+		seekBar.setVisible(false);
+
+		// elapsed and total time sit right above the playback position bar
+		HBox timeRow = new HBox(lcdElapsed, spacer(), lcdTotal);
+		timeRow.getStyleClass().add("lcd-time-row");
+		VBox.setMargin(timeRow, new Insets(4, 0, 0, 0));
+		lcd = new VBox(top, volume, lcdPrimary, lcdSecondary, screen, timeRow, seekBar);
 		lcd.getStyleClass().add("lcd");
 	}
 
@@ -185,21 +219,64 @@ final class DisplayPanel {
 		};
 		lcdSource.setText(source);
 
+		boolean net = state.isNetworkInput() && state.isConnected() && !Boolean.FALSE.equals(state.getPower());
+		String service = net && state.getNetService() != null ? state.getNetService() : "";
+		lcdService.setText(service);
+
 		String primary = "";
 		String secondary = "";
-		String time = "";
 		if (state.isNetworkInput()) {
 			primary = firstNonEmpty(state.getTitle(), state.getListTitle());
 			secondary = Stream.of(state.getArtist(), state.getAlbum())
 					.filter(s -> s != null && !s.isBlank())
 					.collect(Collectors.joining(" · "));
-			time = state.getTime() != null ? state.getTime() : "";
 		}
 		lcdPrimary.setText(primary);
 		lcdSecondary.setText(secondary);
-		lcdTime.setText(time);
 
-		windowTitle.set(source + (primary.isEmpty() ? "" : " :: " + primary) + " - jEISCP");
+		windowTitle.set(source + (service.isEmpty() ? "" : " · " + service)
+				+ (primary.isEmpty() ? "" : " :: " + primary) + " - jEISCP");
+		refreshPlayTime();
+	}
+
+	/** NTM {@code 00:36/02:46}: elapsed left, total right, progress below; unknown parts ({@code --:--}) stay empty. */
+	private void refreshPlayTime() {
+		ReceiverState.PlayTime playTime = state.isNetworkInput() ? state.getPlayTime() : null;
+		String[] parts = playTime != null ? state.getTime().split("/") : new String[0];
+		lcdElapsed.setText(parts.length > 0 ? parts[0].trim() : "");
+		lcdTotal.setText(parts.length > 1 && playTime.total() > 0 ? parts[1].trim() : "");
+
+		boolean known = playTime != null && playTime.progress() >= 0;
+		seekBar.setVisible(known);
+		if (known) {
+			playProgress.setProgress(playTime.progress());
+			if (!seeking) {
+				updatingSeek = true;
+				try {
+					seekSlider.setValue(playTime.progress());
+				} finally {
+					updatingSeek = false;
+				}
+			}
+		}
+	}
+
+	private int seekTarget() {
+		ReceiverState.PlayTime playTime = state.getPlayTime();
+		return playTime == null ? 0 : (int) Math.round(seekSlider.getValue() * playTime.total());
+	}
+
+	/** While dragging, the elapsed time shows where the click or drag will jump to. */
+	private void showSeekTarget() {
+		ReceiverState.PlayTime playTime = state.getPlayTime();
+		if (playTime != null && playTime.total() > 0) {
+			lcdElapsed.setText(ReceiverControl.clock(seekTarget(), playTime.total() >= 3600));
+			playProgress.setProgress(seekSlider.getValue());
+		}
+	}
+
+	private void seek() {
+		control.seek(seekTarget());
 	}
 
 	void refreshNetList() {
@@ -223,7 +300,9 @@ final class DisplayPanel {
 			hasCover = image != null && !image.isError();
 			cover.setBackground(hasCover ? new Background(new BackgroundImage(image,
 					BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
-					new BackgroundSize(1, 1, true, true, true, false))) : null);
+					image.getWidth() <= COVER_SIZE && image.getHeight() <= COVER_SIZE
+							? BackgroundSize.DEFAULT
+							: new BackgroundSize(1, 1, true, true, true, false))) : null);
 		}
 		boolean showCover = hasCover && state.isCoverArtCurrent();
 		cover.setVisible(showCover);

@@ -21,9 +21,16 @@ import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_SELECT_IS
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_STOP_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_TOP_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_TRDN_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_RANDOM_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_REPEAT_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_TRUP_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NETWORK_USB_UP_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_ALBUM_NAME_INFO_QUERY_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_ARTIST_NAME_INFO_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_JACKET_ART_REQ_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TIME_INFO_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_PLAY_STATUS_QUERY_ISCP;
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TIME_SEEK_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TITLE_NAME_QUERY_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_DOWN_ISCP;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SETUP_ENTER_ISCP;
@@ -64,6 +71,7 @@ public class ReceiverControl {
 	private final Consumer<String> sender;
 	private final ReceiverState state;
 	private final List<Consumer<String>> sentListeners = new CopyOnWriteArrayList<>();
+	private volatile String coverRequestedFor;
 
 	/** @param sender passes an ISCP command (without {@code !1}) to the receiver */
 	public ReceiverControl(Consumer<String> sender, ReceiverState state) {
@@ -99,6 +107,27 @@ public class ReceiverControl {
 		if (current == null || current != clamped) {
 			send(MASTER_VOLUME_ISCP + String.format("%02X", clamped));
 		}
+	}
+
+	/**
+	 * Jumps to a position of the playing track (NTS). Only while the total time is known; whether the receiver
+	 * can seek depends on the source (USB and music server usually can, radio streams cannot).
+	 */
+	public void seek(int seconds) {
+		ReceiverState.PlayTime playTime = state.getPlayTime();
+		if (playTime == null || playTime.total() <= 0) {
+			return;
+		}
+		int target = Math.max(0, Math.min(playTime.total(), seconds));
+		send(NET_USB_TIME_SEEK_ISCP + clock(target, playTime.total() >= 3600));
+	}
+
+	/** {@code 01:05} or, with hours, {@code 00:01:05}. */
+	public static String clock(int seconds, boolean withHours) {
+		int h = seconds / 3600;
+		int m = seconds / 60 % 60;
+		int s = seconds % 60;
+		return withHours ? String.format("%02d:%02d:%02d", h, m, s) : String.format("%02d:%02d", seconds / 60, s);
 	}
 
 	/** @param code SLI parameter such as {@code 2B} for NET */
@@ -147,6 +176,16 @@ public class ReceiverControl {
 		});
 	}
 
+	/** The receiver steps to the service's next repeat mode and reports it with {@code NST}. */
+	public void toggleRepeat() {
+		send(NETWORK_USB_REPEAT_ISCP);
+	}
+
+	/** The receiver steps to the service's next shuffle mode and reports it with {@code NST}. */
+	public void toggleShuffle() {
+		send(NETWORK_USB_RANDOM_ISCP);
+	}
+
 	public void numberKey(int digit) {
 		if (digit < 0 || digit > 9) {
 			throw new IllegalArgumentException("not a digit: " + digit);
@@ -169,7 +208,10 @@ public class ReceiverControl {
 		send(INPUT_SELECTOR_QUERY_ISCP);
 	}
 
-	/** On a NET or Bluetooth input, asks for artist and title as long as they are unknown. */
+	/**
+	 * On a NET or Bluetooth input, asks for what is still unknown: artist, title, album, time, play status and cover art.
+	 * The receiver pushes these by itself only when they change, so a freshly started app would miss them.
+	 */
 	public void queryNowPlayingIfMissing() {
 		if (state.isNetworkInput()) {
 			if (state.getArtist() == null) {
@@ -178,6 +220,31 @@ public class ReceiverControl {
 			if (state.getTitle() == null) {
 				send(NET_USB_TITLE_NAME_QUERY_ISCP);
 			}
+			if (state.getAlbum() == null) {
+				send(NET_USB_ALBUM_NAME_INFO_QUERY_ISCP);
+			}
+			if (state.getTime() == null) {
+				send(NET_USB_TIME_INFO_QUERY_ISCP);
+			}
+			if (state.getPlayStatus() == null) {
+				send(NET_USB_PLAY_STATUS_QUERY_ISCP);
+			}
+			requestCoverIfMissing();
+		}
+	}
+
+	/**
+	 * Asks for the cover only while something plays (time and title are known) and once per title:
+	 * on a menu list an old cover would hide the list, and a service without art would be asked every second.
+	 */
+	public void requestCoverIfMissing() {
+		if (!state.isNetworkInput() || state.getCoverArt() != null || state.getPlayTime() == null || state.getTitle() == null) {
+			return;
+		}
+		String track = state.getInput() + "|" + state.getTitle();
+		if (!track.equals(coverRequestedFor)) {
+			coverRequestedFor = track;
+			send(NET_USB_JACKET_ART_REQ_ISCP);
 		}
 	}
 

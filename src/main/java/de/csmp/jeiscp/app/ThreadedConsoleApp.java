@@ -71,6 +71,8 @@ public class ThreadedConsoleApp {
 				device = EiscpAutodiscovery.identify(address);
 			}
 		}
+		// listens before connecting: right after the connect the receiver pushes the NET list title with the service
+		FxGuiController gui = ENABLE_GUI ? new FxGuiController(conn, device) : null;
 		try {
 			conn.connect();	// later losses are reconnected in the background
 		} catch (IOException ex) {
@@ -85,9 +87,9 @@ public class ThreadedConsoleApp {
 			consoleThread.start();
 		}
 		
-		if (ENABLE_GUI) {
-			new FxGuiController(conn, device).start();
-        }
+		if (gui != null) {
+			gui.start();
+		}
 		
 		log.debug("controller threads started");
 	}

@@ -207,33 +207,41 @@
 
 .lcd:standby .label,
 .lcd:standby .lcd-volume-bar,
-.lcd:standby .lcd-screen {
+.lcd:standby .lcd-screen,
+.lcd:standby .lcd-play-progress {
     -fx-opacity: 0.3;
 }
 
 .lcd-volume-bar {
-    -fx-padding: 2 0 6 0;
+    -fx-padding: 3 0 6 0;
 }
 
+/* volume and playback position: thin, subtle lines */
+
 .lcd .progress-bar {
-    -fx-pref-height: 6;
-    -fx-min-height: 6;
-    -fx-max-height: 6;
+    -fx-pref-height: 3;
+    -fx-min-height: 3;
+    -fx-max-height: 3;
     -fx-padding: 0;
 }
 
 .lcd .progress-bar > .track {
-    -fx-background-color: rgba(122, 245, 228, 0.16);
+    -fx-background-color: rgba(122, 245, 228, 0.13);
     -fx-background-insets: 0;
-    -fx-background-radius: 3;
+    -fx-background-radius: 2;
 }
 
 .lcd .progress-bar > .bar {
-    -fx-background-color: -lcd-text;
+    -fx-background-color: rgba(122, 245, 228, 0.85);
     -fx-background-insets: 0;
-    -fx-background-radius: 3;
-    -fx-padding: 3;
-    -fx-effect: dropshadow(gaussian, rgba(122, 245, 228, 0.6), 6, 0, 0, 0);
+    -fx-background-radius: 2;
+    -fx-padding: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(122, 245, 228, 0.35), 4, 0, 0, 0);
+}
+
+.lcd .lcd-play-progress > .bar {
+    -fx-background-color: rgba(122, 245, 228, 0.6);
+    -fx-effect: null;
 }
 
 .lcd .slider .track {
@@ -242,16 +250,42 @@
 
 .lcd .slider .thumb {
     -fx-background-color: #04080a, -lcd-text;
-    -fx-background-insets: 0, 2;
+    -fx-background-insets: 0, 1.5;
     -fx-background-radius: 999;
-    -fx-padding: 6;
+    -fx-padding: 4;
     -fx-cursor: hand;
 }
 
 .lcd-screen {
-    -fx-border-color: rgba(122, 245, 228, 0.18) transparent transparent transparent;
-    -fx-border-width: 1 0 0 0;
     -fx-padding: 6 0 0 0;
+}
+
+.lcd-service {
+    -fx-font-size: 12px;
+    -fx-opacity: 0.7;
+}
+
+.lcd-time-row {
+    -fx-min-height: 14;
+}
+
+/* seek slider over the playback position: the thumb only shows on hover */
+
+.lcd-seek-bar {
+    -fx-padding: 2 0 0 0;
+}
+
+.lcd .slider.lcd-seek .thumb {
+    -fx-opacity: 0;
+}
+
+.lcd .slider.lcd-seek:hover .thumb,
+.lcd .slider.lcd-seek:pressed .thumb {
+    -fx-opacity: 1;
+}
+
+.lcd .slider.lcd-seek {
+    -fx-cursor: hand;
 }
 
 .lcd .list-view,
@@ -403,6 +437,15 @@
 .transport {
     -fx-padding: 8 4;
     -fx-background-radius: 999, 999, 999;
+}
+
+/* play, pause, stop, repeat and shuffle light up with the receiver's play status; no glow, it would enlarge the key */
+.transport:on .icon.solid {
+    -fx-fill: -accent;
+}
+
+.transport:on .icon.line {
+    -fx-stroke: -accent;
 }
 
 .num {

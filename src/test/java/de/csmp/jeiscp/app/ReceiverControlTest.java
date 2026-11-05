@@ -74,12 +74,14 @@ public class ReceiverControlTest {
 		control.playback(Playback.PAUSE);
 		control.playback(Playback.STOP);
 		control.playback(Playback.NEXT);
+		control.toggleRepeat();
+		control.toggleShuffle();
 		control.selectInput("2B");
 		control.numberKey(0);
 		control.numberKey(9);
 		control.query("LMD");
 
-		assertEquals(List.of("OSDMENU", "OSDQUICK", "NTCTRDN", "NTCPLAY", "NTCPAUSE", "NTCSTOP", "NTCTRUP",
+		assertEquals(List.of("OSDMENU", "OSDQUICK", "NTCTRDN", "NTCPLAY", "NTCPAUSE", "NTCSTOP", "NTCTRUP", "NTCREPEAT", "NTCRANDOM",
 				"SLI2B", "NTC0", "NTC9", "LMDQSTN"), sent);
 		assertThrows(IllegalArgumentException.class, () -> control.numberKey(10));
 	}
@@ -92,9 +94,49 @@ public class ReceiverControlTest {
 		sent.clear();
 		control.queryNowPlayingIfMissing();	// input unknown
 		state.receivedIscpMessage("SLI2B");
+		control.queryNowPlayingIfMissing();	// nothing plays yet: no cover request
+		assertEquals(List.of("NATQSTN", "NTIQSTN", "NALQSTN", "NTMQSTN", "NSTQSTN"), sent);
+
+		sent.clear();
 		state.receivedIscpMessage("NATDaft Punk");
+		state.receivedIscpMessage("NALRandom Access Memories");
+		state.receivedIscpMessage("NSTP-S");
 		control.queryNowPlayingIfMissing();
-		assertEquals(List.of("NTIQSTN"), sent);
+		assertEquals(List.of("NTIQSTN", "NTMQSTN"), sent);
+	}
+
+	@Test
+	public void coverIsRequestedOncePerPlayingTitle() {
+		state.receivedIscpMessage("SLI2B");
+		control.requestCoverIfMissing();	// no time yet: a menu list, not a track
+		state.receivedIscpMessage("NTM01:42/05:37");
+		control.requestCoverIfMissing();	// title not there yet, it would be asked twice otherwise
+		state.receivedIscpMessage("NTIInstant Crush");
+		control.requestCoverIfMissing();
+		state.receivedIscpMessage("NTM01:43/05:37");
+		control.requestCoverIfMissing();	// same title: already asked
+		state.receivedIscpMessage("NTIGet Lucky");
+		control.requestCoverIfMissing();
+		state.receivedIscpMessage("NJA10FFD8");
+		state.receivedIscpMessage("NJA12FFD9");
+		state.receivedIscpMessage("NTILose Yourself to Dance");
+		control.requestCoverIfMissing();	// a cover is known; the receiver pushes the next one itself
+
+		assertEquals(List.of("NJAREQ", "NJAREQ"), sent);
+	}
+
+	@Test
+	public void seekNeedsAKnownTotalAndUsesItsFormat() {
+		control.seek(30);	// nothing plays
+		state.receivedIscpMessage("NTM00:36/--:--");
+		control.seek(30);	// a stream without length
+		state.receivedIscpMessage("NTM00:36/02:46");
+		control.seek(65);
+		control.seek(500);	// clamped to the end
+		state.receivedIscpMessage("NTM00:10:00/01:30:00");
+		control.seek(3725);
+
+		assertEquals(List.of("NTS01:05", "NTS02:46", "NTS01:02:05"), sent);
 	}
 
 	@Test

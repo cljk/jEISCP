@@ -88,14 +88,17 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
   - `ConsoleController`: reads raw ISCP commands from stdin on its own thread and prints ANSI output via jansi.
     - When stdin closes (end of input), it stops. It exits the app only without a GUI.
     - Before this fix it sent `!1null` to the receiver in an endless loop.
-  - `ReceiverState`: a GUI-independent model. It is an `EiscpListener` that turns incoming messages into power, volume, mute, input, now playing, the NET list and cover art.
+  - `ReceiverState`: a GUI-independent model. It is an `EiscpListener` that turns incoming messages into power, volume, mute, input, now playing, play status, repeat and shuffle (`NST`), the NET list and cover art.
     - It keeps the last value of every 3-letter command (`getLastValue`).
     - It notifies its listeners with an `Aspect`, on the reader thread. Messages without a dedicated aspect fire `OTHER`.
   - `ReceiverControl`: GUI-independent. It holds the remote's operations as ISCP commands, so views never build command strings or import `EiscpCommmandsConstants`.
-    - Operations: power/mute toggles from `ReceiverState`, volume as hex with an echo check, direction keys/OK/return/home per `Target` NET (`NTC…`) or TV (`OSD…`), playback, number keys and queries.
+    - Operations: power/mute toggles from `ReceiverState`, volume as hex with an echo check, direction keys/OK/return/home per `Target` NET (`NTC…`) or TV (`OSD…`), playback, repeat and shuffle (`NTCREPEAT`, `NTCRANDOM`; the receiver steps through the service's modes), number keys and queries.
     - Sent-listeners see every command; the header LED uses them.
+    - `queryNowPlayingIfMissing` (on input changes) asks for artist, title, album, time and play status.
+    - `requestCoverIfMissing` (on now-playing updates) sends `NJAREQ` only while time and title are known, i.e. something plays, and once per title. The TX-NR626 (2013 firmware) does not answer `NJAREQ`; it only pushes the cover itself, as BMP, when the track changes. It usually sends the previous cover once more first. That is why `ReceiverState` hides the cover after a title change, ignores a transfer identical to the old cover, and shows the old cover again after `STALE_COVER_TIMEOUT` (15 s), since tracks of one album share their cover.
   - `DeviceFunctions`: GUI-independent. It lists the command blocks a model supports (`EiscpDevice.isCapable`), reduced to literal values without `QSTN` or placeholders. The YAML's model sets are coarse: `set1` covers almost everything, so a TX-NR626 is offered Sirius/XM/HD Radio as well.
   - `fx/FxGuiController`: starts JavaFX with `Platform.startup`, so `ThreadedConsoleApp` does not extend `Application`.
+    - Its constructor registers `ReceiverState` on the connector, so `ThreadedConsoleApp` creates it before `connect()`: right after connecting, the receiver pushes `NLT` with the NET service unasked.
     - It sends the initial queries, and sends them again after every reconnect.
     - It mirrors the connection state into `ReceiverState`, so the display shows OFFLINE or CONNECTING.
     - It marshals state changes to the FX thread with `Platform.runLater`. The stage is `StageStyle.TRANSPARENT`, i.e. borderless. Its close request exits the JVM.
@@ -104,13 +107,14 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
     - It maps each `ReceiverState.Aspect` to the parts' `refresh…` methods and holds the keyboard shortcuts.
     - Its parts, all package-private in `fx`:
     - `HeaderBar`: power key, the traffic LED (flashes on every `ReceiverControl` command, opens the log), model, the address link, and the minimize and close keys. The close key fires the stage's close request. The link opens `http://<ip>/` via `Browser`, which uses the platform launcher (`rundll32`, `open` or `xdg-open`) instead of AWT.
-    - `DisplayPanel`: the LCD with input, volume bar, now playing, NET list or cover art. It also builds the window title.
+    - `DisplayPanel`: the LCD with input, volume bar, now playing, NET list or cover art. The TX-NR626 sends 128×128 covers; up to `COVER_SIZE` they show unscaled, larger ones are fitted, and the list's height leaves room for them. The NET service comes from `ReceiverState.getNetService()`: the `NLT` service type, its icon field, or, on old firmware that keeps `F3` inside a service, the list title below the top level. At the bottom sit the elapsed/total time and a playback position bar from `ReceiverState.getPlayTime()`, parsed from `NTM`. A transparent slider over the bar (thumb shown on hover) seeks with `ReceiverControl.seek` (`NTS` with `mm:ss` or `hh:mm:ss`) only on mouse release; pressing and dragging just preview the target time, because dragging along a slider track changes its value on every mouse move. The `updatingSeek` and `seeking` flags keep the receiver's time updates from sending a seek back or moving the thumb under the mouse. Its space is always reserved, so the layout does not jump. The panel also builds the window title.
       - The `updatingVolume` flag stops the slider from sending the receiver's echo back.
       - NET popups (`NPU`, parsed in `ReceiverState.parsePopup`, NUL-separated) cover the list. They close on click, on OK/Return, on a new list page or input, or after 30 s.
     - `KeyPad`: all keys below the display, the input list (`SOURCES`) and the current `ReceiverControl.Target` NET/TV.
       - The target decides whether the direction pad, OK, return and home keys (and the keyboard shortcuts) act on `NTC…` or `OSD…`. Its switch is two small keys in the pad's top corners; the OK key shows the target.
-      - A new input switches the target. SETUP (`OSDMENU`) and QUICK switch to TV.
+      - The app decides the target; the receiver reports no mode. NET is the default and returns with every new input; SETUP (`OSDMENU`), QUICK and the TV key switch to TV.
       - The `OSD` commands are plain key presses: the receiver neither answers them nor reports its TV menus.
+      - Play, pause and stop light up with `ReceiverState.getPlayStatus()`, repeat and shuffle while they are on. The TX-NR626 does not answer `NSTQSTN` and sends `NST` only on a change, so at start `ReceiverState` infers PLAY from a running `NTM` (it stops in pause); repeat and shuffle stay unknown until the first `NST`. All of them only on a NET input; repeat and shuffle are disabled elsewhere and when the service reports none (`x`).
     - `WindowDrag`: moves a borderless window while it is dragged on a non-control area; also used by `LogWindow`.
     - `Ui`: key, icon and spacer helpers. Icons are SVG paths on a 24×24 grid.
     - Power, mute and volume send a command and then wait for the receiver's echo to update the UI.

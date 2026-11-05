@@ -98,6 +98,7 @@ public class RemoteControlView {
 				header.refresh();
 				display.refreshStandby();
 				display.refreshText();
+				keys.refreshPlayStatus();
 			}
 			case VOLUME, MUTE -> {
 				display.refreshVolume();
@@ -107,14 +108,19 @@ public class RemoteControlView {
 				display.refreshPopup();
 				keys.followInput();
 				keys.refreshSources();
+				keys.refreshPlayStatus();
 				display.refreshText();
 			}
-			case NOW_PLAYING -> display.refreshText();
+			case NOW_PLAYING -> {
+				display.refreshText();
+				display.refreshScreen();	// a new title hides the previous cover; the time ticks end that after a timeout
+			}
 			case NET_LIST -> {
 				display.refreshPopup();
 				display.refreshNetList();
 				display.refreshText();
 			}
+			case PLAY_STATUS -> keys.refreshPlayStatus();
 			case COVER_ART -> display.refreshScreen();
 			case POPUP -> display.refreshPopup();
 			case OTHER -> {
@@ -131,6 +137,7 @@ public class RemoteControlView {
 		display.refreshStandby();
 		display.refreshVolume();
 		keys.refreshMute();
+		keys.refreshPlayStatus();
 		display.refreshNetList();
 		keys.refreshSources();
 		display.refreshText();

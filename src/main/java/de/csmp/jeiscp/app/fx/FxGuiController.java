@@ -25,10 +25,11 @@ public class FxGuiController {
 	private final ReceiverControl control = new ReceiverControl(this::send, state);
 	private RemoteControlView view;
 
-	/** @param device the connected model, {@code null} if unknown */
+	/** Listens to the connector at once; create it before {@code connect()} to get what the receiver pushes first. */
 	public FxGuiController(EiscpConnector conn, EiscpDevice device) {
 		this.conn = conn;
 		this.device = device;
+		conn.addListener(state);
 	}
 
 	/** Starts the JavaFX runtime and returns without waiting for the window. */
@@ -36,12 +37,13 @@ public class FxGuiController {
 		state.addListener(aspect -> {
 			if (aspect == Aspect.INPUT) {
 				control.queryNowPlayingIfMissing();
+			} else if (aspect == Aspect.NOW_PLAYING) {
+				control.requestCoverIfMissing();	// the time shows that something plays
 			}
 		});
 		state.setConnectionState(conn.getState());
 		conn.addStateListener(this::connectionChanged);
 		Platform.startup(this::showWindow);
-		conn.addListener(state);
 		control.queryStatus();
 	}
 
