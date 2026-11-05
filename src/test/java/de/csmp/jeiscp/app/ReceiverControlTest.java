@@ -1,6 +1,7 @@
 package de.csmp.jeiscp.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
@@ -85,6 +86,20 @@ public class ReceiverControlTest {
 		assertEquals(List.of("OSDMENU", "OSDQUICK", "NTCTRDN", "NTCPLAY", "NTCPAUSE", "NTCSTOP", "NTCTRUP", "NTCREPEAT", "NTCRANDOM",
 				"SLI2B", "NTC0", "NTC9", "LMDQSTN"), sent);
 		assertThrows(IllegalArgumentException.class, () -> control.numberKey(10));
+	}
+
+	@Test
+	public void txNr626IsNotAskedWhatItDoesNotAnswer() {
+		ReceiverControl nr626 = new ReceiverControl(sent::add, state, ReceiverProfile.of("TX-NR626"));
+		state.receivedIscpMessage("SLI2B");
+		state.receivedIscpMessage("NTIInstant Crush");
+		state.receivedIscpMessage("NTM01:42/05:37");
+		nr626.queryNowPlayingIfMissing();
+
+		assertFalse(sent.contains("NSTQSTN"));
+		assertFalse(sent.contains("NJAREQ"));
+		assertEquals(ReceiverProfile.DEFAULT, ReceiverProfile.of("TX-NR709"));
+		assertEquals(ReceiverProfile.DEFAULT, ReceiverProfile.of(null));
 	}
 
 	@Test

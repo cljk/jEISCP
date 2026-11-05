@@ -56,20 +56,20 @@ public class ReceiverStateTest {
 	public void netServiceFromListTitle() {
 		state.receivedIscpMessage("SLI2B");
 		state.receivedIscpMessage("NLTF300000600090000FFFF00NE");	// NET top level
-		assertNull(state.getNetService());
+		assertNull(state.netList().getService());
 
 		state.receivedIscpMessage("NLT0A21000000010100180A00Daily Mix");	// service type Spotify
-		assertEquals("Spotify", state.getNetService());
-		assertEquals("Daily Mix", state.getListTitle());
+		assertEquals("Spotify", state.netList().getService());
+		assertEquals("Daily Mix", state.netList().getTitle());
 
 		state.receivedIscpMessage("NLTF33100000001010000FF00TuneIn");	// old firmware: NET, service only in the title
-		assertEquals("TuneIn", state.getNetService());
+		assertEquals("TuneIn", state.netList().getService());
 
 		state.receivedIscpMessage("NLTF311000000010100000E00Favorites");	// NET with the TuneIn icon
-		assertEquals("TuneIn Radio", state.getNetService());
+		assertEquals("TuneIn Radio", state.netList().getService());
 
 		state.receivedIscpMessage("SLI10");
-		assertNull(state.getNetService());
+		assertNull(state.netList().getService());
 	}
 
 	/** As captured: right after connecting, the receiver sends NLT before the answer to SLIQSTN. */
@@ -79,26 +79,26 @@ public class ReceiverStateTest {
 		state.receivedIscpMessage("NLT0A31000000010200FF0A00Spotify");
 		state.receivedIscpMessage("SLI2B");
 
-		assertEquals("Spotify", state.getNetService());
+		assertEquals("Spotify", state.netList().getService());
 	}
 
 	@Test
 	public void playTimeFromNtm() {
-		assertNull(state.getPlayTime());
+		assertNull(state.playback().getPlayTime());
 
 		state.receivedIscpMessage("NTM00:36/02:46");
-		assertEquals(new ReceiverState.PlayTime(36, 166), state.getPlayTime());
-		assertEquals(36 / 166.0, state.getPlayTime().progress(), 1e-9);
+		assertEquals(new NetPlayback.PlayTime(36, 166), state.playback().getPlayTime());
+		assertEquals(36 / 166.0, state.playback().getPlayTime().progress(), 1e-9);
 
 		state.receivedIscpMessage("NTM01:02:03/02:00:00");
-		assertEquals(new ReceiverState.PlayTime(3723, 7200), state.getPlayTime());
+		assertEquals(new NetPlayback.PlayTime(3723, 7200), state.playback().getPlayTime());
 
 		state.receivedIscpMessage("NTM00:10/--:--");	// e.g. a radio stream without length
-		assertEquals(new ReceiverState.PlayTime(10, 0), state.getPlayTime());
-		assertEquals(-1, state.getPlayTime().progress(), 0);
+		assertEquals(new NetPlayback.PlayTime(10, 0), state.playback().getPlayTime());
+		assertEquals(-1, state.playback().getPlayTime().progress(), 0);
 
 		state.receivedIscpMessage("NTM--:--/--:--");
-		assertNull(state.getPlayTime());
+		assertNull(state.playback().getPlayTime());
 	}
 
 	/** As captured from a TX-NR626: on a title change the previous cover comes again first, then the new one. */
@@ -108,15 +108,15 @@ public class ReceiverStateTest {
 		ReceiverState timed = new ReceiverState(clock);
 		timed.receivedIscpMessage("NTIOld Song");
 		cover(timed, "AAAA");
-		assertTrue(timed.isCoverArtCurrent());
+		assertTrue(timed.cover().isCurrent());
 
 		timed.receivedIscpMessage("NTINew Song");
-		assertFalse("old cover hidden", timed.isCoverArtCurrent());
+		assertFalse("old cover hidden", timed.cover().isCurrent());
 		cover(timed, "AAAA");	// the repetition
-		assertFalse("repetition ignored", timed.isCoverArtCurrent());
+		assertFalse("repetition ignored", timed.cover().isCurrent());
 		cover(timed, "BBBB");
-		assertTrue(timed.isCoverArtCurrent());
-		assertArrayEquals(new byte[] { (byte) 0xBB, (byte) 0xBB }, timed.getCoverArt());
+		assertTrue(timed.cover().isCurrent());
+		assertArrayEquals(new byte[] { (byte) 0xBB, (byte) 0xBB }, timed.cover().getImage());
 	}
 
 	@Test
@@ -129,10 +129,10 @@ public class ReceiverStateTest {
 		cover(timed, "AAAA");
 		cover(timed, "AAAA");
 
-		clock.advance(ReceiverState.STALE_COVER_TIMEOUT.minusSeconds(1));
-		assertFalse(timed.isCoverArtCurrent());
+		clock.advance(CoverArt.STALE_TIMEOUT.minusSeconds(1));
+		assertFalse(timed.cover().isCurrent());
 		clock.advance(java.time.Duration.ofSeconds(1));
-		assertTrue(timed.isCoverArtCurrent());
+		assertTrue(timed.cover().isCurrent());
 	}
 
 	@Test
@@ -140,7 +140,7 @@ public class ReceiverStateTest {
 		cover(state, "AAAA");
 		state.receivedIscpMessage("NTIFirst Song");
 
-		assertTrue(state.isCoverArtCurrent());
+		assertTrue(state.cover().isCurrent());
 	}
 
 	private static void cover(ReceiverState target, String hex) {
@@ -174,18 +174,18 @@ public class ReceiverStateTest {
 	@Test
 	public void playStatusFromNst() {
 		state.receivedIscpMessage("SLI2B");
-		assertNull(state.getPlayStatus());
+		assertNull(state.playback().getPlayStatus());
 		state.receivedIscpMessage("NSTP-S");
-		assertEquals(ReceiverState.PlayStatus.PLAY, state.getPlayStatus());
+		assertEquals(NetPlayback.PlayStatus.PLAY, state.playback().getPlayStatus());
 		state.receivedIscpMessage("NSTp-S");	// end of a Spotify playlist
-		assertEquals(ReceiverState.PlayStatus.PAUSE, state.getPlayStatus());
+		assertEquals(NetPlayback.PlayStatus.PAUSE, state.playback().getPlayStatus());
 		state.receivedIscpMessage("NSTS--");
-		assertEquals(ReceiverState.PlayStatus.STOP, state.getPlayStatus());
+		assertEquals(NetPlayback.PlayStatus.STOP, state.playback().getPlayStatus());
 		state.receivedIscpMessage("NSTF--");
-		assertEquals(ReceiverState.PlayStatus.PLAY, state.getPlayStatus());
+		assertEquals(NetPlayback.PlayStatus.PLAY, state.playback().getPlayStatus());
 
 		state.receivedIscpMessage("SLI10");
-		assertNull("another input has its own play status", state.getPlayStatus());
+		assertNull("another input has its own play status", state.playback().getPlayStatus());
 	}
 
 	/** As the TX-NR626 at start: NSTQSTN stays unanswered, the time keeps running. */
@@ -193,49 +193,49 @@ public class ReceiverStateTest {
 	public void playingIsInferredFromTheRunningTime() {
 		state.receivedIscpMessage("SLI2B");
 		state.receivedIscpMessage("NTM01:08/03:28");
-		assertNull("one time alone does not show it runs", state.getPlayStatus());
+		assertNull("one time alone does not show it runs", state.playback().getPlayStatus());
 		state.receivedIscpMessage("NTM01:09/03:28");
-		assertEquals(ReceiverState.PlayStatus.PLAY, state.getPlayStatus());
-		assertNull("repeat is not inferred", state.getRepeat());
+		assertEquals(NetPlayback.PlayStatus.PLAY, state.playback().getPlayStatus());
+		assertNull("repeat is not inferred", state.playback().getRepeat());
 
 		state.receivedIscpMessage("NSTp-S");
 		state.receivedIscpMessage("NTM01:10/03:28");
-		assertEquals("a reported status wins", ReceiverState.PlayStatus.PAUSE, state.getPlayStatus());
+		assertEquals("a reported status wins", NetPlayback.PlayStatus.PAUSE, state.playback().getPlayStatus());
 	}
 
 	@Test
 	public void repeatFromNst() {
 		state.receivedIscpMessage("SLI2B");
-		assertNull(state.getRepeat());
+		assertNull(state.playback().getRepeat());
 		state.receivedIscpMessage("NSTP-S");
-		assertEquals(ReceiverState.Repeat.OFF, state.getRepeat());
+		assertEquals(NetPlayback.Repeat.OFF, state.playback().getRepeat());
 		state.receivedIscpMessage("NSTPRS");
-		assertEquals(ReceiverState.Repeat.ALL, state.getRepeat());
+		assertEquals(NetPlayback.Repeat.ALL, state.playback().getRepeat());
 		state.receivedIscpMessage("NSTP1S");
-		assertEquals(ReceiverState.Repeat.ONE, state.getRepeat());
+		assertEquals(NetPlayback.Repeat.ONE, state.playback().getRepeat());
 		state.receivedIscpMessage("NSTPxx");
-		assertEquals(ReceiverState.Repeat.UNAVAILABLE, state.getRepeat());
+		assertEquals(NetPlayback.Repeat.UNAVAILABLE, state.playback().getRepeat());
 		state.receivedIscpMessage("NSTP");
-		assertNull(state.getRepeat());
+		assertNull(state.playback().getRepeat());
 	}
 
 	@Test
 	public void shuffleFromNst() {
 		state.receivedIscpMessage("SLI2B");
-		assertNull(state.getShuffle());
+		assertNull(state.playback().getShuffle());
 		state.receivedIscpMessage("NSTP--");
-		assertEquals(ReceiverState.Shuffle.OFF, state.getShuffle());
+		assertEquals(NetPlayback.Shuffle.OFF, state.playback().getShuffle());
 		state.receivedIscpMessage("NSTp-S");
-		assertEquals(ReceiverState.Shuffle.ALL, state.getShuffle());
-		assertTrue(state.getShuffle().isOn());
+		assertEquals(NetPlayback.Shuffle.ALL, state.playback().getShuffle());
+		assertTrue(state.playback().getShuffle().isOn());
 		state.receivedIscpMessage("NSTP-A");
-		assertEquals(ReceiverState.Shuffle.ALBUM, state.getShuffle());
+		assertEquals(NetPlayback.Shuffle.ALBUM, state.playback().getShuffle());
 		state.receivedIscpMessage("NSTPxx");
-		assertEquals(ReceiverState.Shuffle.UNAVAILABLE, state.getShuffle());
-		assertFalse(state.getShuffle().isOn());
+		assertEquals(NetPlayback.Shuffle.UNAVAILABLE, state.playback().getShuffle());
+		assertFalse(state.playback().getShuffle().isOn());
 
 		state.receivedIscpMessage("SLI10");
-		assertNull(state.getShuffle());
+		assertNull(state.playback().getShuffle());
 	}
 
 	@Test
@@ -252,7 +252,7 @@ public class ReceiverStateTest {
 	public void netPopupWithButton() {
 		state.receivedIscpMessage("NPUTTuneIn\0Verbindungsfehler.\0Die Verbindung zum Server konnte nicht hergestellt werden.\0" + "1OK\0");
 
-		ReceiverState.Popup popup = state.getPopup();
+		NetList.Popup popup = state.netList().getPopup();
 		assertEquals("TuneIn", popup.topTitle());
 		assertEquals("Verbindungsfehler.", popup.title());
 		assertEquals("Die Verbindung zum Server konnte nicht hergestellt werden.", popup.message());
@@ -263,26 +263,26 @@ public class ReceiverStateTest {
 	@Test
 	public void netPopupWithoutButtonsAndListType() {
 		state.receivedIscpMessage("NPUBService\0Title\0Message\0" + "0");
-		assertEquals(List.of(), state.getPopup().buttons());
+		assertEquals(List.of(), state.netList().getPopup().buttons());
 
 		state.receivedIscpMessage("NPULSetup\0Server\0on\0Port\0" + "8080\0");
-		assertEquals("Setup", state.getPopup().topTitle());
-		assertEquals("Server: on\nPort: 8080", state.getPopup().message());
+		assertEquals("Setup", state.netList().getPopup().topTitle());
+		assertEquals("Server: on\nPort: 8080", state.netList().getPopup().message());
 	}
 
 	@Test
 	public void popupClosesWithNewListPageOrInput() {
 		state.receivedIscpMessage("NPUTTuneIn\0Error\0Text\0" + "0");
 		state.receivedIscpMessage("NLSC0P");
-		assertNull(state.getPopup());
+		assertNull(state.netList().getPopup());
 
 		state.receivedIscpMessage("NPUTTuneIn\0Error\0Text\0" + "0");
 		state.receivedIscpMessage("SLI10");
-		assertNull(state.getPopup());
+		assertNull(state.netList().getPopup());
 
 		state.receivedIscpMessage("NPUTTuneIn\0Error\0Text\0" + "0");
-		state.dismissPopup();
-		assertNull(state.getPopup());
+		state.netList().dismissPopup();
+		assertNull(state.netList().getPopup());
 	}
 
 	@Test
@@ -300,26 +300,26 @@ public class ReceiverStateTest {
 		state.receivedIscpMessage("NLSU1-Internet Radio");
 		state.receivedIscpMessage("NLSC1C");
 
-		assertEquals(List.of("My Music", "Internet Radio"), state.getNetLines());
-		assertEquals(1, state.getNetCursor());
+		assertEquals(List.of("My Music", "Internet Radio"), state.netList().getLines());
+		assertEquals(1, state.netList().getCursor());
 
 		state.receivedIscpMessage("NLSC0P");
-		assertTrue(state.getNetLines().isEmpty());
+		assertTrue(state.netList().getLines().isEmpty());
 	}
 
 	@Test
 	public void coverArtIsAssembledFromBlocks() {
 		state.receivedIscpMessage("NJA10FFD8");
 		state.receivedIscpMessage("NJA11FFE0");
-		assertNull(state.getCoverArt());
+		assertNull(state.cover().getImage());
 
 		state.receivedIscpMessage("NJA12FFD9");
 		assertArrayEquals(new byte[] { (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, (byte) 0xFF, (byte) 0xD9 },
-				state.getCoverArt());
-		assertTrue(state.isCoverArtCurrent());
+				state.cover().getImage());
+		assertTrue(state.cover().isCurrent());
 
 		state.receivedIscpMessage("NLSC0P");
-		assertFalse(state.isCoverArtCurrent());
+		assertFalse(state.cover().isCurrent());
 	}
 
 	@Test
@@ -327,6 +327,6 @@ public class ReceiverStateTest {
 		state.receivedIscpMessage("NJA11FFE0");
 		state.receivedIscpMessage("NJA12FFD9");
 
-		assertNull(state.getCoverArt());
+		assertNull(state.cover().getImage());
 	}
 }

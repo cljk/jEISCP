@@ -5,6 +5,7 @@
     -text: #e6e8eb;
     -text-dim: #8b929c;
     -lcd-text: #7af5e4;
+    -lcd-accent: #7af5e4;	/* bars, thumbs and the card title; the display sets the cover's colour */
     -fx-background-color: transparent;
     -fx-font-size: 12px;
 }
@@ -60,6 +61,7 @@
     -fx-background-radius: 32, 31;
     -fx-padding: 16 20 24 20;
     -fx-spacing: 14;
+    -fx-pref-width: 352;	/* the key grids and the display share this width */
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 26, 0.15, 0, 8);
 }
 
@@ -205,6 +207,16 @@
     -fx-opacity: 0.8;
 }
 
+.lcd-album {
+    -fx-font-size: 11px;
+    -fx-opacity: 0.55;
+}
+
+.lcd .lcd-card-title {
+    -fx-text-fill: -lcd-accent;
+    -fx-font-size: 14px;
+}
+
 .lcd:standby .label,
 .lcd:standby .lcd-volume-bar,
 .lcd:standby .lcd-screen,
@@ -226,22 +238,22 @@
 }
 
 .lcd .progress-bar > .track {
-    -fx-background-color: rgba(122, 245, 228, 0.13);
+    -fx-background-color: -lcd-accent;
+    -fx-opacity: 0.13;
     -fx-background-insets: 0;
     -fx-background-radius: 2;
 }
 
 .lcd .progress-bar > .bar {
-    -fx-background-color: rgba(122, 245, 228, 0.85);
+    -fx-background-color: -lcd-accent;
+    -fx-opacity: 0.85;
     -fx-background-insets: 0;
     -fx-background-radius: 2;
     -fx-padding: 1.5;
-    -fx-effect: dropshadow(gaussian, rgba(122, 245, 228, 0.35), 4, 0, 0, 0);
 }
 
 .lcd .lcd-play-progress > .bar {
-    -fx-background-color: rgba(122, 245, 228, 0.6);
-    -fx-effect: null;
+    -fx-opacity: 0.6;
 }
 
 .lcd .slider .track {
@@ -249,7 +261,7 @@
 }
 
 .lcd .slider .thumb {
-    -fx-background-color: #04080a, -lcd-text;
+    -fx-background-color: #04080a, -lcd-accent;
     -fx-background-insets: 0, 1.5;
     -fx-background-radius: 999;
     -fx-padding: 4;
@@ -257,7 +269,11 @@
 }
 
 .lcd-screen {
-    -fx-padding: 6 0 0 0;
+    -fx-padding: 8 0 2 0;
+}
+
+.lcd-cover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.2, 0, 2);
 }
 
 .lcd-service {
@@ -466,7 +482,7 @@
     -fx-text-fill: -text-dim;
     -fx-font-size: 10px;
     -fx-font-weight: bold;
-    -fx-padding: 0 6 0 0;
+    -fx-padding: 0;
 }
 
 /* function row: mode keys, SETUP, QUICK, more */
@@ -496,6 +512,32 @@
 .mode:selected {
     -fx-text-fill: -accent;
     -fx-effect: innershadow(gaussian, rgba(45, 212, 191, 0.5), 8, 0, 0, 0);
+}
+
+/* repeat and shuffle in the pad's bottom corners, lit like the selected mode */
+.corner .icon.line {
+    -fx-stroke: -text-dim;
+    -fx-stroke-width: 2.6;
+}
+
+.corner:on {
+    -fx-effect: innershadow(gaussian, rgba(45, 212, 191, 0.5), 8, 0, 0, 0);
+}
+
+.corner:on .icon.line {
+    -fx-stroke: -accent;
+}
+
+/* the "123" handle over the full width; lit while the digits are unfolded */
+.drawer {
+    -fx-font-size: 10px;
+    -fx-text-fill: -text-dim;
+    -fx-padding: 3 8;
+}
+
+.drawer:selected {
+    -fx-text-fill: -accent;
+    -fx-effect: innershadow(gaussian, rgba(45, 212, 191, 0.45), 8, 0, 0, 0);
 }
 
 .dpad-ok-label {

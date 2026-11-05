@@ -14,9 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.csmp.jeiscp.app.ReceiverState;
-import de.csmp.jeiscp.app.ReceiverState.PlayStatus;
-import de.csmp.jeiscp.app.ReceiverState.Repeat;
-import de.csmp.jeiscp.app.ReceiverState.Shuffle;
+import de.csmp.jeiscp.app.NetPlayback.PlayStatus;
+import de.csmp.jeiscp.app.NetPlayback.Repeat;
+import de.csmp.jeiscp.app.NetPlayback.Shuffle;
 
 /** The emulator through the real connector and model, as the app sees it. */
 public class ReceiverEmulatorTest {
@@ -51,7 +51,7 @@ public class ReceiverEmulatorTest {
 
 	@Test
 	public void pushesTheServiceRightAfterConnecting() {
-		await(() -> "Spotify".equals(state.getNetService()));
+		await(() -> "Spotify".equals(state.netList().getService()));
 	}
 
 	@Test
@@ -62,32 +62,32 @@ public class ReceiverEmulatorTest {
 		conn.sendIscpCommand("MVL20");
 		conn.sendIscpCommand("AMTTG");
 
-		await(() -> Boolean.TRUE.equals(state.getPower()) && state.isNetworkInput() && state.getTitle() != null
+		await(() -> Boolean.TRUE.equals(state.getPower()) && state.isNetworkInput() && state.playback().getTitle() != null
 				&& Integer.valueOf(0x20).equals(state.getVolume()) && Boolean.TRUE.equals(state.getMuted()));
-		assertEquals(ReceiverEmulator.PLAYLIST.get(0).title(), state.getTitle());
+		assertEquals(ReceiverEmulator.PLAYLIST.get(0).title(), state.playback().getTitle());
 	}
 
 	@Test
 	public void playbackKeysReportTheirStatus() throws Exception {
 		conn.sendIscpCommand("NTCPAUSE");
-		await(() -> state.getPlayStatus() == PlayStatus.PAUSE);
+		await(() -> state.playback().getPlayStatus() == PlayStatus.PAUSE);
 		conn.sendIscpCommand("NTCREPEAT");
 		conn.sendIscpCommand("NTCRANDOM");
-		await(() -> state.getRepeat() == Repeat.ALL && state.getShuffle() == Shuffle.ALL);
+		await(() -> state.playback().getRepeat() == Repeat.ALL && state.playback().getShuffle() == Shuffle.ALL);
 	}
 
 	@Test
 	public void trackChangeRepeatsThePreviousCoverFirst() throws Exception {
 		conn.sendIscpCommand("NTCTRUP");	// same album: the first cover
-		await(() -> state.getCoverArt() != null && state.isCoverArtCurrent());
-		byte[] album = state.getCoverArt();
+		await(() -> state.cover().getImage() != null && state.cover().isCurrent());
+		byte[] album = state.cover().getImage();
 		assertArrayEquals(ReceiverEmulator.cover(ReceiverEmulator.PLAYLIST.get(1)), album);
 
 		conn.sendIscpCommand("NTCTRUP");	// another album: the old cover again, then the new one
-		await(() -> ReceiverEmulator.PLAYLIST.get(2).title().equals(state.getTitle()));
-		assertFalse("hidden after the title change", state.isCoverArtCurrent());
-		await(() -> state.isCoverArtCurrent());
-		assertArrayEquals(ReceiverEmulator.cover(ReceiverEmulator.PLAYLIST.get(2)), state.getCoverArt());
+		await(() -> ReceiverEmulator.PLAYLIST.get(2).title().equals(state.playback().getTitle()));
+		assertFalse("hidden after the title change", state.cover().isCurrent());
+		await(() -> state.cover().isCurrent());
+		assertArrayEquals(ReceiverEmulator.cover(ReceiverEmulator.PLAYLIST.get(2)), state.cover().getImage());
 	}
 
 	@Test
@@ -97,8 +97,8 @@ public class ReceiverEmulatorTest {
 		conn.sendIscpCommand("PWRQSTN");	// answered in order, so the two above had their chance
 
 		await(() -> state.getPower() != null);
-		assertEquals(null, state.getPlayStatus());
-		assertEquals(null, state.getCoverArt());
+		assertEquals(null, state.playback().getPlayStatus());
+		assertEquals(null, state.cover().getImage());
 	}
 
 	private static void await(BooleanSupplier condition) {

@@ -71,6 +71,15 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- jpackage marks the Windows launcher in target/dist read-only -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.5.0</version>
+				<configuration>
+					<force>true</force>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.16</version>
@@ -149,7 +158,11 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-clean-plugin</artifactId>
-						<version>3.4.1</version>
+						<version>3.5.0</version>
+						<configuration>
+							<!-- jpackage marks the Windows launcher read-only -->
+							<force>true</force>
+						</configuration>
 						<executions>
 							<execution>
 								<!-- jpackage refuses an existing image -->
@@ -257,7 +270,7 @@
 										<argument>--app-content</argument>
 										<argument>${project.build.directory}/dist/javafx</argument>
 										<argument>--java-options</argument>
-										<argument>--module-path $APPDIR/../javafx --add-modules javafx.controls</argument>
+										<argument>--enable-native-access=javafx.graphics --module-path $APPDIR/../javafx --add-modules javafx.controls</argument>
 										<!-- without arguments: no console reader, there is no console -->
 										<argument>--arguments</argument>
 										<argument>-noconsole</argument>

@@ -56,7 +56,7 @@ try {
     $exitCode = $LASTEXITCODE
     if ($exitCode -eq 0) {
         $sep = [IO.Path]::PathSeparator
-        $javaArgs = @('--enable-native-access=javafx.graphics')
+        $javaArgs = @('--enable-native-access=javafx.graphics', '-Djeiscp.logDir=.')
         if ($version -ge 23) {
             # keep JDK 23+ quiet about JavaFX's sun.misc.Unsafe use
             $javaArgs += '--sun-misc-unsafe-memory-access=allow'

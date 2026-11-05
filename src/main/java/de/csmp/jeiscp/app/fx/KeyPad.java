@@ -10,17 +10,19 @@ import static de.csmp.jeiscp.app.fx.Ui.solid;
 import static de.csmp.jeiscp.app.fx.Ui.spacer;
 import static de.csmp.jeiscp.app.fx.Ui.vspacer;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.ReceiverControl.Direction;
 import de.csmp.jeiscp.app.ReceiverControl.Playback;
-import de.csmp.jeiscp.app.ReceiverState.PlayStatus;
-import de.csmp.jeiscp.app.ReceiverState.Repeat;
-import de.csmp.jeiscp.app.ReceiverState.Shuffle;
+import de.csmp.jeiscp.app.NetPlayback.PlayStatus;
+import de.csmp.jeiscp.app.NetPlayback.Repeat;
+import de.csmp.jeiscp.app.NetPlayback.Shuffle;
 import de.csmp.jeiscp.app.ReceiverControl.Target;
 import de.csmp.jeiscp.app.ReceiverState;
 import javafx.css.PseudoClass;
@@ -28,6 +30,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
@@ -88,6 +92,8 @@ final class KeyPad {
 
 	private final Map<String, Button> sourceButtons = new LinkedHashMap<>();
 	private final Map<Target, Button> modeButtons = new LinkedHashMap<>();
+	private final ToggleButton numbersKey = new ToggleButton("123");
+	private final Node numbers;
 	private final Map<PlayStatus, Button> playStatusKeys = new EnumMap<>(PlayStatus.class);
 	private final SVGPath repeatOne = line(ICON_REPEAT_ONE);
 	private Button repeatKey;
@@ -98,12 +104,29 @@ final class KeyPad {
 	private String followedInput;
 
 	/** @param dismissPopup closes a shown NET popup; OK and return close it on the receiver too */
-	KeyPad(ReceiverState state, ReceiverControl control, Runnable showFunctions, Runnable dismissPopup) {
+	/**
+	 * @param numbersShown whether the number keys start unfolded
+	 * @param numbersToggled told when the "123" key folds or unfolds them
+	 */
+	KeyPad(ReceiverState state, ReceiverControl control, Runnable showFunctions, Runnable dismissPopup,
+			boolean numbersShown, Consumer<Boolean> numbersToggled) {
 		this.state = state;
 		this.control = control;
 		this.showFunctions = showFunctions;
 		this.dismissPopup = dismissPopup;
-		node = new VBox(14, sourceKeys(), functionKeys(), controlCluster(), transportKeys(), numberKeys());
+		numbers = numberKeys();
+		numbersKey.setSelected(numbersShown);
+		showNumbers(numbersShown);
+		numbersKey.selectedProperty().addListener((obs, was, shown) -> {
+			showNumbers(shown);
+			numbersToggled.accept(shown);
+		});
+		node = new VBox(14, sourceKeys(), functionKeys(), controlCluster(), playbackKeys());
+	}
+
+	private void showNumbers(boolean shown) {
+		numbers.setVisible(shown);
+		numbers.setManaged(shown);
 	}
 
 	Node getNode() {
@@ -149,13 +172,13 @@ final class KeyPad {
 	/** Play, pause or stop is lit while a NET input reports it; repeat and shuffle are lit while on and usable only on NET. */
 	void refreshPlayStatus() {
 		boolean net = state.isNetworkInput() && state.isConnected() && !Boolean.FALSE.equals(state.getPower());
-		PlayStatus status = net ? state.getPlayStatus() : null;
+		PlayStatus status = net ? state.playback().getPlayStatus() : null;
 		playStatusKeys.forEach((shown, key) -> key.pseudoClassStateChanged(ON, shown == status));
 
-		Repeat repeat = net ? state.getRepeat() : null;
+		Repeat repeat = net ? state.playback().getRepeat() : null;
 		refreshModeKey(repeatKey, "Repeat", repeat, net && repeat != Repeat.UNAVAILABLE, repeat != null && repeat.isOn());
 		repeatOne.setVisible(repeat == Repeat.ONE);
-		Shuffle shuffle = net ? state.getShuffle() : null;
+		Shuffle shuffle = net ? state.playback().getShuffle() : null;
 		refreshModeKey(shuffleKey, "Shuffle", shuffle, net && shuffle != Shuffle.UNAVAILABLE, shuffle != null && shuffle.isOn());
 	}
 
@@ -185,21 +208,29 @@ final class KeyPad {
 	// ---- layout
 
 	private Node sourceKeys() {
+		List<Button> keys = new ArrayList<>();
+		for (Source source : SOURCES) {
+			Button button = key(source.label(), e -> control.selectInput(source.code()));
+			button.getStyleClass().add("source");
+			sourceButtons.put(source.code(), button);
+			keys.add(button);
+		}
+		return grid(3, keys);
+	}
+
+	/** Keys of one width in {@code columns} columns: rows with the same count line up (3 for text, 5 for icons and digits). */
+	private static GridPane grid(int columns, List<? extends Region> keys) {
 		GridPane grid = new GridPane();
 		grid.setHgap(8);
 		grid.setVgap(8);
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < columns; i++) {
 			ColumnConstraints column = new ColumnConstraints();
-			column.setPercentWidth(100.0 / 3);
+			column.setPercentWidth(100.0 / columns);
 			grid.getColumnConstraints().add(column);
 		}
-		for (int i = 0; i < SOURCES.size(); i++) {
-			Source source = SOURCES.get(i);
-			Button button = key(source.label(), e -> control.selectInput(source.code()));
-			button.getStyleClass().add("source");
-			button.setMaxWidth(Double.MAX_VALUE);
-			grid.add(button, i % 3, i / 3);
-			sourceButtons.put(source.code(), button);
+		for (int i = 0; i < keys.size(); i++) {
+			keys.get(i).setMaxWidth(Double.MAX_VALUE);
+			grid.add(keys.get(i), i % columns, i / columns);
 		}
 		return grid;
 	}
@@ -218,14 +249,9 @@ final class KeyPad {
 		quick.setTooltip(new Tooltip("Quick setup on the TV"));
 		Button more = iconKey(icon(18, solid(ICON_MORE)), "All functions of this model", e -> showFunctions.run());
 
-		HBox row = new HBox(8, setup, quick, more);
-		for (Node child : row.getChildren()) {
-			Button button = (Button) child;
-			button.getStyleClass().add("fn-key");
-			button.setMaxWidth(Double.MAX_VALUE);
-			HBox.setHgrow(button, Priority.ALWAYS);
-		}
-		return row;
+		List<Button> keys = List.of(setup, quick, more);
+		keys.forEach(key -> key.getStyleClass().add("fn-key"));
+		return grid(3, keys);
 	}
 
 	private Node controlCluster() {
@@ -271,13 +297,20 @@ final class KeyPad {
 		StackPane.setAlignment(tv, Pos.TOP_RIGHT);
 		StackPane.setMargin(net, new Insets(-6, 0, 0, -10));
 		StackPane.setMargin(tv, new Insets(-6, -10, 0, 0));
+		// repeat and shuffle mirror them in the bottom corners
+		Button repeat = repeatKey();
+		Button shuffle = shuffleKey();
+		StackPane.setAlignment(repeat, Pos.BOTTOM_LEFT);
+		StackPane.setAlignment(shuffle, Pos.BOTTOM_RIGHT);
+		StackPane.setMargin(repeat, new Insets(0, 0, -6, -10));
+		StackPane.setMargin(shuffle, new Insets(0, -10, -6, 0));
 
 		StackPane pad = new StackPane(ring,
 				dpadKey(ICON_UP, Direction.UP, Pos.TOP_CENTER),
 				dpadKey(ICON_DOWN, Direction.DOWN, Pos.BOTTOM_CENTER),
 				dpadKey(ICON_LEFT, Direction.LEFT, Pos.CENTER_LEFT),
 				dpadKey(ICON_RIGHT, Direction.RIGHT, Pos.CENTER_RIGHT),
-				ok, net, tv);
+				ok, net, tv, repeat, shuffle);
 		pad.setMinSize(DPAD_SIZE, DPAD_SIZE);
 		pad.setPrefSize(DPAD_SIZE, DPAD_SIZE);
 		pad.setMaxSize(DPAD_SIZE, DPAD_SIZE);
@@ -301,15 +334,19 @@ final class KeyPad {
 		return button;
 	}
 
-	private Node transportKeys() {
-		return new HBox(8,
+	/** Playback in five columns, then the "123" handle over the full width and the digits, again in five columns. */
+	private Node playbackKeys() {
+		GridPane transport = grid(5, List.of(
 				transportKey(ICON_PREV, Playback.PREVIOUS, "Previous"),
 				statusKey(PlayStatus.PLAY, transportKey(ICON_PLAY, Playback.PLAY, "Play")),
 				statusKey(PlayStatus.PAUSE, transportKey(ICON_PAUSE, Playback.PAUSE, "Pause")),
 				statusKey(PlayStatus.STOP, transportKey(ICON_STOP, Playback.STOP, "Stop")),
-				transportKey(ICON_NEXT, Playback.NEXT, "Next"),
-				repeatKey(),
-				shuffleKey());
+				transportKey(ICON_NEXT, Playback.NEXT, "Next")));
+		numbersKey.getStyleClass().addAll("key", "drawer");
+		numbersKey.setFocusTraversable(false);
+		numbersKey.setTooltip(new Tooltip("Number keys"));
+		numbersKey.setMaxWidth(Double.MAX_VALUE);
+		return new VBox(8, transport, numbersKey, numbers);
 	}
 
 	private Button statusKey(PlayStatus status, Button key) {
@@ -319,15 +356,20 @@ final class KeyPad {
 
 	private Button repeatKey() {
 		repeatOne.setVisible(false);
-		repeatKey = transportKey(icon(16, line(ICON_REPEAT), repeatOne), "Repeat", control::toggleRepeat);
-		repeatKey.getStyleClass().add("repeat");
+		repeatKey = cornerKey(icon(13, line(ICON_REPEAT), repeatOne), "Repeat", control::toggleRepeat);
 		return repeatKey;
 	}
 
 	private Button shuffleKey() {
-		shuffleKey = transportKey(icon(16, line(ICON_SHUFFLE)), "Shuffle", control::toggleShuffle);
-		shuffleKey.getStyleClass().add("shuffle");
+		shuffleKey = cornerKey(icon(13, line(ICON_SHUFFLE)), "Shuffle", control::toggleShuffle);
 		return shuffleKey;
+	}
+
+	/** Small key in a bottom corner of the direction pad, lit while its mode is on. */
+	private static Button cornerKey(Node icon, String tooltip, Runnable action) {
+		Button button = iconKey(icon, tooltip, e -> action.run());
+		button.getStyleClass().setAll("button", "key", "mode", "corner");
+		return button;
 	}
 
 	private Button transportKey(String iconPath, Playback playback, String tooltip) {
@@ -337,27 +379,17 @@ final class KeyPad {
 	private static Button transportKey(Node icon, String tooltip, Runnable action) {
 		Button button = iconKey(icon, tooltip, e -> action.run());
 		button.getStyleClass().add("transport");
-		button.setMaxWidth(Double.MAX_VALUE);
-		HBox.setHgrow(button, Priority.ALWAYS);
 		return button;
 	}
 
 	private Node numberKeys() {
-		GridPane grid = new GridPane();
-		grid.setHgap(8);
-		grid.setVgap(8);
-		for (int i = 0; i < 5; i++) {
-			ColumnConstraints column = new ColumnConstraints();
-			column.setPercentWidth(20);
-			grid.getColumnConstraints().add(column);
-		}
+		List<Button> keys = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			int digit = (i + 1) % 10;
 			Button button = key(String.valueOf(digit), e -> control.numberKey(digit));
 			button.getStyleClass().add("num");
-			button.setMaxWidth(Double.MAX_VALUE);
-			grid.add(button, i % 5, i / 5);
+			keys.add(button);
 		}
-		return grid;
+		return grid(5, keys);
 	}
 }

@@ -9,6 +9,7 @@ import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.ReceiverControl.Direction;
 import de.csmp.jeiscp.app.ReceiverState;
 import de.csmp.jeiscp.app.ReceiverState.Aspect;
+import de.csmp.jeiscp.app.Settings;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.Parent;
@@ -42,10 +43,22 @@ public class RemoteControlView {
 
 	/** @param receiverAddress IP of the connected receiver, shown as a link to its web interface; {@code null} hides it */
 	public RemoteControlView(ReceiverState state, ReceiverControl control, EiscpDevice device, String receiverAddress) {
+		this(state, control, device, receiverAddress, null);
+	}
+
+	/** @param settings keeps whether the number keys are unfolded; {@code null} for none */
+	public RemoteControlView(ReceiverState state, ReceiverControl control, EiscpDevice device, String receiverAddress,
+			Settings settings) {
 		this.control = control;
 		header = new HeaderBar(state, control, device, receiverAddress, this::openLog);
 		display = new DisplayPanel(state, control);
-		keys = new KeyPad(state, control, () -> showFunctions(true), display::dismissPopupIfShown);
+		keys = new KeyPad(state, control, () -> showFunctions(true), display::dismissPopupIfShown,
+				settings != null && settings.numberKeysShown(), shown -> {
+					if (settings != null) {
+						settings.rememberNumberKeysShown(shown);
+					}
+					fitWindow();
+				});
 		functionsPage = new FunctionsPage(state, device, control, () -> showFunctions(false));
 		functionsPage.getRoot().setVisible(false);
 		StackPane pages = new StackPane(keys.getNode(), functionsPage.getRoot());
@@ -110,6 +123,7 @@ public class RemoteControlView {
 				keys.refreshSources();
 				keys.refreshPlayStatus();
 				display.refreshText();
+				display.refreshScreen();	// cover and accent only on a network input
 			}
 			case NOW_PLAYING -> {
 				display.refreshText();
@@ -141,6 +155,13 @@ public class RemoteControlView {
 		display.refreshNetList();
 		keys.refreshSources();
 		display.refreshText();
+	}
+
+	/** The borderless window grows or shrinks with the number keys. */
+	private void fitWindow() {
+		if (root.getScene() != null && root.getScene().getWindow() != null) {
+			root.getScene().getWindow().sizeToScene();
+		}
 	}
 
 	private void showFunctions(boolean show) {

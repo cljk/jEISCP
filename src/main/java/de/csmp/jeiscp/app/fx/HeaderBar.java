@@ -18,6 +18,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -81,7 +82,12 @@ final class HeaderBar {
 		Button close = iconKey(icon(14, line(ICON_CLOSE)), "Quit jEISCP", e -> closeWindow());
 		close.getStyleClass().setAll("button", "window-key", "close");
 
-		node = new HBox(8, powerButton, ledKey, brand, model, address, spacer(), minimize, close);
+		// name above model and address, so the narrow remote has room for all of them
+		HBox modelAndAddress = new HBox(6, model, address);
+		modelAndAddress.setAlignment(Pos.CENTER_LEFT);
+		VBox identity = new VBox(-1, brand, modelAndAddress);
+		identity.setAlignment(Pos.CENTER_LEFT);
+		node = new HBox(8, powerButton, ledKey, identity, spacer(), minimize, close);
 		node.setAlignment(Pos.CENTER_LEFT);
 	}
 

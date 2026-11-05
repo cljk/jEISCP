@@ -70,13 +70,22 @@ public class ReceiverControl {
 
 	private final Consumer<String> sender;
 	private final ReceiverState state;
+	private final NetPlayback playback;
+	private final ReceiverProfile profile;
 	private final List<Consumer<String>> sentListeners = new CopyOnWriteArrayList<>();
 	private volatile String coverRequestedFor;
 
 	/** @param sender passes an ISCP command (without {@code !1}) to the receiver */
 	public ReceiverControl(Consumer<String> sender, ReceiverState state) {
+		this(sender, state, ReceiverProfile.DEFAULT);
+	}
+
+	/** @param profile leaves out the queries the model does not answer */
+	public ReceiverControl(Consumer<String> sender, ReceiverState state, ReceiverProfile profile) {
 		this.sender = sender;
 		this.state = state;
+		this.playback = state.playback();
+		this.profile = profile;
 	}
 
 	/** Notified after every command sent through this control, on the sending thread. */
@@ -114,7 +123,7 @@ public class ReceiverControl {
 	 * can seek depends on the source (USB and music server usually can, radio streams cannot).
 	 */
 	public void seek(int seconds) {
-		ReceiverState.PlayTime playTime = state.getPlayTime();
+		NetPlayback.PlayTime playTime = playback.getPlayTime();
 		if (playTime == null || playTime.total() <= 0) {
 			return;
 		}
@@ -214,19 +223,19 @@ public class ReceiverControl {
 	 */
 	public void queryNowPlayingIfMissing() {
 		if (state.isNetworkInput()) {
-			if (state.getArtist() == null) {
+			if (playback.getArtist() == null) {
 				send(NET_USB_ARTIST_NAME_INFO_QUERY_ISCP);
 			}
-			if (state.getTitle() == null) {
+			if (playback.getTitle() == null) {
 				send(NET_USB_TITLE_NAME_QUERY_ISCP);
 			}
-			if (state.getAlbum() == null) {
+			if (playback.getAlbum() == null) {
 				send(NET_USB_ALBUM_NAME_INFO_QUERY_ISCP);
 			}
-			if (state.getTime() == null) {
+			if (playback.getTime() == null) {
 				send(NET_USB_TIME_INFO_QUERY_ISCP);
 			}
-			if (state.getPlayStatus() == null) {
+			if (playback.getPlayStatus() == null && profile.answersPlayStatusQuery()) {
 				send(NET_USB_PLAY_STATUS_QUERY_ISCP);
 			}
 			requestCoverIfMissing();
@@ -238,10 +247,11 @@ public class ReceiverControl {
 	 * on a menu list an old cover would hide the list, and a service without art would be asked every second.
 	 */
 	public void requestCoverIfMissing() {
-		if (!state.isNetworkInput() || state.getCoverArt() != null || state.getPlayTime() == null || state.getTitle() == null) {
+		if (!profile.answersCoverRequest() || !state.isNetworkInput() || state.cover().getImage() != null
+				|| playback.getPlayTime() == null || playback.getTitle() == null) {
 			return;
 		}
-		String track = state.getInput() + "|" + state.getTitle();
+		String track = state.getInput() + "|" + playback.getTitle();
 		if (!track.equals(coverRequestedFor)) {
 			coverRequestedFor = track;
 			send(NET_USB_JACKET_ART_REQ_ISCP);

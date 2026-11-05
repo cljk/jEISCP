@@ -45,7 +45,7 @@ if [ "$version" -ge 23 ]; then
 fi
 
 # shellcheck disable=SC2086 # $unsafe is empty or one word
-exec "$java" --enable-native-access=javafx.graphics $unsafe \
+exec "$java" --enable-native-access=javafx.graphics -Djeiscp.logDir=. $unsafe \
 	--module-path "$(cat target/javafx-module-path.txt)" --add-modules javafx.controls \
 	--class-path "target/classes$sep$(cat target/class-path.txt)" \
 	de.csmp.jeiscp.app.ThreadedConsoleApp "$@"

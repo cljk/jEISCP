@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.csmp.jeiscp.app.NetList;
+import de.csmp.jeiscp.app.NetPlayback;
 import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.ReceiverState;
 import javafx.animation.PauseTransition;
@@ -26,6 +28,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelFormat;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -39,14 +42,17 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-/** The LCD: input and volume, now playing, the NET list or cover art, and NET popups. Also yields the window title. */
+/**
+ * The LCD: input and volume, then the NET list under two title lines, or while a cover is shown a card with the cover
+ * and the titles beside it, and NET popups. Also yields the window title.
+ */
 final class DisplayPanel {
 
 	/** Slider ceiling; the full scale of 100 is rarely sensible. */
 	static final int MAX_VOLUME = 70;
 
 	private static final double NET_LINE_HEIGHT = 19;
-	private static final int NET_LINES_SHOWN = 7;	// also leaves room for a 128 px cover
+	private static final int NET_LINES_SHOWN = 5;	// with the two title lines as high as the cover card
 	/** Covers up to this size show unscaled; the TX-NR626 sends 128x128, larger ones are fitted. */
 	private static final double COVER_SIZE = 128;
 
@@ -60,8 +66,13 @@ final class DisplayPanel {
 	private final VBox lcd;
 	private final Label lcdSource = label("lcd-source");
 	private final Label lcdVolume = label("lcd-volume");
-	private final Label lcdPrimary = label("lcd-primary");
+	private final Marquee lcdPrimary = new Marquee("lcd-primary");
 	private final Label lcdSecondary = label("lcd-secondary");
+	private final Marquee cardTitle = new Marquee("lcd-primary", "lcd-card-title");
+	private final Label cardArtist = label("lcd-secondary");
+	private final Label cardAlbum = label("lcd-album");
+	private final VBox listPage;
+	private final HBox cardPage;
 	private final Label lcdService = label("lcd-service");
 	private final Label lcdElapsed = label("lcd-time");
 	private final Label lcdTotal = label("lcd-time");
@@ -81,6 +92,7 @@ final class DisplayPanel {
 	private final Tooltip popupText = new Tooltip();
 	private byte[] shownCoverArt;
 	private boolean hasCover;
+	private int coverAccent = -1;
 	private boolean updatingVolume;
 	private boolean updatingSeek;
 	private boolean seeking;
@@ -113,7 +125,6 @@ final class DisplayPanel {
 		StackPane volume = new StackPane(volumeBar, volumeSlider);
 		volume.getStyleClass().add("lcd-volume-bar");
 
-		lcdPrimary.setMaxWidth(Double.MAX_VALUE);
 		lcdSecondary.setMaxWidth(Double.MAX_VALUE);
 
 		netList.setCellFactory(list -> new NetListCell());
@@ -136,7 +147,24 @@ final class DisplayPanel {
 		Tooltip.install(popup, popupText);
 		popupTimeout.setOnFinished(e -> dismissPopup());
 		StackPane.setAlignment(popup, Pos.CENTER);
-		StackPane screen = new StackPane(netList, cover, popup);
+
+		listPage = new VBox(1, lcdPrimary, lcdSecondary, netList);
+		VBox.setMargin(netList, new Insets(4, 0, 0, 0));
+		// while playing: the cover with the titles beside it, in the room of the title lines and the list
+		cover.getStyleClass().add("lcd-cover");
+		cover.setMinSize(COVER_SIZE, COVER_SIZE);
+		cover.setPrefSize(COVER_SIZE, COVER_SIZE);
+		cover.setMaxSize(COVER_SIZE, COVER_SIZE);
+		cardArtist.setMaxWidth(Double.MAX_VALUE);
+		cardAlbum.setMaxWidth(Double.MAX_VALUE);
+		VBox cardText = new VBox(4, cardTitle, cardArtist, cardAlbum);
+		cardText.setAlignment(Pos.CENTER_LEFT);
+		HBox.setHgrow(cardText, Priority.ALWAYS);
+		cardPage = new HBox(14, cover, cardText);
+		cardPage.setAlignment(Pos.CENTER_LEFT);
+		cardPage.setVisible(false);
+		StackPane screen = new StackPane(listPage, cardPage, popup);
+		StackPane.setAlignment(listPage, Pos.TOP_LEFT);
 		screen.getStyleClass().add("lcd-screen");
 		VBox.setVgrow(screen, Priority.ALWAYS);
 
@@ -168,7 +196,7 @@ final class DisplayPanel {
 		HBox timeRow = new HBox(lcdElapsed, spacer(), lcdTotal);
 		timeRow.getStyleClass().add("lcd-time-row");
 		VBox.setMargin(timeRow, new Insets(4, 0, 0, 0));
-		lcd = new VBox(top, volume, lcdPrimary, lcdSecondary, screen, timeRow, seekBar);
+		lcd = new VBox(top, volume, screen, timeRow, seekBar);
 		lcd.getStyleClass().add("lcd");
 	}
 
@@ -220,19 +248,23 @@ final class DisplayPanel {
 		lcdSource.setText(source);
 
 		boolean net = state.isNetworkInput() && state.isConnected() && !Boolean.FALSE.equals(state.getPower());
-		String service = net && state.getNetService() != null ? state.getNetService() : "";
+		String service = net && state.netList().getService() != null ? state.netList().getService() : "";
 		lcdService.setText(service);
 
 		String primary = "";
 		String secondary = "";
+		NetPlayback playback = state.playback();
 		if (state.isNetworkInput()) {
-			primary = firstNonEmpty(state.getTitle(), state.getListTitle());
-			secondary = Stream.of(state.getArtist(), state.getAlbum())
+			primary = firstNonEmpty(playback.getTitle(), state.netList().getTitle());
+			secondary = Stream.of(playback.getArtist(), playback.getAlbum())
 					.filter(s -> s != null && !s.isBlank())
 					.collect(Collectors.joining(" · "));
 		}
 		lcdPrimary.setText(primary);
 		lcdSecondary.setText(secondary);
+		cardTitle.setText(firstNonEmpty(playback.getTitle()));
+		cardArtist.setText(firstNonEmpty(playback.getArtist()));
+		cardAlbum.setText(firstNonEmpty(playback.getAlbum()));
 
 		windowTitle.set(source + (service.isEmpty() ? "" : " · " + service)
 				+ (primary.isEmpty() ? "" : " :: " + primary) + " - jEISCP");
@@ -241,8 +273,8 @@ final class DisplayPanel {
 
 	/** NTM {@code 00:36/02:46}: elapsed left, total right, progress below; unknown parts ({@code --:--}) stay empty. */
 	private void refreshPlayTime() {
-		ReceiverState.PlayTime playTime = state.isNetworkInput() ? state.getPlayTime() : null;
-		String[] parts = playTime != null ? state.getTime().split("/") : new String[0];
+		NetPlayback.PlayTime playTime = state.isNetworkInput() ? state.playback().getPlayTime() : null;
+		String[] parts = playTime != null ? state.playback().getTime().split("/") : new String[0];
 		lcdElapsed.setText(parts.length > 0 ? parts[0].trim() : "");
 		lcdTotal.setText(parts.length > 1 && playTime.total() > 0 ? parts[1].trim() : "");
 
@@ -262,13 +294,13 @@ final class DisplayPanel {
 	}
 
 	private int seekTarget() {
-		ReceiverState.PlayTime playTime = state.getPlayTime();
+		NetPlayback.PlayTime playTime = state.playback().getPlayTime();
 		return playTime == null ? 0 : (int) Math.round(seekSlider.getValue() * playTime.total());
 	}
 
 	/** While dragging, the elapsed time shows where the click or drag will jump to. */
 	private void showSeekTarget() {
-		ReceiverState.PlayTime playTime = state.getPlayTime();
+		NetPlayback.PlayTime playTime = state.playback().getPlayTime();
 		if (playTime != null && playTime.total() > 0) {
 			lcdElapsed.setText(ReceiverControl.clock(seekTarget(), playTime.total() >= 3600));
 			playProgress.setProgress(seekSlider.getValue());
@@ -280,12 +312,12 @@ final class DisplayPanel {
 	}
 
 	void refreshNetList() {
-		List<String> lines = state.getNetLines();
+		List<String> lines = state.netList().getLines();
 		if (!netList.getItems().equals(lines)) {
 			netList.getItems().setAll(lines);
 		}
 		netList.refresh();
-		int cursor = state.getNetCursor();
+		int cursor = state.netList().getCursor();
 		if (cursor >= 0 && cursor < lines.size()) {
 			netList.scrollTo(Math.max(0, cursor - 2));
 		}
@@ -293,7 +325,7 @@ final class DisplayPanel {
 	}
 
 	void refreshScreen() {
-		byte[] art = state.getCoverArt();
+		byte[] art = state.cover().getImage();
 		if (art != shownCoverArt) {
 			shownCoverArt = art;
 			Image image = art == null ? null : new Image(new ByteArrayInputStream(art));
@@ -303,14 +335,26 @@ final class DisplayPanel {
 					image.getWidth() <= COVER_SIZE && image.getHeight() <= COVER_SIZE
 							? BackgroundSize.DEFAULT
 							: new BackgroundSize(1, 1, true, true, true, false))) : null);
+			coverAccent = hasCover ? accentOf(image) : -1;
 		}
-		boolean showCover = hasCover && state.isCoverArtCurrent();
-		cover.setVisible(showCover);
-		netList.setVisible(!showCover);
+		boolean net = state.isNetworkInput();
+		boolean showCover = net && hasCover && state.cover().isCurrent();
+		cardPage.setVisible(showCover);
+		listPage.setVisible(!showCover);
+		// bars and the card title take on the last cover's colour, also while a new title waits for its own cover
+		lcd.setStyle(net && hasCover && coverAccent >= 0 ? String.format("-lcd-accent: #%06x;", coverAccent) : "");
+	}
+
+	private static int accentOf(Image image) {
+		int width = (int) image.getWidth();
+		int height = (int) image.getHeight();
+		int[] pixels = new int[width * height];
+		image.getPixelReader().getPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixels, 0, width);
+		return CoverColors.accent(pixels);
 	}
 
 	void refreshPopup() {
-		ReceiverState.Popup current = state.getPopup();
+		NetList.Popup current = state.netList().getPopup();
 		boolean show = current != null;
 		if (show) {
 			popupTop.setText(current.topTitle());
@@ -340,7 +384,7 @@ final class DisplayPanel {
 	}
 
 	private void dismissPopup() {
-		state.dismissPopup();
+		state.netList().dismissPopup();
 		refreshPopup();
 	}
 
@@ -363,7 +407,7 @@ final class DisplayPanel {
 		protected void updateItem(String item, boolean empty) {
 			super.updateItem(item, empty);
 			setText(empty ? null : item);
-			pseudoClassStateChanged(CURSOR, !empty && getIndex() == state.getNetCursor());
+			pseudoClassStateChanged(CURSOR, !empty && getIndex() == state.netList().getCursor());
 		}
 	}
 }

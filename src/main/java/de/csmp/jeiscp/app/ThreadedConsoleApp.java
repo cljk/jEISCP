@@ -1,5 +1,6 @@
 package de.csmp.jeiscp.app;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
@@ -53,17 +54,25 @@ public class ThreadedConsoleApp {
 		}
 		
 		
+		File logFile = LogFile.install();
+		log.info("log file {}", logFile.getAbsolutePath());
+		Settings settings = Settings.user();
+
 		StartupWindow startup = null;	// with the GUI, search and connection show there instead of only on the console
 		if (ENABLE_GUI) {
 			LogBuffer.install();	// from the start, so the GUI's log window also shows the autodiscovery
 			startup = StartupWindow.open();
 		}
 
+		// the last receiver first, so a start needs no search while it is still there
+		String remembered = address == null ? settings.lastReceiver() : null;
 		FxGuiController gui = null;
 		while (conn == null) {
+			String target = address != null ? address : remembered;
+			boolean fromMemory = address == null && remembered != null;
 			EiscpDevice device = null;	// model, for the functions the GUI offers
 			EiscpConnector candidate;
-			if (address == null) {
+			if (target == null) {
 				if (startup != null) {
 					startup.searching(EiscpAutodiscovery.DEFAULT_TIMEOUT);
 				}
@@ -75,32 +84,41 @@ public class ThreadedConsoleApp {
 					continue;
 				}
 				candidate = new EiscpConnector(device.getIpAddress(), device.getPort());
+				target = device.getIpAddress() + (device.getPort() == EiscpConstants.DEFAULT_EISCP_PORT ? "" : ":" + device.getPort());
 			} else {
 				if (startup != null) {
-					startup.connecting(address);
+					startup.connecting(target);
 				}
 				try {
-					candidate = new EiscpConnector(host(address), port(address));
+					candidate = new EiscpConnector(host(target), port(target));
 				} catch (NumberFormatException ex) {
-					address = giveUp(startup, "Not an address: " + address, "", "");
+					remembered = null;
+					if (!fromMemory) {
+						address = giveUp(startup, "Not an address: " + target, "", "");
+					}
 					continue;
 				}
 				if (ENABLE_GUI) {
-					device = EiscpAutodiscovery.identify(host(address), port(address));
+					device = EiscpAutodiscovery.identify(host(target), port(target));
 				}
 			}
 			if (startup != null) {
-				startup.connecting(candidate.getAddress() + (device != null ? " · " + device.getDeviceType() : ""));
+				startup.connecting(target + (device != null ? " · " + device.getDeviceType() : ""));
 			}
 			// listens before connecting: right after the connect the receiver pushes the NET list title with the service
-			gui = ENABLE_GUI ? new FxGuiController(candidate, device) : null;
+			gui = ENABLE_GUI ? new FxGuiController(candidate, device, settings) : null;
 			try {
 				candidate.connect();	// later losses are reconnected in the background
 				conn = candidate;
+				settings.rememberReceiver(target);
 			} catch (IOException | IllegalArgumentException ex) {
 				candidate.close();
-				String target = address != null ? address : candidate.getAddress();
-				address = giveUp(startup, "Cannot connect to " + target + ": " + ex.getMessage(), "", "");
+				if (fromMemory) {
+					log.info("last receiver {} not reachable ({}), searching", target, ex.getMessage());
+					remembered = null;
+				} else {
+					address = giveUp(startup, "Cannot connect to " + target + ": " + ex.getMessage(), "", "");
+				}
 			}
 		}
 

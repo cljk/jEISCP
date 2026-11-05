@@ -54,16 +54,21 @@ Without `-a`, the autodiscovery broadcasts on every network interface and repeat
 
 ### Starter without Java and console
 
-    mvn -Pdist -DskipTests package
+    .\dist.ps1
 
-builds `target/dist/jEISCP`, a folder with its own Java runtime: start `jEISCP.exe` on Windows or `bin/jEISCP` on Linux, without a console window and without an installed Java. Copy or zip the whole folder. It is built for the system it is built on, so build the Windows starter on Windows and the Linux one on Linux. The log `eiscp.log` is written to the working directory.
+on Windows, or
+
+    ./dist.sh
+
+on Linux, builds `target/dist/jEISCP`, a folder with its own Java runtime: start `jEISCP.exe` on Windows or `bin/jEISCP` on Linux, without a console window and without an installed Java. Next to it the script packs the folder as `jEISCP-<version>-windows.zip` or `jEISCP-<version>-linux.tar.gz` to pass on. It is built for the system it is built on, so build the Windows starter on Windows and the Linux one on Linux. The log `eiscp.log` goes to `%LOCALAPPDATA%\jEISCP` on Windows and `~/.local/state/jeiscp` on Linux.
 
 Remote control
 --------------
 The GUI looks like a remote control in a borderless window: drag it to move it; the keys at its top right minimize or quit.
 
-* **Display:** input and NET service (e.g. Spotify, TuneIn), volume (drag the bar), title, artist and album, the NET/USB list with its cursor, cover art, and the playing time above a thin position bar. Clicking or dragging the bar jumps within the track, as far as the source allows it (USB and music servers usually do, radio streams don't). Album, time and cover are requested when jEISCP starts during playback. Messages of NET services, such as a TuneIn connection error, appear here too; a click, OK or Return closes them. If the connection to the receiver is lost, the display shows OFFLINE while jEISCP reconnects in the background.
-* **Keys:** power, inputs, volume rocker and mute, playback with repeat and shuffle (they light up, like play, pause and stop, as the receiver reports them), number keys, and SETUP / QUICK, which open the receiver's menus on the TV.
+* **Display:** input and NET service (e.g. Spotify, TuneIn), volume (drag the bar), title, artist and album over the NET/USB list with its cursor, or while a track plays its cover with the titles beside it, tinted in the cover's colour; long titles scroll. Below, the playing time above a thin position bar. Clicking or dragging the bar jumps within the track, as far as the source allows it (USB and music servers usually do, radio streams don't). Album, time and cover are requested when jEISCP starts during playback. Messages of NET services, such as a TuneIn connection error, appear here too; a click, OK or Return closes them. If the connection to the receiver is lost, the display shows OFFLINE while jEISCP reconnects in the background.
+* **Keys:** power, inputs, volume rocker and mute, playback with repeat and shuffle (they light up, like play, pause and stop, as the receiver reports them), number keys (folded behind "123"), and SETUP / QUICK, which open the receiver's menus on the TV.
+* **Memory:** jEISCP connects to the last receiver right away and searches only if it is gone; it also keeps the window position and the number keys.
 * **Direction pad:** the small NET and TV keys at its top corners decide what it controls: the NET/USB lists or the receiver's menus on the TV. The OK key shows the current target. NET is the default and returns with every input change; SETUP and QUICK switch to TV.
 * **"⋯" key:** all functions the connected model supports according to the command catalogue, e.g. listening mode, dimmer or late night. They are searchable and show their current value.
 * **Header:** the receiver's model and IP address. Clicking the address opens the receiver's web interface, e.g. http://192.168.0.97/.
@@ -87,7 +92,9 @@ java src/test/java/de/csmp/jeiscp/ReceiverEmulator.java 0
 
 ```bash
 ./run.sh -a 127.0.0.1:<port>
-``` [AGENTS.md](AGENTS.md) describes the architecture and how the command constants are generated from the catalogue.
+```
+
+[AGENTS.md](AGENTS.md) describes the architecture and how the command constants are generated from the catalogue.
 
 Status/Version
 ==============
