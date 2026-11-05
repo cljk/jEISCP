@@ -19,10 +19,17 @@ import static org.fusesource.jansi.Ansi.Color.*;
 public class ConsoleController implements Runnable, EiscpListener {
 	private static final Logger log = LoggerFactory.getLogger(ConsoleController.class);
 	
-	EiscpConnector conn = null; 
-	
+	EiscpConnector conn = null;
+	private final boolean exitOnEndOfInput;
+
 	public ConsoleController(EiscpConnector conn) {
+		this(conn, true);
+	}
+
+	/** @param exitOnEndOfInput {@code false} while a GUI keeps the application alive after stdin closes */
+	public ConsoleController(EiscpConnector conn, boolean exitOnEndOfInput) {
 		this.conn = conn;
+		this.exitOnEndOfInput = exitOnEndOfInput;
 	}
 	
 	
@@ -44,13 +51,22 @@ public class ConsoleController implements Runnable, EiscpListener {
             
             // start console loop - asking for input (commands)
             BufferedReader bin = new BufferedReader(new InputStreamReader(System.in));
-            boolean quit = false;
-            while (! quit) {
+            while (true) {
             	String input = bin.readLine();
+            	if (input == null) {
+            		// stdin closed, e.g. started without a console
+            		if (!exitOnEndOfInput) {
+            			log.info("console input closed");
+            			return;
+            		}
+            		break;
+            	}
+            	input = input.trim();
             	if ("quit".equalsIgnoreCase(input)) {
             		System.out.println("bye");
-            		quit = true;
-            	} else {
+            		break;
+            	}
+            	if (!input.isEmpty()) {
             		conn.sendIscpCommand(input);
             	}
             }

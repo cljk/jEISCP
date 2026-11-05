@@ -1,12 +1,12 @@
 package de.csmp.jeiscp.eiscp;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +28,7 @@ public class EiscpCommandsParser {
 	private static final String YAML_VALUES = "values";
 
 	private static final String EISCP_COMMANDS_YAML = "miracle2k-onkyo-eiscp/eiscp-commands.yaml";
+	private static final List<String> ZONES = List.of("main", "dock");
 
 	private static final Logger log = LoggerFactory.getLogger(EiscpCommandsParser.class);
 
@@ -61,18 +62,19 @@ public class EiscpCommandsParser {
 			idToCommandMap = new HashMap<String, Command>();
 			for (CommandBlock cmdBlock : getMainCommandBlocks()) {
 				for (Command cmd : cmdBlock.getValues()) {
-					idToCommandMap.put(cmd.getIdentifier(), cmd);
+					idToCommandMap.putIfAbsent(cmd.getIdentifier(), cmd);
 				}
 			}
 		}
 		return idToCommandMap;
 	}
-	
+
+	/** Blocks sharing a name (e.g. NLS, NLA, NLU are all "net-usb-list-info") resolve to the first one in the YAML. */
 	public static Map<String, CommandBlock> getIdToCommandBlockMap() {
 		if (idToCommandBlockMap == null) {
 			idToCommandBlockMap = new HashMap<String, CommandBlock>();
 			for (CommandBlock cmdBlock : getMainCommandBlocks()) {
-				idToCommandBlockMap.put(cmdBlock.getName(), cmdBlock);
+				idToCommandBlockMap.putIfAbsent(cmdBlock.getName(), cmdBlock);
 			}
 		}
 		return idToCommandBlockMap;
@@ -90,69 +92,59 @@ public class EiscpCommandsParser {
 		return getCommand(commandId).getIscpCommand();
 	}
 	
+	/** Commands of the main zone plus the "dock" zone, where upstream keeps the NET/USB commands (NTC, NLS, NJA, ...). */
 	public static List<CommandBlock> getMainCommandBlocks() {
 		if (mainCommandBlocks == null) {
-			Map<String, Object> main = (Map<String, Object>) getEiscpCommands().get("main");
-			
 			List<CommandBlock> mc = new LinkedList<CommandBlock>();
-			for (String mainCommand : main.keySet()) {
-				Map<String, Object> cmdMap = (Map<String, Object>) main.get(mainCommand);
-				
-				CommandBlock cmdBlock = new CommandBlock();
-				cmdBlock.setCommand(mainCommand);
-				Object yamlNameValue = cmdMap.get(YAML_NAME);
-				if (yamlNameValue instanceof ArrayList) {
-					yamlNameValue = ((ArrayList) yamlNameValue).get(0);	// choose first
-				}
-				cmdBlock.setName((String) yamlNameValue);
-				cmdBlock.setDescription((String) cmdMap.get(YAML_DESCRIPTION));
-				mc.add(cmdBlock);
-				//log.info(cmdBlock);
-				
-				Map subCmdMap = (Map) cmdMap.get(YAML_VALUES);
-				Set subCmdMapKeyset = subCmdMap.keySet();
-				for (Object subCommandKeyO : subCmdMapKeyset) {
-					Map<String, Object> subcommandO = (Map<String, Object>) subCmdMap.get(subCommandKeyO);
-					if (subCommandKeyO instanceof String) {
-						String subCommand = (String) subCommandKeyO;
-						Command subC = new Command(cmdBlock);
-						subC.setCommand(subCommand);
-						
-						String name = null;
-						Object nameO = subcommandO.get(YAML_NAME);
-						if (nameO == null) {
-							//log.debug("no name for subcommand " + subCommand);
-						} else if (nameO instanceof String) {
-							name = (String) nameO;
-						} else {
-							name = (String) ((ArrayList) nameO).get(0);
-						}
-						subC.setName( name );
-						
-						subC.setDescription((String) subcommandO.get(YAML_DESCRIPTION));
-						subC.setModels((String) subcommandO.get(YAML_MODELS));
-						
-						cmdBlock.getValues().add(subC);
-						// log.info("   " + subC); 
-					} else {
-						if (log.isDebugEnabled())
-							log.debug("subCommandKey unhandeled: " + subCommandKeyO.getClass().getName() + " - " + subCommandKeyO + " for " + cmdBlock);
+			for (String zone : ZONES) {
+				Map<String, Object> commands = (Map<String, Object>) getEiscpCommands().get(zone);
+				if (commands != null) {
+					for (String command : commands.keySet()) {
+						mc.add(parseCommandBlock(command, (Map<String, Object>) commands.get(command)));
 					}
 				}
-				
 			}
-			
 			mainCommandBlocks = mc;
 		}
 		return mainCommandBlocks;
 	}
+
+	private static CommandBlock parseCommandBlock(String command, Map<String, Object> cmdMap) {
+		CommandBlock cmdBlock = new CommandBlock();
+		cmdBlock.setCommand(command);
+		cmdBlock.setName(firstName(cmdMap.get(YAML_NAME)));
+		cmdBlock.setDescription((String) cmdMap.get(YAML_DESCRIPTION));
+
+		Map<Object, Map<String, Object>> values = (Map<Object, Map<String, Object>>) cmdMap.get(YAML_VALUES);
+		for (Map.Entry<Object, Map<String, Object>> value : values.entrySet()) {
+			if (value.getKey() instanceof String) {
+				Command subC = new Command(cmdBlock);
+				subC.setCommand((String) value.getKey());
+				subC.setName(firstName(value.getValue().get(YAML_NAME)));
+				subC.setDescription((String) value.getValue().get(YAML_DESCRIPTION));
+				subC.setModels((String) value.getValue().get(YAML_MODELS));
+				cmdBlock.getValues().add(subC);
+			} else if (log.isDebugEnabled()) {
+				// value ranges such as [0, 100] are keyed by lists
+				log.debug("subCommandKey unhandeled: " + value.getKey().getClass().getName() + " - " + value.getKey() + " for " + cmdBlock);
+			}
+		}
+		return cmdBlock;
+	}
+
+	/** YAML names are a string or a list of alternative names. */
+	private static String firstName(Object name) {
+		return name instanceof List ? (String) ((List<?>) name).get(0) : (String) name;
+	}
 	
 	public static Map<String, Object> getEiscpCommands() {
 		if (ec == null) {
-			InputStream is = EiscpCommandsParser.class.getClassLoader().getResourceAsStream(EISCP_COMMANDS_YAML);
-			
-			Yaml y = new Yaml();
-			ec = (Map<String, Object>) y.load(is);
+			try (InputStream is = EiscpCommandsParser.class.getClassLoader().getResourceAsStream(EISCP_COMMANDS_YAML)) {
+				Yaml y = new Yaml();
+				ec = (Map<String, Object>) y.load(is);
+			} catch (IOException ex) {
+				throw new UncheckedIOException(ex);
+			}
 			log.debug("parsed YAML @ " + EISCP_COMMANDS_YAML);
 		}
 		return ec;

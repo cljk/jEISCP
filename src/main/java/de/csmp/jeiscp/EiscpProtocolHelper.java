@@ -5,6 +5,7 @@ import static de.csmp.jeiscp.EiscpConstants.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.HexFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,13 +199,7 @@ public class EiscpProtocolHelper {
 	 * @return
 	 */
 	public static String convertToHexString(byte[] byteArray) {
-		String ret = "";
-		for (int i=0; i<byteArray.length; i++) {
-			if (i > 0) ret += " ";
-			if (byteArray[i] < 16) ret += "0";
-			ret += Integer.toString(byteArray[i], 16);
-		}
-		return ret.toUpperCase();
+		return HexFormat.ofDelimiter(" ").withUpperCase().formatHex(byteArray);
 	}
 
 	public static String convertToHexString(byte sByte) {

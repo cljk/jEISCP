@@ -33,6 +33,13 @@ public static final String _12V_TRIGGER_A_ON_ID = "12v-trigger-a::on";
 public static final String _12V_TRIGGER_A_ON_ISCP = "TGA01";
 
 /**
+ * ISCP Command: TGAQSTN
+ * gets 12V Trigger A Status
+ */
+public static final String _12V_TRIGGER_A_QUERY_ID = "12v-trigger-a::query";
+public static final String _12V_TRIGGER_A_QUERY_ISCP = "TGAQSTN";
+
+/**
  * CommandBlock
  * ISCP Command prefix: TGB
  * 12V Trigger B Command
@@ -53,6 +60,13 @@ public static final String _12V_TRIGGER_B_OFF_ISCP = "TGB00";
  */
 public static final String _12V_TRIGGER_B_ON_ID = "12v-trigger-b::on";
 public static final String _12V_TRIGGER_B_ON_ISCP = "TGB01";
+
+/**
+ * ISCP Command: TGBQSTN
+ * gets 12V Trigger B Status
+ */
+public static final String _12V_TRIGGER_B_QUERY_ID = "12v-trigger-b::query";
+public static final String _12V_TRIGGER_B_QUERY_ISCP = "TGBQSTN";
 
 /**
  * CommandBlock
@@ -77,26 +91,279 @@ public static final String _12V_TRIGGER_C_ON_ID = "12v-trigger-c::on";
 public static final String _12V_TRIGGER_C_ON_ISCP = "TGC01";
 
 /**
- * CommandBlock
- * ISCP Command prefix: IFA
- * Audio Infomation Command
+ * ISCP Command: TGCQSTN
+ * gets 12V Trigger C Status
  */
-public static final String AUDIO_INFOMATION_ID = "audio-infomation";
-public static final String AUDIO_INFOMATION_ISCP = "IFA";
+public static final String _12V_TRIGGER_C_QUERY_ID = "12v-trigger-c::query";
+public static final String _12V_TRIGGER_C_QUERY_ISCP = "TGCQSTN";
 
 /**
- * ISCP Command: IFAnnnnn:nnnnn
- * Infomation of Audio(Same Immediate Display ',' is separator of infomations)
+ * CommandBlock
+ * ISCP Command prefix: AVS
+ * A/V Sync
  */
-public static final String AUDIO_INFOMATION_NULL_ID = "audio-infomation::null";
-public static final String AUDIO_INFOMATION_NULL_ISCP = "IFAnnnnn:nnnnn";
+public static final String A_V_SYNC_ID = "a-v-sync";
+public static final String A_V_SYNC_ISCP = "AVS";
+
+/**
+ * ISCP Command: AVSDOWN
+ * sets A/V Sync is decreased (step is depend on model)
+ */
+public static final String A_V_SYNC_IS_DECREASED_ID = "a-v-sync::is-decreased";
+public static final String A_V_SYNC_IS_DECREASED_ISCP = "AVSDOWN";
+
+/**
+ * ISCP Command: AVSUP
+ * sets A/V Sync is increased (step is depend on model)
+ */
+public static final String A_V_SYNC_IS_INCREASED_ID = "a-v-sync::is-increased";
+public static final String A_V_SYNC_IS_INCREASED_ISCP = "AVSUP";
+
+/**
+ * ISCP Command: AVSsnnn
+ * sets A/V Sync
+ s: sign ( "+" or "-" or "0")
+ If set minus value, s="-". (only HDMI Lipsync is available)
+ If set plus value, s="+"
+ If set zero value, s="0"
+nnn : value; If set 100msec, nnn="100"
+ */
+public static final String A_V_SYNC_OFFSET_ID = "a-v-sync::offset";
+public static final String A_V_SYNC_OFFSET_ISCP = "AVSsnnn";
+
+/**
+ * ISCP Command: AVSQSTN
+ * gets A/V Sync Value
+ */
+public static final String A_V_SYNC_QUERY_ID = "a-v-sync::query";
+public static final String A_V_SYNC_QUERY_ISCP = "AVSQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: AEQ
+ * AccuEQ
+ */
+public static final String ACCUEQ_ID = "accueq";
+public static final String ACCUEQ_ISCP = "AEQ";
+
+/**
+ * ISCP Command: AEQ00
+ * sets AccuEQ Off
+ */
+public static final String ACCUEQ_OFF_ID = "accueq::off";
+public static final String ACCUEQ_OFF_ISCP = "AEQ00";
+
+/**
+ * ISCP Command: AEQ01
+ * sets AccuEQ On, On(All Ch)
+ */
+public static final String ACCUEQ_ON_ID = "accueq::on";
+public static final String ACCUEQ_ON_ISCP = "AEQ01";
+
+/**
+ * ISCP Command: AEQQSTN
+ * gets The AccuEQ State
+ */
+public static final String ACCUEQ_QUERY_ID = "accueq::query";
+public static final String ACCUEQ_QUERY_ISCP = "AEQQSTN";
+
+/**
+ * ISCP Command: AEQUP
+ * sets AccuEQ State Wrap-Around Up
+ */
+public static final String ACCUEQ_UP_ID = "accueq::up";
+public static final String ACCUEQ_UP_ISCP = "AEQUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: AAL
+ * Airplay Album Name Info (Airplay Model Only)
+ */
+public static final String AIRPLAY_ALBUM_NAME_INFO_ID = "airplay-album-name-info";
+public static final String AIRPLAY_ALBUM_NAME_INFO_ISCP = "AAL";
+
+/**
+ * ISCP Command: AALnnnnnnn
+ * NET/USB Album Name (variable-length, 64 Unicode letters [UTF-8 encoded] max , for Network Control only)
+ */
+public static final String AIRPLAY_ALBUM_NAME_INFO_ALBUM_NAME_ID = "airplay-album-name-info::album-name";
+public static final String AIRPLAY_ALBUM_NAME_INFO_ALBUM_NAME_ISCP = "AALnnnnnnn";
+
+/**
+ * ISCP Command: AALQSTN
+ * gets iPod Album Name
+ */
+public static final String AIRPLAY_ALBUM_NAME_INFO_QUERY_ID = "airplay-album-name-info::query";
+public static final String AIRPLAY_ALBUM_NAME_INFO_QUERY_ISCP = "AALQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: AAT
+ * Airplay Artist Name Info (Airplay Model Only)
+ */
+public static final String AIRPLAY_ARTIST_NAME_INFO_ID = "airplay-artist-name-info";
+public static final String AIRPLAY_ARTIST_NAME_INFO_ISCP = "AAT";
+
+/**
+ * ISCP Command: AATnnnnnnnnnn
+ * NET/USB Artist Name (variable-length, 64 Unicode letters [UTF-8 encoded] max , for Network Control only)
+ */
+public static final String AIRPLAY_ARTIST_NAME_INFO_NULL_ID = "airplay-artist-name-info::null";
+public static final String AIRPLAY_ARTIST_NAME_INFO_NULL_ISCP = "AATnnnnnnnnnn";
+
+/**
+ * ISCP Command: AATQSTN
+ * gets iPod Artist Name
+ */
+public static final String AIRPLAY_ARTIST_NAME_INFO_QUERY_ID = "airplay-artist-name-info::query";
+public static final String AIRPLAY_ARTIST_NAME_INFO_QUERY_ISCP = "AATQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: AST
+ * Airplay Play Status (Airplay Model Only)
+ */
+public static final String AIRPLAY_PLAY_STATUS_ID = "airplay-play-status";
+public static final String AIRPLAY_PLAY_STATUS_ISCP = "AST";
+
+/**
+ * ISCP Command: ASTprs
+ * NET/USB Play Status (3 letters)
+p -> Play Status: "S": STOP, "P": Play, "p": Pause
+r -> Repeat Status: "-": Off
+s -> Shuffle Status: "-": Off
+ */
+public static final String AIRPLAY_PLAY_STATUS_PRS_ID = "airplay-play-status::prs";
+public static final String AIRPLAY_PLAY_STATUS_PRS_ISCP = "ASTprs";
+
+/**
+ * ISCP Command: ASTQSTN
+ * gets the Net/USB Status
+ */
+public static final String AIRPLAY_PLAY_STATUS_QUERY_ID = "airplay-play-status::query";
+public static final String AIRPLAY_PLAY_STATUS_QUERY_ISCP = "ASTQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: ATM
+ * Airplay Time Info (Airplay Model Only)
+ */
+public static final String AIRPLAY_TIME_INFO_ID = "airplay-time-info";
+public static final String AIRPLAY_TIME_INFO_ISCP = "ATM";
+
+/**
+ * ISCP Command: ATMmm:ss/mm:ss
+ * NET/USB Time Info (Elapsed time/Track Time Max 99:59)
+ */
+public static final String AIRPLAY_TIME_INFO_MM_SS_MM_SS_ID = "airplay-time-info::mm-ss-mm-ss";
+public static final String AIRPLAY_TIME_INFO_MM_SS_MM_SS_ISCP = "ATMmm:ss/mm:ss";
+
+/**
+ * ISCP Command: ATMQSTN
+ * gets iPod Time Info
+ */
+public static final String AIRPLAY_TIME_INFO_QUERY_ID = "airplay-time-info::query";
+public static final String AIRPLAY_TIME_INFO_QUERY_ISCP = "ATMQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: ATI
+ * Airplay Title Name (Airplay Model Only)
+ */
+public static final String AIRPLAY_TITLE_NAME_ID = "airplay-title-name";
+public static final String AIRPLAY_TITLE_NAME_ISCP = "ATI";
+
+/**
+ * ISCP Command: ATIQSTN
+ * gets HD Radio Title
+ */
+public static final String AIRPLAY_TITLE_NAME_QUERY_ID = "airplay-title-name::query";
+public static final String AIRPLAY_TITLE_NAME_QUERY_ISCP = "ATIQSTN";
+
+/**
+ * ISCP Command: ATInnnnnnnnnn
+ * NET/USB Title Name (variable-length, 64 Unicode letters [UTF-8 encoded] max , for Network Control only)
+ */
+public static final String AIRPLAY_TITLE_NAME_TITLE_ID = "airplay-title-name::title";
+public static final String AIRPLAY_TITLE_NAME_TITLE_ISCP = "ATInnnnnnnnnn";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: ACE
+ * All Channel EQ for Temporary Value
+ */
+public static final String ALL_CHANNEL_EQ_FOR_TEMPORARY_VALUE_ID = "all-channel-eq-for-temporary-value";
+public static final String ALL_CHANNEL_EQ_FOR_TEMPORARY_VALUE_ISCP = "ACE";
+
+/**
+ * ISCP Command: ACEaaabbbcccdddeeefffggghhhiii
+ * sets All Channel EQ for Temporary Value
+xxx=-18(-12.0dB)~000(0.0dB)~+18(+12.0dB)
+
+aaa:63Hz
+bbb:125Hz
+ccc:250Hz
+ddd:500Hz
+eee:1kHz
+fff:2kHz
+ggg:4kHz
+hhh:8kHz
+iii:16kHz
+ */
+public static final String ALL_CHANNEL_EQ_FOR_TEMPORARY_VALUE_EQ_ID = "all-channel-eq-for-temporary-value::eq";
+public static final String ALL_CHANNEL_EQ_FOR_TEMPORARY_VALUE_EQ_ISCP = "ACEaaabbbcccdddeeefffggghhhiii";
+
+/**
+ * ISCP Command: ACEQSTN
+ * gets The Phase Control
+ */
+public static final String ALL_CHANNEL_EQ_FOR_TEMPORARY_VALUE_QUERY_ID = "all-channel-eq-for-temporary-value::query";
+public static final String ALL_CHANNEL_EQ_FOR_TEMPORARY_VALUE_QUERY_ISCP = "ACEQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: IFA
+ * Audio Information Command
+ */
+public static final String AUDIO_INFORMATION_ID = "audio-information";
+public static final String AUDIO_INFORMATION_ISCP = "IFA";
+
+/**
+ * ISCP Command: IFAa..a,b..b,c…c,d..d,e…e,f…f,
+ * Infomation of Audio(Same Immediate Display ',' is separator of infomations)
+a...a: Audio Input Port
+b…b: Input Signal Format
+c…c: Sampling Frequency
+d…d: Input Signal Channel
+e…e: Listening Mode
+f…f: Output Signal Channel
+ */
+public static final String AUDIO_INFORMATION_A_A_B_B_C_C_D_D_E_E_F_F_ID = "audio-information::a-a-b-b-c-c-d-d-e-e-f-f";
+public static final String AUDIO_INFORMATION_A_A_B_B_C_C_D_D_E_E_F_F_ISCP = "IFAa..a,b..b,c…c,d..d,e…e,f…f,";
+
+/**
+ * ISCP Command: IFAa..a,b..b,c…c,d..d,e…e,f…f,g…g,h…h,i…I,j…j,k…k
+ * Information of Audio(Same Immediate Display ',' is separator of infomartions)
+a...a: Audio Input Port
+b…b: Input Signal Format
+c…c: Sampling Frequency
+d…d: Input Signal Channel
+e…e: Listening Mode
+f…f: Output Signal Channel
+g…g: Output Sampling Frequency
+h...h: PQLS (Off/2ch/Multich/Bitstream)
+i...i: Auto Phase Control Current Delay (0ms - 16ms / ---)
+j...j: Auto Phase Control Phase (Normal/Reverse)
+ */
+public static final String AUDIO_INFORMATION_A_A_B_B_C_C_D_D_E_E_F_F_G_G_H_H_I_I_J_J_ID = "audio-information::a-a-b-b-c-c-d-d-e-e-f-f-g-g-h-h-i-i-j-j";
+public static final String AUDIO_INFORMATION_A_A_B_B_C_C_D_D_E_E_F_F_G_G_H_H_I_I_J_J_ISCP = "IFAa..a,b..b,c…c,d..d,e…e,f…f,g…g,h…h,i…I,j…j,k…k";
 
 /**
  * ISCP Command: IFAQSTN
  * gets Infomation of Audio
  */
-public static final String AUDIO_INFOMATION_QUERY_ID = "audio-infomation::query";
-public static final String AUDIO_INFOMATION_QUERY_ISCP = "IFAQSTN";
+public static final String AUDIO_INFORMATION_QUERY_ID = "audio-information::query";
+public static final String AUDIO_INFORMATION_QUERY_ISCP = "IFAQSTN";
 
 /**
  * CommandBlock
@@ -133,6 +400,118 @@ public static final String AUDIO_MUTING_QUERY_ISCP = "AMTQSTN";
  */
 public static final String AUDIO_MUTING_TOGGLE_ID = "audio-muting::toggle";
 public static final String AUDIO_MUTING_TOGGLE_ISCP = "AMTTG";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: CMT
+ * Audio Muting by Channel Command
+ */
+public static final String AUDIO_MUTING_BY_CHANNEL_ID = "audio-muting-by-channel";
+public static final String AUDIO_MUTING_BY_CHANNEL_ISCP = "CMT";
+
+/**
+ * ISCP Command: CMTaabbccddeeffgghhiijjkkllmm
+ * sets Audio Muting by Channel
+xx=00 Muting Off
+xx=01 Muting On
+xx=TG Muting Wrap-Around
+for not exist channel is always 00.
+
+aa:Front Left
+bb:Front Right
+cc:Center
+dd:Surround Left
+ee:Surround Right
+ff:Surround Back Left
+gg:Surround Back Right
+hh:Subwoofer 1
+ii:Height 1 Left
+jj:Height 1 Right
+kk:Height 2 Left
+ll:Height2 Right
+mm:Subwoofer 2
+ */
+public static final String AUDIO_MUTING_BY_CHANNEL_AABBCCDDEEFFGGHHIIJJKKLLMM_ID = "audio-muting-by-channel::aabbccddeeffgghhiijjkkllmm";
+public static final String AUDIO_MUTING_BY_CHANNEL_AABBCCDDEEFFGGHHIIJJKKLLMM_ISCP = "CMTaabbccddeeffgghhiijjkkllmm";
+
+/**
+ * ISCP Command: CMTQSTN
+ * gets the Audio Muting State
+ */
+public static final String AUDIO_MUTING_BY_CHANNEL_QUERY_ID = "audio-muting-by-channel::query";
+public static final String AUDIO_MUTING_BY_CHANNEL_QUERY_ISCP = "CMTQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: ARC
+ * Audio Return Channel
+ */
+public static final String AUDIO_RETURN_CHANNEL_ID = "audio-return-channel";
+public static final String AUDIO_RETURN_CHANNEL_ISCP = "ARC";
+
+/**
+ * ISCP Command: ARC01
+ * sets Audio Return Channel Auto
+ */
+public static final String AUDIO_RETURN_CHANNEL_AUTO_ID = "audio-return-channel::auto";
+public static final String AUDIO_RETURN_CHANNEL_AUTO_ISCP = "ARC01";
+
+/**
+ * ISCP Command: ARC00
+ * sets Audio Return Channel Off
+ */
+public static final String AUDIO_RETURN_CHANNEL_OFF_ID = "audio-return-channel::off";
+public static final String AUDIO_RETURN_CHANNEL_OFF_ISCP = "ARC00";
+
+/**
+ * ISCP Command: ARCQSTN
+ * gets The Audio Return Channel State
+ */
+public static final String AUDIO_RETURN_CHANNEL_QUERY_ID = "audio-return-channel::query";
+public static final String AUDIO_RETURN_CHANNEL_QUERY_ISCP = "ARCQSTN";
+
+/**
+ * ISCP Command: ARCUP
+ * sets Audio Return Channel Wrap-Around
+ */
+public static final String AUDIO_RETURN_CHANNEL_UP_ID = "audio-return-channel::up";
+public static final String AUDIO_RETURN_CHANNEL_UP_ISCP = "ARCUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: ASC
+ * Audio Scalar
+ */
+public static final String AUDIO_SCALAR_ID = "audio-scalar";
+public static final String AUDIO_SCALAR_ISCP = "ASC";
+
+/**
+ * ISCP Command: ASC00
+ * sets Audio Scalar Auto
+ */
+public static final String AUDIO_SCALAR_AUTO_ID = "audio-scalar::auto";
+public static final String AUDIO_SCALAR_AUTO_ISCP = "ASC00";
+
+/**
+ * ISCP Command: ASC01
+ * sets Audio Scalar Manual
+ */
+public static final String AUDIO_SCALAR_MANUAL_ID = "audio-scalar::manual";
+public static final String AUDIO_SCALAR_MANUAL_ISCP = "ASC01";
+
+/**
+ * ISCP Command: ASCQSTN
+ * gets The Audio Scalar State
+ */
+public static final String AUDIO_SCALAR_QUERY_ID = "audio-scalar::query";
+public static final String AUDIO_SCALAR_QUERY_ISCP = "ASCQSTN";
+
+/**
+ * ISCP Command: ASCUP
+ * sets Audio Scalar Wrap-Around
+ */
+public static final String AUDIO_SCALAR_UP_ID = "audio-scalar::up";
+public static final String AUDIO_SCALAR_UP_ISCP = "ASCUP";
 
 /**
  * CommandBlock
@@ -197,6 +576,13 @@ public static final String AUDIO_SELECTOR_ILINK_ISCP = "SLA03";
  */
 public static final String AUDIO_SELECTOR_MULTI_CHANNEL_ID = "audio-selector::multi-channel";
 public static final String AUDIO_SELECTOR_MULTI_CHANNEL_ISCP = "SLA01";
+
+/**
+ * ISCP Command: SLA0F
+ * sets None
+ */
+public static final String AUDIO_SELECTOR_NONE_ID = "audio-selector::none";
+public static final String AUDIO_SELECTOR_NONE_ISCP = "SLA0F";
 
 /**
  * ISCP Command: SLAQSTN
@@ -343,193 +729,180 @@ public static final String AUDYSSEY_DYNAMIC_VOLUME_UP_ISCP = "ADVUP";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: APD
+ * Auto Power Down
+ */
+public static final String AUTO_POWER_DOWN_ID = "auto-power-down";
+public static final String AUTO_POWER_DOWN_ISCP = "APD";
+
+/**
+ * ISCP Command: APD00
+ * sets Auto Power Down Off
+ */
+public static final String AUTO_POWER_DOWN_OFF_ID = "auto-power-down::off";
+public static final String AUTO_POWER_DOWN_OFF_ISCP = "APD00";
+
+/**
+ * ISCP Command: APD01
+ * sets Auto Power Down On
+ */
+public static final String AUTO_POWER_DOWN_ON_ID = "auto-power-down::on";
+public static final String AUTO_POWER_DOWN_ON_ISCP = "APD01";
+
+/**
+ * ISCP Command: APDQSTN
+ * gets The Auto Power Down State
+ */
+public static final String AUTO_POWER_DOWN_QUERY_ID = "auto-power-down::query";
+public static final String AUTO_POWER_DOWN_QUERY_ISCP = "APDQSTN";
+
+/**
+ * ISCP Command: APDUP
+ * sets Auto Power Down Wrap-Around
+ */
+public static final String AUTO_POWER_DOWN_UP_ID = "auto-power-down::up";
+public static final String AUTO_POWER_DOWN_UP_ISCP = "APDUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: BCS
+ * Battery Charge Status Command (Battery Model Only)
+ */
+public static final String BATTERY_CHARGE_STATUS_ID = "battery-charge-status";
+public static final String BATTERY_CHARGE_STATUS_ISCP = "BCS";
+
+/**
+ * ISCP Command: BCS00
+ * charging
+ */
+public static final String BATTERY_CHARGE_STATUS_CHARGING_ID = "battery-charge-status::charging";
+public static final String BATTERY_CHARGE_STATUS_CHARGING_ISCP = "BCS00";
+
+/**
+ * ISCP Command: BCS01
+ * charge completed
+ */
+public static final String BATTERY_CHARGE_STATUS_COMPLETED_ID = "battery-charge-status::completed";
+public static final String BATTERY_CHARGE_STATUS_COMPLETED_ISCP = "BCS01";
+
+/**
+ * ISCP Command: BCS12
+ * battery level High
+ */
+public static final String BATTERY_CHARGE_STATUS_HIGH_ID = "battery-charge-status::high";
+public static final String BATTERY_CHARGE_STATUS_HIGH_ISCP = "BCS12";
+
+/**
+ * ISCP Command: BCS10
+ * battery level Low
+ */
+public static final String BATTERY_CHARGE_STATUS_LOW_ID = "battery-charge-status::low";
+public static final String BATTERY_CHARGE_STATUS_LOW_ISCP = "BCS10";
+
+/**
+ * ISCP Command: BCS11
+ * battery level Middle
+ */
+public static final String BATTERY_CHARGE_STATUS_MIDDLE_ID = "battery-charge-status::middle";
+public static final String BATTERY_CHARGE_STATUS_MIDDLE_ISCP = "BCS11";
+
+/**
+ * ISCP Command: BCSQSTN
+ * gets battery charge status
+ */
+public static final String BATTERY_CHARGE_STATUS_QUERY_ID = "battery-charge-status::query";
+public static final String BATTERY_CHARGE_STATUS_QUERY_ISCP = "BCSQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NBT
+ * Bluetooth(Internal) Operation Command
+ */
+public static final String BLUETOOTH_INTERNAL_ID = "bluetooth-internal";
+public static final String BLUETOOTH_INTERNAL_ISCP = "NBT";
+
+/**
+ * ISCP Command: NBTCLEAR
+ * CLEAR PAIRING INFORMATION
+ */
+public static final String BLUETOOTH_INTERNAL_CLEAR_ID = "bluetooth-internal::clear";
+public static final String BLUETOOTH_INTERNAL_CLEAR_ISCP = "NBTCLEAR";
+
+/**
+ * ISCP Command: NBTPAIRING
+ * PAIRING
+ */
+public static final String BLUETOOTH_INTERNAL_PAIRING_ID = "bluetooth-internal::pairing";
+public static final String BLUETOOTH_INTERNAL_PAIRING_ISCP = "NBTPAIRING";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NBS
+ * Bluetooth Setting Operation Command
+ */
+public static final String BLUETOOTH_SETTING_ID = "bluetooth-setting";
+public static final String BLUETOOTH_SETTING_ISCP = "NBS";
+
+/**
+ * ISCP Command: NBSOFF
+ * sets Bluetooth Off
+ */
+public static final String BLUETOOTH_SETTING_OFF_ID = "bluetooth-setting::off";
+public static final String BLUETOOTH_SETTING_OFF_ISCP = "NBSOFF";
+
+/**
+ * ISCP Command: NBSON
+ * sets Bluetooth On
+ */
+public static final String BLUETOOTH_SETTING_ON_ID = "bluetooth-setting::on";
+public static final String BLUETOOTH_SETTING_ON_ISCP = "NBSON";
+
+/**
+ * ISCP Command: NBSQSTN
+ * gets Bluetooth Setting
+ */
+public static final String BLUETOOTH_SETTING_QUERY_ID = "bluetooth-setting::query";
+public static final String BLUETOOTH_SETTING_QUERY_ISCP = "NBSQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: CST
+ * CD Play Status
+ */
+public static final String CD_PLAY_STATUS_ID = "cd-play-status";
+public static final String CD_PLAY_STATUS_ISCP = "CST";
+
+/**
+ * ISCP Command: CSTQSTN
+ * gets CD Play Status
+ */
+public static final String CD_PLAY_STATUS_QUERY_ID = "cd-play-status::query";
+public static final String CD_PLAY_STATUS_QUERY_ISCP = "CSTQSTN";
+
+/**
+ * ISCP Command: CSTprs
+ * CD Play Status (3 letters)
+p -> Play Status: "S": STOP, "P": Play, "p": Pause, "F": FF, "R": FR
+r -> Repeat Status: "-": Off, "R": All,  "1": Repeat 1
+s -> Shuffle(Random) Status: "-": Off, "S": All
+ */
+public static final String CD_PLAY_STATUS_STATUS_ID = "cd-play-status::status";
+public static final String CD_PLAY_STATUS_STATUS_ISCP = "CSTprs";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: CCD
- * CD Player Operation Command
+ * CD Player Operation Command  (Include CD Function Model Only)
  */
 public static final String CD_PLAYER_ID = "cd-player";
 public static final String CD_PLAYER_ISCP = "CCD";
 
 /**
- * ISCP Command: CCD0
- * 0.0
+ * ISCP Command: CCDSKIP.F
+ * >>I
  */
-public static final String CD_PLAYER_0_ID = "cd-player::0";
-public static final String CD_PLAYER_0_ISCP = "CCD0";
-
-/**
- * ISCP Command: CCD1
- * 1.0
- */
-public static final String CD_PLAYER_1_ID = "cd-player::1";
-public static final String CD_PLAYER_1_ISCP = "CCD1";
-
-/**
- * ISCP Command: CCD+10
- * +10
- */
-public static final String CD_PLAYER_10_ID = "cd-player::10";
-public static final String CD_PLAYER_10_ISCP = "CCD+10";
-
-/**
- * ISCP Command: CCD2
- * 2.0
- */
-public static final String CD_PLAYER_2_ID = "cd-player::2";
-public static final String CD_PLAYER_2_ISCP = "CCD2";
-
-/**
- * ISCP Command: CCD3
- * 3.0
- */
-public static final String CD_PLAYER_3_ID = "cd-player::3";
-public static final String CD_PLAYER_3_ISCP = "CCD3";
-
-/**
- * ISCP Command: CCD4
- * 4.0
- */
-public static final String CD_PLAYER_4_ID = "cd-player::4";
-public static final String CD_PLAYER_4_ISCP = "CCD4";
-
-/**
- * ISCP Command: CCD5
- * 5.0
- */
-public static final String CD_PLAYER_5_ID = "cd-player::5";
-public static final String CD_PLAYER_5_ISCP = "CCD5";
-
-/**
- * ISCP Command: CCD6
- * 6.0
- */
-public static final String CD_PLAYER_6_ID = "cd-player::6";
-public static final String CD_PLAYER_6_ISCP = "CCD6";
-
-/**
- * ISCP Command: CCD7
- * 7.0
- */
-public static final String CD_PLAYER_7_ID = "cd-player::7";
-public static final String CD_PLAYER_7_ISCP = "CCD7";
-
-/**
- * ISCP Command: CCD8
- * 8.0
- */
-public static final String CD_PLAYER_8_ID = "cd-player::8";
-public static final String CD_PLAYER_8_ISCP = "CCD8";
-
-/**
- * ISCP Command: CCD9
- * 9.0
- */
-public static final String CD_PLAYER_9_ID = "cd-player::9";
-public static final String CD_PLAYER_9_ISCP = "CCD9";
-
-/**
- * ISCP Command: CCDCLEAR
- * CLEAR
- */
-public static final String CD_PLAYER_CLEAR_ID = "cd-player::clear";
-public static final String CD_PLAYER_CLEAR_ISCP = "CCDCLEAR";
-
-/**
- * ISCP Command: CCDD.MODE
- * D.MODE
- */
-public static final String CD_PLAYER_D_MODE_ID = "cd-player::d-mode";
-public static final String CD_PLAYER_D_MODE_ISCP = "CCDD.MODE";
-
-/**
- * ISCP Command: CCDD.SKIP
- * DISC +
- */
-public static final String CD_PLAYER_D_SKIP_ID = "cd-player::d-skip";
-public static final String CD_PLAYER_D_SKIP_ISCP = "CCDD.SKIP";
-
-/**
- * ISCP Command: CCDDISC.F
- * DISC +
- */
-public static final String CD_PLAYER_DISC_F_ID = "cd-player::disc-f";
-public static final String CD_PLAYER_DISC_F_ISCP = "CCDDISC.F";
-
-/**
- * ISCP Command: CCDDISC.R
- * DISC -
- */
-public static final String CD_PLAYER_DISC_R_ID = "cd-player::disc-r";
-public static final String CD_PLAYER_DISC_R_ISCP = "CCDDISC.R";
-
-/**
- * ISCP Command: CCDDISC1
- * DISC1
- */
-public static final String CD_PLAYER_DISC1_ID = "cd-player::disc1";
-public static final String CD_PLAYER_DISC1_ISCP = "CCDDISC1";
-
-/**
- * ISCP Command: CCDDISC2
- * DISC2
- */
-public static final String CD_PLAYER_DISC2_ID = "cd-player::disc2";
-public static final String CD_PLAYER_DISC2_ISCP = "CCDDISC2";
-
-/**
- * ISCP Command: CCDDISC3
- * DISC3
- */
-public static final String CD_PLAYER_DISC3_ID = "cd-player::disc3";
-public static final String CD_PLAYER_DISC3_ISCP = "CCDDISC3";
-
-/**
- * ISCP Command: CCDDISC4
- * DISC4
- */
-public static final String CD_PLAYER_DISC4_ID = "cd-player::disc4";
-public static final String CD_PLAYER_DISC4_ISCP = "CCDDISC4";
-
-/**
- * ISCP Command: CCDDISC5
- * DISC5
- */
-public static final String CD_PLAYER_DISC5_ID = "cd-player::disc5";
-public static final String CD_PLAYER_DISC5_ISCP = "CCDDISC5";
-
-/**
- * ISCP Command: CCDDISC6
- * DISC6
- */
-public static final String CD_PLAYER_DISC6_ID = "cd-player::disc6";
-public static final String CD_PLAYER_DISC6_ISCP = "CCDDISC6";
-
-/**
- * ISCP Command: CCDDISP
- * DISPLAY
- */
-public static final String CD_PLAYER_DISP_ID = "cd-player::disp";
-public static final String CD_PLAYER_DISP_ISCP = "CCDDISP";
-
-/**
- * ISCP Command: CCDFF
- * FF >>
- */
-public static final String CD_PLAYER_FF_ID = "cd-player::ff";
-public static final String CD_PLAYER_FF_ISCP = "CCDFF";
-
-/**
- * ISCP Command: CCDMEMORY
- * MEMORY
- */
-public static final String CD_PLAYER_MEMORY_ID = "cd-player::memory";
-public static final String CD_PLAYER_MEMORY_ISCP = "CCDMEMORY";
-
-/**
- * ISCP Command: CCDOP/CL
- * OPEN/CLOSE
- */
-public static final String CD_PLAYER_OP_CL_ID = "cd-player::op-cl";
-public static final String CD_PLAYER_OP_CL_ISCP = "CCDOP/CL";
+public static final String CD_PLAYER_NEXT_ID = "cd-player::next";
+public static final String CD_PLAYER_NEXT_ISCP = "CCDSKIP.F";
 
 /**
  * ISCP Command: CCDPAUSE
@@ -546,18 +919,11 @@ public static final String CD_PLAYER_PLAY_ID = "cd-player::play";
 public static final String CD_PLAYER_PLAY_ISCP = "CCDPLAY";
 
 /**
- * ISCP Command: CCDPON
- * POWER ON
+ * ISCP Command: CCDSKIP.R
+ * I<<
  */
-public static final String CD_PLAYER_PON_ID = "cd-player::pon";
-public static final String CD_PLAYER_PON_ISCP = "CCDPON";
-
-/**
- * ISCP Command: CCDPOWER
- * POWER ON/OFF
- */
-public static final String CD_PLAYER_POWER_ID = "cd-player::power";
-public static final String CD_PLAYER_POWER_ISCP = "CCDPOWER";
+public static final String CD_PLAYER_PREVIOUS_ID = "cd-player::previous";
+public static final String CD_PLAYER_PREVIOUS_ISCP = "CCDSKIP.R";
 
 /**
  * ISCP Command: CCDRANDOM
@@ -574,34 +940,6 @@ public static final String CD_PLAYER_REPEAT_ID = "cd-player::repeat";
 public static final String CD_PLAYER_REPEAT_ISCP = "CCDREPEAT";
 
 /**
- * ISCP Command: CCDREW
- * REW <<
- */
-public static final String CD_PLAYER_REW_ID = "cd-player::rew";
-public static final String CD_PLAYER_REW_ISCP = "CCDREW";
-
-/**
- * ISCP Command: CCDSKIP.F
- * >>I
- */
-public static final String CD_PLAYER_SKIP_F_ID = "cd-player::skip-f";
-public static final String CD_PLAYER_SKIP_F_ISCP = "CCDSKIP.F";
-
-/**
- * ISCP Command: CCDSKIP.R
- * I<<
- */
-public static final String CD_PLAYER_SKIP_R_ID = "cd-player::skip-r";
-public static final String CD_PLAYER_SKIP_R_ISCP = "CCDSKIP.R";
-
-/**
- * ISCP Command: CCDSTBY
- * STANDBY
- */
-public static final String CD_PLAYER_STBY_ID = "cd-player::stby";
-public static final String CD_PLAYER_STBY_ISCP = "CCDSTBY";
-
-/**
  * ISCP Command: CCDSTOP
  * STOP
  */
@@ -609,222 +947,91 @@ public static final String CD_PLAYER_STOP_ID = "cd-player::stop";
 public static final String CD_PLAYER_STOP_ISCP = "CCDSTOP";
 
 /**
- * ISCP Command: CCDTRACK
- * TRACK+
+ * CommandBlock
+ * ISCP Command prefix: CTM
+ * CD Time Info
  */
-public static final String CD_PLAYER_TRACK_ID = "cd-player::track";
-public static final String CD_PLAYER_TRACK_ISCP = "CCDTRACK";
+public static final String CD_TIME_INFO_ID = "cd-time-info";
+public static final String CD_TIME_INFO_ISCP = "CTM";
+
+/**
+ * ISCP Command: CTMQSTN
+ * gets CDTime Info
+ */
+public static final String CD_TIME_INFO_QUERY_ID = "cd-time-info::query";
+public static final String CD_TIME_INFO_QUERY_ISCP = "CTMQSTN";
+
+/**
+ * ISCP Command: CTMmm:ss/mm:ss
+ * CD Time Info (Elapsed time/Track Time Max 99:59)
+ */
+public static final String CD_TIME_INFO_TIME_MM_SS_MM_SS_ID = "cd-time-info::time-mm-ss-mm-ss";
+public static final String CD_TIME_INFO_TIME_MM_SS_MM_SS_ISCP = "CTMmm:ss/mm:ss";
 
 /**
  * CommandBlock
- * ISCP Command prefix: CCR
- * CD-R Recorder Operation Command
+ * ISCP Command prefix: CTI
+ * Center Image for Neo:6 Music
  */
-public static final String CD_R_RECORDER_ID = "cd-r-recorder";
-public static final String CD_R_RECORDER_ISCP = "CCR";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_ID = "center-image-for-neo-6-music";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_ISCP = "CTI";
 
 /**
- * ISCP Command: CCR1
- * 1.0
+ * ISCP Command: CTIDOWN
+ * sets Center Image Down
  */
-public static final String CD_R_RECORDER_1_ID = "cd-r-recorder::1";
-public static final String CD_R_RECORDER_1_ISCP = "CCR1";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_DOWN_ID = "center-image-for-neo-6-music::down";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_DOWN_ISCP = "CTIDOWN";
 
 /**
- * ISCP Command: CCR10/0
- * 10/0
+ * ISCP Command: CTIQSTN
+ * gets The Center Image State
  */
-public static final String CD_R_RECORDER_10_0_ID = "cd-r-recorder::10-0";
-public static final String CD_R_RECORDER_10_0_ISCP = "CCR10/0";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_QUERY_ID = "center-image-for-neo-6-music::query";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_QUERY_ISCP = "CTIQSTN";
 
 /**
- * ISCP Command: CCR2
- * 2.0
+ * ISCP Command: CTIUP
+ * sets Center Image Up
  */
-public static final String CD_R_RECORDER_2_ID = "cd-r-recorder::2";
-public static final String CD_R_RECORDER_2_ISCP = "CCR2";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_UP_ID = "center-image-for-neo-6-music::up";
+public static final String CENTER_IMAGE_FOR_NEO_6_MUSIC_UP_ISCP = "CTIUP";
 
 /**
- * ISCP Command: CCR3
- * 3.0
+ * CommandBlock
+ * ISCP Command prefix: CTS
+ * Center Spread for Dolby Surround
  */
-public static final String CD_R_RECORDER_3_ID = "cd-r-recorder::3";
-public static final String CD_R_RECORDER_3_ISCP = "CCR3";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_ID = "center-spread-for-dolby-surround";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_ISCP = "CTS";
 
 /**
- * ISCP Command: CCR4
- * 4.0
+ * ISCP Command: CTS00
+ * sets Center Spread Off
  */
-public static final String CD_R_RECORDER_4_ID = "cd-r-recorder::4";
-public static final String CD_R_RECORDER_4_ISCP = "CCR4";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_CENTER_OFF_ID = "center-spread-for-dolby-surround::center-off";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_CENTER_OFF_ISCP = "CTS00";
 
 /**
- * ISCP Command: CCR5
- * 5.0
+ * ISCP Command: CTS01
+ * sets Center Spread On
  */
-public static final String CD_R_RECORDER_5_ID = "cd-r-recorder::5";
-public static final String CD_R_RECORDER_5_ISCP = "CCR5";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_CENTER_ON_ID = "center-spread-for-dolby-surround::center-on";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_CENTER_ON_ISCP = "CTS01";
 
 /**
- * ISCP Command: CCR6
- * 6.0
+ * ISCP Command: CTSQSTN
+ * gets The Center Spread State
  */
-public static final String CD_R_RECORDER_6_ID = "cd-r-recorder::6";
-public static final String CD_R_RECORDER_6_ISCP = "CCR6";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_QUERY_ID = "center-spread-for-dolby-surround::query";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_QUERY_ISCP = "CTSQSTN";
 
 /**
- * ISCP Command: CCR7
- * 7.0
+ * ISCP Command: CTSTG
+ * sets Center Spread Wrap-Around
  */
-public static final String CD_R_RECORDER_7_ID = "cd-r-recorder::7";
-public static final String CD_R_RECORDER_7_ISCP = "CCR7";
-
-/**
- * ISCP Command: CCR8
- * 8.0
- */
-public static final String CD_R_RECORDER_8_ID = "cd-r-recorder::8";
-public static final String CD_R_RECORDER_8_ISCP = "CCR8";
-
-/**
- * ISCP Command: CCR9
- * 9.0
- */
-public static final String CD_R_RECORDER_9_ID = "cd-r-recorder::9";
-public static final String CD_R_RECORDER_9_ISCP = "CCR9";
-
-/**
- * ISCP Command: CCRCLEAR
- * CLEAR
- */
-public static final String CD_R_RECORDER_CLEAR_ID = "cd-r-recorder::clear";
-public static final String CD_R_RECORDER_CLEAR_ISCP = "CCRCLEAR";
-
-/**
- * ISCP Command: CCRDISP
- * DISPLAY
- */
-public static final String CD_R_RECORDER_DISP_ID = "cd-r-recorder::disp";
-public static final String CD_R_RECORDER_DISP_ISCP = "CCRDISP";
-
-/**
- * ISCP Command: CCRFF
- * FF
- */
-public static final String CD_R_RECORDER_FF_ID = "cd-r-recorder::ff";
-public static final String CD_R_RECORDER_FF_ISCP = "CCRFF";
-
-/**
- * ISCP Command: CCRMEMORY
- * MEMORY
- */
-public static final String CD_R_RECORDER_MEMORY_ID = "cd-r-recorder::memory";
-public static final String CD_R_RECORDER_MEMORY_ISCP = "CCRMEMORY";
-
-/**
- * ISCP Command: CCRnn/nnn
- * --/---
- */
-public static final String CD_R_RECORDER_NULL_ID = "cd-r-recorder::null";
-public static final String CD_R_RECORDER_NULL_ISCP = "CCRnn/nnn";
-
-/**
- * ISCP Command: CCROP/CL
- * OPEN/CLOSE
- */
-public static final String CD_R_RECORDER_OP_CL_ID = "cd-r-recorder::op-cl";
-public static final String CD_R_RECORDER_OP_CL_ISCP = "CCROP/CL";
-
-/**
- * ISCP Command: CCRP.MODE
- * PLAY MODE
- */
-public static final String CD_R_RECORDER_P_MODE_ID = "cd-r-recorder::p-mode";
-public static final String CD_R_RECORDER_P_MODE_ISCP = "CCRP.MODE";
-
-/**
- * ISCP Command: CCRPAUSE
- * PAUSE
- */
-public static final String CD_R_RECORDER_PAUSE_ID = "cd-r-recorder::pause";
-public static final String CD_R_RECORDER_PAUSE_ISCP = "CCRPAUSE";
-
-/**
- * ISCP Command: CCRPLAY
- * PLAY
- */
-public static final String CD_R_RECORDER_PLAY_ID = "cd-r-recorder::play";
-public static final String CD_R_RECORDER_PLAY_ISCP = "CCRPLAY";
-
-/**
- * ISCP Command: CCRPOWER
- * POWER ON/OFF
- */
-public static final String CD_R_RECORDER_POWER_ID = "cd-r-recorder::power";
-public static final String CD_R_RECORDER_POWER_ISCP = "CCRPOWER";
-
-/**
- * ISCP Command: CCRRANDOM
- * RANDOM
- */
-public static final String CD_R_RECORDER_RANDOM_ID = "cd-r-recorder::random";
-public static final String CD_R_RECORDER_RANDOM_ISCP = "CCRRANDOM";
-
-/**
- * ISCP Command: CCRREC
- * REC
- */
-public static final String CD_R_RECORDER_REC_ID = "cd-r-recorder::rec";
-public static final String CD_R_RECORDER_REC_ISCP = "CCRREC";
-
-/**
- * ISCP Command: CCRREPEAT
- * REPEAT
- */
-public static final String CD_R_RECORDER_REPEAT_ID = "cd-r-recorder::repeat";
-public static final String CD_R_RECORDER_REPEAT_ISCP = "CCRREPEAT";
-
-/**
- * ISCP Command: CCRREW
- * REW
- */
-public static final String CD_R_RECORDER_REW_ID = "cd-r-recorder::rew";
-public static final String CD_R_RECORDER_REW_ISCP = "CCRREW";
-
-/**
- * ISCP Command: CCRSCROLL
- * SCROLL
- */
-public static final String CD_R_RECORDER_SCROLL_ID = "cd-r-recorder::scroll";
-public static final String CD_R_RECORDER_SCROLL_ISCP = "CCRSCROLL";
-
-/**
- * ISCP Command: CCRSKIP.F
- * >>I
- */
-public static final String CD_R_RECORDER_SKIP_F_ID = "cd-r-recorder::skip-f";
-public static final String CD_R_RECORDER_SKIP_F_ISCP = "CCRSKIP.F";
-
-/**
- * ISCP Command: CCRSKIP.R
- * I<<
- */
-public static final String CD_R_RECORDER_SKIP_R_ID = "cd-r-recorder::skip-r";
-public static final String CD_R_RECORDER_SKIP_R_ISCP = "CCRSKIP.R";
-
-/**
- * ISCP Command: CCRSTBY
- * STANDBY
- */
-public static final String CD_R_RECORDER_STBY_ID = "cd-r-recorder::stby";
-public static final String CD_R_RECORDER_STBY_ISCP = "CCRSTBY";
-
-/**
- * ISCP Command: CCRSTOP
- * STOP
- */
-public static final String CD_R_RECORDER_STOP_ID = "cd-r-recorder::stop";
-public static final String CD_R_RECORDER_STOP_ISCP = "CCRSTOP";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_TOGGLE_ID = "center-spread-for-dolby-surround::toggle";
+public static final String CENTER_SPREAD_FOR_DOLBY_SURROUND_TOGGLE_ISCP = "CTSTG";
 
 /**
  * CommandBlock
@@ -854,6 +1061,35 @@ public static final String CENTER_TEMPORARY_LEVEL_QUERY_ISCP = "CTLQSTN";
  */
 public static final String CENTER_TEMPORARY_LEVEL_UP_ID = "center-temporary-level::up";
 public static final String CENTER_TEMPORARY_LEVEL_UP_ISCP = "CTLUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: CTW
+ * Center Width for PLII Music
+ */
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_ID = "center-width-for-plii-music";
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_ISCP = "CTW";
+
+/**
+ * ISCP Command: CTWDOWN
+ * sets Center Width Down
+ */
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_DOWN_ID = "center-width-for-plii-music::down";
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_DOWN_ISCP = "CTWDOWN";
+
+/**
+ * ISCP Command: CTWQSTN
+ * gets The Center Width State
+ */
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_QUERY_ID = "center-width-for-plii-music::query";
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_QUERY_ISCP = "CTWQSTN";
+
+/**
+ * ISCP Command: CTWUP
+ * sets Center Width Up
+ */
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_UP_ID = "center-width-for-plii-music::up";
+public static final String CENTER_WIDTH_FOR_PLII_MUSIC_UP_ISCP = "CTWUP";
 
 /**
  * CommandBlock
@@ -893,161 +1129,466 @@ public static final String CINEMA_FILTER_UP_ISCP = "RASUP";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UDD
- * DAB Display Info (Universal Port Dock Only)
+ * ISCP Command prefix: CTV
+ * Control TV over HDMI-CEC
  */
-public static final String DAB_DISPLAY_INFO_ID = "dab-display-info";
-public static final String DAB_DISPLAY_INFO_ISCP = "UDD";
+public static final String CTV_ID = "ctv";
+public static final String CTV_ISCP = "CTV";
 
 /**
- * ISCP Command: UDDAT
- * gets & display DAB Bitrate & Audio Type
+ * ISCP Command: CTV0
+ * 0 command
  */
-public static final String DAB_DISPLAY_INFO_AT_ID = "dab-display-info::at";
-public static final String DAB_DISPLAY_INFO_AT_ISCP = "UDDAT";
+public static final String CTV_0_ID = "ctv::0";
+public static final String CTV_0_ISCP = "CTV0";
 
 /**
- * ISCP Command: UDDMF
- * gets & display DAB Multicast Band & Freq Info
+ * ISCP Command: CTV1
+ * 1 command
  */
-public static final String DAB_DISPLAY_INFO_MF_ID = "dab-display-info::mf";
-public static final String DAB_DISPLAY_INFO_MF_ISCP = "UDDMF";
+public static final String CTV_1_ID = "ctv::1";
+public static final String CTV_1_ISCP = "CTV1";
 
 /**
- * ISCP Command: UDDMN
- * gets & display DAB Multicast Name
+ * ISCP Command: CTV2
+ * 2 command
  */
-public static final String DAB_DISPLAY_INFO_MN_ID = "dab-display-info::mn";
-public static final String DAB_DISPLAY_INFO_MN_ISCP = "UDDMN";
+public static final String CTV_2_ID = "ctv::2";
+public static final String CTV_2_ISCP = "CTV2";
 
 /**
- * ISCP Command: UDDMN:nnnnnnnnn
- * DAB Multiplex Name (9 letters)
+ * ISCP Command: CTV3
+ * 3 command
  */
-public static final String DAB_DISPLAY_INFO_NULL_ID = "dab-display-info::null";
-public static final String DAB_DISPLAY_INFO_NULL_ISCP = "UDDMN:nnnnnnnnn";
+public static final String CTV_3_ID = "ctv::3";
+public static final String CTV_3_ISCP = "CTV3";
 
 /**
- * ISCP Command: UDDPT
- * gets & display DAB Program Info
+ * ISCP Command: CTV4
+ * 4 command
  */
-public static final String DAB_DISPLAY_INFO_PT_ID = "dab-display-info::pt";
-public static final String DAB_DISPLAY_INFO_PT_ISCP = "UDDPT";
+public static final String CTV_4_ID = "ctv::4";
+public static final String CTV_4_ISCP = "CTV4";
 
 /**
- * ISCP Command: UDDUP
- * gets & dispaly DAB Infomation Wrap-Around Up
+ * ISCP Command: CTV5
+ * 5 command
  */
-public static final String DAB_DISPLAY_INFO_UP_ID = "dab-display-info::up";
-public static final String DAB_DISPLAY_INFO_UP_ISCP = "UDDUP";
+public static final String CTV_5_ID = "ctv::5";
+public static final String CTV_5_ISCP = "CTV5";
+
+/**
+ * ISCP Command: CTV6
+ * 6 command
+ */
+public static final String CTV_6_ID = "ctv::6";
+public static final String CTV_6_ISCP = "CTV6";
+
+/**
+ * ISCP Command: CTV7
+ * 7 command
+ */
+public static final String CTV_7_ID = "ctv::7";
+public static final String CTV_7_ISCP = "CTV7";
+
+/**
+ * ISCP Command: CTV8
+ * 8 command
+ */
+public static final String CTV_8_ID = "ctv::8";
+public static final String CTV_8_ISCP = "CTV8";
+
+/**
+ * ISCP Command: CTV9
+ * 9 command
+ */
+public static final String CTV_9_ID = "ctv::9";
+public static final String CTV_9_ISCP = "CTV9";
+
+/**
+ * ISCP Command: CTVA
+ * A for CEC US:R,EU:R,JP:B
+ */
+public static final String CTV_A_ID = "ctv::a";
+public static final String CTV_A_ISCP = "CTVA";
+
+/**
+ * ISCP Command: CTVB
+ * B for CEC US:G,EU:G,JP:R
+ */
+public static final String CTV_B_ID = "ctv::b";
+public static final String CTV_B_ISCP = "CTVB";
+
+/**
+ * ISCP Command: CTVC
+ * C for CEC US:B,EU:Y,JP:G
+ */
+public static final String CTV_C_ID = "ctv::c";
+public static final String CTV_C_ISCP = "CTVC";
+
+/**
+ * ISCP Command: CTVCHDN
+ * CH Down
+ */
+public static final String CTV_CHDOWN_ID = "ctv::chdown";
+public static final String CTV_CHDOWN_ISCP = "CTVCHDN";
+
+/**
+ * ISCP Command: CTVPREV
+ * Previous
+ */
+public static final String CTV_CHPREV_ID = "ctv::chprev";
+public static final String CTV_CHPREV_ISCP = "CTVPREV";
+
+/**
+ * ISCP Command: CTVCHUP
+ * CH Up
+ */
+public static final String CTV_CHUP_ID = "ctv::chup";
+public static final String CTV_CHUP_ISCP = "CTVCHUP";
+
+/**
+ * ISCP Command: CTVCLEAR
+ * Clear
+ */
+public static final String CTV_CLEAR_ID = "ctv::clear";
+public static final String CTV_CLEAR_ISCP = "CTVCLEAR";
+
+/**
+ * ISCP Command: CTVDOWN
+ * Cursor Down
+ */
+public static final String CTV_CURSOR_DOWN_ID = "ctv::cursor-down";
+public static final String CTV_CURSOR_DOWN_ISCP = "CTVDOWN";
+
+/**
+ * ISCP Command: CTVLEFT
+ * Cursor Left
+ */
+public static final String CTV_CURSOR_LEFT_ID = "ctv::cursor-left";
+public static final String CTV_CURSOR_LEFT_ISCP = "CTVLEFT";
+
+/**
+ * ISCP Command: CTVRIGHT
+ * Cursor Right
+ */
+public static final String CTV_CURSOR_RIGHT_ID = "ctv::cursor-right";
+public static final String CTV_CURSOR_RIGHT_ISCP = "CTVRIGHT";
+
+/**
+ * ISCP Command: CTVUP
+ * Cursor Up
+ */
+public static final String CTV_CURSOR_UP_ID = "ctv::cursor-up";
+public static final String CTV_CURSOR_UP_ISCP = "CTVUP";
+
+/**
+ * ISCP Command: CTVD
+ * D for CEC US:Y,EU:B,JP:Y
+ */
+public static final String CTV_D_ID = "ctv::d";
+public static final String CTV_D_ISCP = "CTVD";
+
+/**
+ * ISCP Command: CTVDISP
+ * Display
+ */
+public static final String CTV_DISPLAY_ID = "ctv::display";
+public static final String CTV_DISPLAY_ISCP = "CTVDISP";
+
+/**
+ * ISCP Command: CTVENTER
+ * Enter
+ */
+public static final String CTV_ENTER_ID = "ctv::enter";
+public static final String CTV_ENTER_ISCP = "CTVENTER";
+
+/**
+ * ISCP Command: CTVGUIDE
+ * Guide / Top Menu
+ */
+public static final String CTV_GUIDE_ID = "ctv::guide";
+public static final String CTV_GUIDE_ISCP = "CTVGUIDE";
+
+/**
+ * ISCP Command: CTVINPUT
+ * Input
+ */
+public static final String CTV_INPUT_ID = "ctv::input";
+public static final String CTV_INPUT_ISCP = "CTVINPUT";
+
+/**
+ * ISCP Command: CTVMUTE
+ * Muting
+ */
+public static final String CTV_MUTE_ID = "ctv::mute";
+public static final String CTV_MUTE_ISCP = "CTVMUTE";
+
+/**
+ * ISCP Command: CTVPOWER
+ * Toggle Power State
+ */
+public static final String CTV_POWER_ID = "ctv::power";
+public static final String CTV_POWER_ISCP = "CTVPOWER";
+
+/**
+ * ISCP Command: CTVPWROFF
+ * Standby
+ */
+public static final String CTV_POWER_OFF_ID = "ctv::power-off";
+public static final String CTV_POWER_OFF_ISCP = "CTVPWROFF";
+
+/**
+ * ISCP Command: CTVPWRON
+ * Power On
+ */
+public static final String CTV_POWER_ON_ID = "ctv::power-on";
+public static final String CTV_POWER_ON_ISCP = "CTVPWRON";
+
+/**
+ * ISCP Command: CTVRETURN
+ * Return
+ */
+public static final String CTV_RETURN_ID = "ctv::return";
+public static final String CTV_RETURN_ISCP = "CTVRETURN";
+
+/**
+ * ISCP Command: CTVSETUP
+ * Setup
+ */
+public static final String CTV_SETUP_ID = "ctv::setup";
+public static final String CTV_SETUP_ISCP = "CTVSETUP";
+
+/**
+ * ISCP Command: CTVVLDN
+ * Volume Down
+ */
+public static final String CTV_VOLUME_DOWN_ID = "ctv::volume-down";
+public static final String CTV_VOLUME_DOWN_ISCP = "CTVVLDN";
+
+/**
+ * ISCP Command: CTVVLUP
+ * Volume Up
+ */
+public static final String CTV_VOLUME_UP_ID = "ctv::volume-up";
+public static final String CTV_VOLUME_UP_ISCP = "CTVVLUP";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UPR
- * DAB Preset Command (Universal Port Dock Only)
+ * ISCP Command prefix: DST
+ * Current disc status notice
  */
-public static final String DAB_PRESET_ID = "dab-preset";
-public static final String DAB_PRESET_ISCP = "UPR";
+public static final String CURRENT_DISC_STATUS_NOTICE_ID = "current-disc-status-notice";
+public static final String CURRENT_DISC_STATUS_NOTICE_ISCP = "DST";
 
 /**
- * ISCP Command: UPRDOWN
- * sets Preset No. Wrap-Around Down
+ * ISCP Command: DST04
+ * Audio CD
  */
-public static final String DAB_PRESET_DOWN_ID = "dab-preset::down";
-public static final String DAB_PRESET_DOWN_ISCP = "UPRDOWN";
+public static final String CURRENT_DISC_STATUS_NOTICE_CD_ID = "current-disc-status-notice::cd";
+public static final String CURRENT_DISC_STATUS_NOTICE_CD_ISCP = "DST04";
 
 /**
- * ISCP Command: UPRQSTN
- * gets The Preset No.
+ * ISCP Command: DST07
+ * MP3 CD
  */
-public static final String DAB_PRESET_QUERY_ID = "dab-preset::query";
-public static final String DAB_PRESET_QUERY_ISCP = "UPRQSTN";
+public static final String CURRENT_DISC_STATUS_NOTICE_MP3_CD_ID = "current-disc-status-notice::mp3-cd";
+public static final String CURRENT_DISC_STATUS_NOTICE_MP3_CD_ISCP = "DST07";
 
 /**
- * ISCP Command: UPRUP
- * sets Preset No. Wrap-Around Up
+ * ISCP Command: DST00
+ * No disc
  */
-public static final String DAB_PRESET_UP_ID = "dab-preset::up";
-public static final String DAB_PRESET_UP_ISCP = "UPRUP";
+public static final String CURRENT_DISC_STATUS_NOTICE_NONE_ID = "current-disc-status-notice::none";
+public static final String CURRENT_DISC_STATUS_NOTICE_NONE_ISCP = "DST00";
 
 /**
- * CommandBlock
- * ISCP Command prefix: UDS
- * DAB Sation Name (Universal Port Dock Only)
+ * ISCP Command: DSTQSTN
+ * gets Disc Status
  */
-public static final String DAB_SATION_NAME_ID = "dab-sation-name";
-public static final String DAB_SATION_NAME_ISCP = "UDS";
+public static final String CURRENT_DISC_STATUS_NOTICE_QUERY_ID = "current-disc-status-notice::query";
+public static final String CURRENT_DISC_STATUS_NOTICE_QUERY_ISCP = "DSTQSTN";
 
 /**
- * ISCP Command: UDSnnnnnnnnn
- * Sation Name (9 letters)
+ * ISCP Command: DSTFF
+ * Unknown
  */
-public static final String DAB_SATION_NAME_NULL_ID = "dab-sation-name::null";
-public static final String DAB_SATION_NAME_NULL_ISCP = "UDSnnnnnnnnn";
-
-/**
- * ISCP Command: UDSQSTN
- * gets The Tuning Frequency
- */
-public static final String DAB_SATION_NAME_QUERY_ID = "dab-sation-name::query";
-public static final String DAB_SATION_NAME_QUERY_ISCP = "UDSQSTN";
+public static final String CURRENT_DISC_STATUS_NOTICE_UNKNOWN_ID = "current-disc-status-notice::unknown";
+public static final String CURRENT_DISC_STATUS_NOTICE_UNKNOWN_ISCP = "DSTFF";
 
 /**
  * CommandBlock
- * ISCP Command prefix: CDT
- * DAT Recorder Operation Command
+ * ISCP Command prefix: CFS
+ * Current Folder Status（No.）
  */
-public static final String DAT_RECORDER_ID = "dat-recorder";
-public static final String DAT_RECORDER_ISCP = "CDT";
+public static final String CURRENT_FOLDER_STATUS_NO_ID = "current-folder-status-no";
+public static final String CURRENT_FOLDER_STATUS_NO_ISCP = "CFS";
 
 /**
- * ISCP Command: CDTFF
- * FF >>
+ * ISCP Command: CFSQSTN
+ * gets Folder Number Info
  */
-public static final String DAT_RECORDER_FF_ID = "dat-recorder::ff";
-public static final String DAT_RECORDER_FF_ISCP = "CDTFF";
+public static final String CURRENT_FOLDER_STATUS_NO_QUERY_ID = "current-folder-status-no::query";
+public static final String CURRENT_FOLDER_STATUS_NO_QUERY_ISCP = "CFSQSTN";
 
 /**
- * ISCP Command: CDTPLAY
- * PLAY
+ * CommandBlock
+ * ISCP Command prefix: DSN
+ * DAB Station Name
  */
-public static final String DAT_RECORDER_PLAY_ID = "dat-recorder::play";
-public static final String DAT_RECORDER_PLAY_ISCP = "CDTPLAY";
+public static final String DAB_STATION_NAME_ID = "dab-station-name";
+public static final String DAB_STATION_NAME_ISCP = "DSN";
 
 /**
- * ISCP Command: CDTRC/PAU
- * REC/PAUSE
+ * ISCP Command: DSNQSTN
+ * gets Station Name
  */
-public static final String DAT_RECORDER_RC_PAU_ID = "dat-recorder::rc-pau";
-public static final String DAT_RECORDER_RC_PAU_ISCP = "CDTRC/PAU";
+public static final String DAB_STATION_NAME_QUERY_ID = "dab-station-name::query";
+public static final String DAB_STATION_NAME_QUERY_ISCP = "DSNQSTN";
 
 /**
- * ISCP Command: CDTREW
- * REW <<
+ * ISCP Command: DSNxx…xx
+ * xx…xx   : DAB Station Name (UTF-8)
+下記文字は特殊コードで送信する
+0x02  ： ←
+0x03  ： ↑
+0x04  ： →
+0x05  ： ↓
+0x06  ： ║
+上記以外の0x00~0x1F、0x80~0xA0はスペース表示とする
  */
-public static final String DAT_RECORDER_REW_ID = "dat-recorder::rew";
-public static final String DAT_RECORDER_REW_ISCP = "CDTREW";
+public static final String DAB_STATION_NAME_STATION_NAME_ID = "dab-station-name::station-name";
+public static final String DAB_STATION_NAME_STATION_NAME_ISCP = "DSNxx…xx";
 
 /**
- * ISCP Command: CDTSKIP.F
- * >>I
+ * CommandBlock
+ * ISCP Command prefix: DLC
+ * Dialog Control
  */
-public static final String DAT_RECORDER_SKIP_F_ID = "dat-recorder::skip-f";
-public static final String DAT_RECORDER_SKIP_F_ISCP = "CDTSKIP.F";
+public static final String DIALOG_CONTROL_ID = "dialog-control";
+public static final String DIALOG_CONTROL_ISCP = "DLC";
 
 /**
- * ISCP Command: CDTSKIP.R
- * I<<
+ * ISCP Command: DLCDOWN
+ * sets Dialog Control Down
  */
-public static final String DAT_RECORDER_SKIP_R_ID = "dat-recorder::skip-r";
-public static final String DAT_RECORDER_SKIP_R_ISCP = "CDTSKIP.R";
+public static final String DIALOG_CONTROL_DOWN_ID = "dialog-control::down";
+public static final String DIALOG_CONTROL_DOWN_ISCP = "DLCDOWN";
 
 /**
- * ISCP Command: CDTSTOP
- * STOP
+ * ISCP Command: DLCQSTN
+ * gets The Dialog Control State
  */
-public static final String DAT_RECORDER_STOP_ID = "dat-recorder::stop";
-public static final String DAT_RECORDER_STOP_ISCP = "CDTSTOP";
+public static final String DIALOG_CONTROL_QUERY_ID = "dialog-control::query";
+public static final String DIALOG_CONTROL_QUERY_ISCP = "DLCQSTN";
+
+/**
+ * ISCP Command: DLCUP
+ * sets Dialog Control Up
+ */
+public static final String DIALOG_CONTROL_UP_ID = "dialog-control::up";
+public static final String DIALOG_CONTROL_UP_ISCP = "DLCUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: DCE
+ * Dialog Control Enabled
+ */
+public static final String DIALOG_CONTROL_ENABLED_ID = "dialog-control-enabled";
+public static final String DIALOG_CONTROL_ENABLED_ISCP = "DCE";
+
+/**
+ * ISCP Command: DCE00
+ * Dialog Control is disabled
+ */
+public static final String DIALOG_CONTROL_ENABLED_OFF_ID = "dialog-control-enabled::off";
+public static final String DIALOG_CONTROL_ENABLED_OFF_ISCP = "DCE00";
+
+/**
+ * ISCP Command: DCE01
+ * Dialog Control is enabled
+ */
+public static final String DIALOG_CONTROL_ENABLED_ON_ID = "dialog-control-enabled::on";
+public static final String DIALOG_CONTROL_ENABLED_ON_ISCP = "DCE01";
+
+/**
+ * ISCP Command: DCEQSTN
+ * gets The Dialog Control Enabled State
+ */
+public static final String DIALOG_CONTROL_ENABLED_QUERY_ID = "dialog-control-enabled::query";
+public static final String DIALOG_CONTROL_ENABLED_QUERY_ISCP = "DCEQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: DGF
+ * Digital Filter
+ */
+public static final String DIGITAL_FILTER_ID = "digital-filter";
+public static final String DIGITAL_FILTER_ISCP = "DGF";
+
+/**
+ * ISCP Command: DGFQSTN
+ * gets The Digital Filter State
+ */
+public static final String DIGITAL_FILTER_QUERY_ID = "digital-filter::query";
+public static final String DIGITAL_FILTER_QUERY_ISCP = "DGFQSTN";
+
+/**
+ * ISCP Command: DGF01
+ * sets Digital Filter Sharp
+ */
+public static final String DIGITAL_FILTER_SHARP_ID = "digital-filter::sharp";
+public static final String DIGITAL_FILTER_SHARP_ISCP = "DGF01";
+
+/**
+ * ISCP Command: DGF02
+ * sets Digital Filter Short
+ */
+public static final String DIGITAL_FILTER_SHORT_ID = "digital-filter::short";
+public static final String DIGITAL_FILTER_SHORT_ISCP = "DGF02";
+
+/**
+ * ISCP Command: DGF00
+ * sets Digital Filter Slow
+ */
+public static final String DIGITAL_FILTER_SLOW_ID = "digital-filter::slow";
+public static final String DIGITAL_FILTER_SLOW_ISCP = "DGF00";
+
+/**
+ * ISCP Command: DGFUP
+ * sets Digital Filter Wrap-Around
+ */
+public static final String DIGITAL_FILTER_UP_ID = "digital-filter::up";
+public static final String DIGITAL_FILTER_UP_ISCP = "DGFUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: DMS
+ * Dimension for PLII Music
+ */
+public static final String DIMENSION_FOR_PLII_MUSIC_ID = "dimension-for-plii-music";
+public static final String DIMENSION_FOR_PLII_MUSIC_ISCP = "DMS";
+
+/**
+ * ISCP Command: DMSDOWN
+ * sets Dimension Down
+ */
+public static final String DIMENSION_FOR_PLII_MUSIC_DOWN_ID = "dimension-for-plii-music::down";
+public static final String DIMENSION_FOR_PLII_MUSIC_DOWN_ISCP = "DMSDOWN";
+
+/**
+ * ISCP Command: DMSQSTN
+ * gets The Dimension State
+ */
+public static final String DIMENSION_FOR_PLII_MUSIC_QUERY_ID = "dimension-for-plii-music::query";
+public static final String DIMENSION_FOR_PLII_MUSIC_QUERY_ISCP = "DMSQSTN";
+
+/**
+ * ISCP Command: DMSUP
+ * sets Dimension Up
+ */
+public static final String DIMENSION_FOR_PLII_MUSIC_UP_ID = "dimension-for-plii-music::up";
+public static final String DIMENSION_FOR_PLII_MUSIC_UP_ISCP = "DMSUP";
 
 /**
  * CommandBlock
@@ -1094,6 +1635,42 @@ public static final String DIMMER_LEVEL_SHUT_OFF_ISCP = "DIM03";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: DIR
+ * Direct Command
+ */
+public static final String DIRECT_ID = "direct";
+public static final String DIRECT_ISCP = "DIR";
+
+/**
+ * ISCP Command: DIR00
+ * sets Off
+ */
+public static final String DIRECT_OFF_ID = "direct::off";
+public static final String DIRECT_OFF_ISCP = "DIR00";
+
+/**
+ * ISCP Command: DIR01
+ * sets On
+ */
+public static final String DIRECT_ON_ID = "direct::on";
+public static final String DIRECT_ON_ISCP = "DIR01";
+
+/**
+ * ISCP Command: DIRQSTN
+ * gets Direct Status
+ */
+public static final String DIRECT_QUERY_ID = "direct::query";
+public static final String DIRECT_QUERY_ISCP = "DIRQSTN";
+
+/**
+ * ISCP Command: DIRTG
+ * sets Direct Wrap-Around Up
+ */
+public static final String DIRECT_TOGGLE_ID = "direct::toggle";
+public static final String DIRECT_TOGGLE_ISCP = "DIRTG";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: DIF
  * Display Mode Command
  */
@@ -1123,17 +1700,17 @@ public static final String DISPLAY_MODE_QUERY_ISCP = "DIFQSTN";
 
 /**
  * ISCP Command: DIF01
- * sets Selector + Listening Mode Display Mode
+ * sets Selector + Listening Mode Display Mode@1line
  */
-public static final String DISPLAY_MODE_SELECTOR_LISTENING_ID = "display-mode::selector-listening";
-public static final String DISPLAY_MODE_SELECTOR_LISTENING_ISCP = "DIF01";
+public static final String DISPLAY_MODE_SELECTOR_LISTENING_1LINE_ID = "display-mode::selector-listening-1line";
+public static final String DISPLAY_MODE_SELECTOR_LISTENING_1LINE_ISCP = "DIF01";
 
 /**
  * ISCP Command: DIF00
- * sets Selector + Volume Display Mode
+ * sets Selector + Volume Display Mode@1line, Default@2line
  */
-public static final String DISPLAY_MODE_SELECTOR_VOLUME_ID = "display-mode::selector-volume";
-public static final String DISPLAY_MODE_SELECTOR_VOLUME_ISCP = "DIF00";
+public static final String DISPLAY_MODE_SELECTOR_VOLUME_1LINE_ID = "display-mode::selector-volume-1line";
+public static final String DISPLAY_MODE_SELECTOR_VOLUME_1LINE_ISCP = "DIF00";
 
 /**
  * ISCP Command: DIFTG
@@ -1194,699 +1771,362 @@ public static final String DOLBY_VOLUME_UP_ISCP = "DVLUP";
 
 /**
  * CommandBlock
- * ISCP Command prefix: CDV
- * DVD Player Operation Command (via RIHD only after TX-NR509)
+ * ISCP Command prefix: STW
+ * EQ for Standing Wave / Standing Wave
  */
-public static final String DVD_PLAYER_ID = "dvd-player";
-public static final String DVD_PLAYER_ISCP = "CDV";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_ID = "eq-for-standing-wave-standing-wave";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_ISCP = "STW";
 
 /**
- * ISCP Command: CDV0
- * 0.0
+ * ISCP Command: STW00
+ * sets Standing Wave Off
  */
-public static final String DVD_PLAYER_0_ID = "dvd-player::0";
-public static final String DVD_PLAYER_0_ISCP = "CDV0";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_OFF_ID = "eq-for-standing-wave-standing-wave::off";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_OFF_ISCP = "STW00";
 
 /**
- * ISCP Command: CDV1
- * 1.0
+ * ISCP Command: STW01
+ * sets Standing Wave On
  */
-public static final String DVD_PLAYER_1_ID = "dvd-player::1";
-public static final String DVD_PLAYER_1_ISCP = "CDV1";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_ON_ID = "eq-for-standing-wave-standing-wave::on";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_ON_ISCP = "STW01";
 
 /**
- * ISCP Command: CDV10
- * 10.0
+ * ISCP Command: STWQSTN
+ * gets The Standing Wave
  */
-public static final String DVD_PLAYER_10_ID = "dvd-player::10";
-public static final String DVD_PLAYER_10_ISCP = "CDV10";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_QUERY_ID = "eq-for-standing-wave-standing-wave::query";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_QUERY_ISCP = "STWQSTN";
 
 /**
- * ISCP Command: CDV2
- * 2.0
+ * ISCP Command: STWUP
+ * sets Standing Wave Wrap-Around Up
  */
-public static final String DVD_PLAYER_2_ID = "dvd-player::2";
-public static final String DVD_PLAYER_2_ISCP = "CDV2";
-
-/**
- * ISCP Command: CDV3
- * 3.0
- */
-public static final String DVD_PLAYER_3_ID = "dvd-player::3";
-public static final String DVD_PLAYER_3_ISCP = "CDV3";
-
-/**
- * ISCP Command: CDV4
- * 4.0
- */
-public static final String DVD_PLAYER_4_ID = "dvd-player::4";
-public static final String DVD_PLAYER_4_ISCP = "CDV4";
-
-/**
- * ISCP Command: CDV5
- * 5.0
- */
-public static final String DVD_PLAYER_5_ID = "dvd-player::5";
-public static final String DVD_PLAYER_5_ISCP = "CDV5";
-
-/**
- * ISCP Command: CDV6
- * 6.0
- */
-public static final String DVD_PLAYER_6_ID = "dvd-player::6";
-public static final String DVD_PLAYER_6_ISCP = "CDV6";
-
-/**
- * ISCP Command: CDV7
- * 7.0
- */
-public static final String DVD_PLAYER_7_ID = "dvd-player::7";
-public static final String DVD_PLAYER_7_ISCP = "CDV7";
-
-/**
- * ISCP Command: CDV8
- * 8.0
- */
-public static final String DVD_PLAYER_8_ID = "dvd-player::8";
-public static final String DVD_PLAYER_8_ISCP = "CDV8";
-
-/**
- * ISCP Command: CDV9
- * 9.0
- */
-public static final String DVD_PLAYER_9_ID = "dvd-player::9";
-public static final String DVD_PLAYER_9_ISCP = "CDV9";
-
-/**
- * ISCP Command: CDVABR
- * A-B REPEAT
- */
-public static final String DVD_PLAYER_ABR_ID = "dvd-player::abr";
-public static final String DVD_PLAYER_ABR_ISCP = "CDVABR";
-
-/**
- * ISCP Command: CDVANGLE
- * ANGLE
- */
-public static final String DVD_PLAYER_ANGLE_ID = "dvd-player::angle";
-public static final String DVD_PLAYER_ANGLE_ISCP = "CDVANGLE";
-
-/**
- * ISCP Command: CDVASCTG
- * ASPECT(Toggle)
- */
-public static final String DVD_PLAYER_ASCTG_ID = "dvd-player::asctg";
-public static final String DVD_PLAYER_ASCTG_ISCP = "CDVASCTG";
-
-/**
- * ISCP Command: CDVAUDIO
- * AUDIO
- */
-public static final String DVD_PLAYER_AUDIO_ID = "dvd-player::audio";
-public static final String DVD_PLAYER_AUDIO_ISCP = "CDVAUDIO";
-
-/**
- * ISCP Command: CDVCDPCD
- * CD CHAIN REPEAT
- */
-public static final String DVD_PLAYER_CDPCD_ID = "dvd-player::cdpcd";
-public static final String DVD_PLAYER_CDPCD_ISCP = "CDVCDPCD";
-
-/**
- * ISCP Command: CDVCLEAR
- * CLEAR
- */
-public static final String DVD_PLAYER_CLEAR_ID = "dvd-player::clear";
-public static final String DVD_PLAYER_CLEAR_ISCP = "CDVCLEAR";
-
-/**
- * ISCP Command: CDVCONMEM
- * CONDITION MEMORY
- */
-public static final String DVD_PLAYER_CONMEM_ID = "dvd-player::conmem";
-public static final String DVD_PLAYER_CONMEM_ISCP = "CDVCONMEM";
-
-/**
- * ISCP Command: CDVDISC.F
- * DISC +
- */
-public static final String DVD_PLAYER_DISC_F_ID = "dvd-player::disc-f";
-public static final String DVD_PLAYER_DISC_F_ISCP = "CDVDISC.F";
-
-/**
- * ISCP Command: CDVDISC.R
- * DISC -
- */
-public static final String DVD_PLAYER_DISC_R_ID = "dvd-player::disc-r";
-public static final String DVD_PLAYER_DISC_R_ISCP = "CDVDISC.R";
-
-/**
- * ISCP Command: CDVDISC1
- * DISC1
- */
-public static final String DVD_PLAYER_DISC1_ID = "dvd-player::disc1";
-public static final String DVD_PLAYER_DISC1_ISCP = "CDVDISC1";
-
-/**
- * ISCP Command: CDVDISC2
- * DISC2
- */
-public static final String DVD_PLAYER_DISC2_ID = "dvd-player::disc2";
-public static final String DVD_PLAYER_DISC2_ISCP = "CDVDISC2";
-
-/**
- * ISCP Command: CDVDISC3
- * DISC3
- */
-public static final String DVD_PLAYER_DISC3_ID = "dvd-player::disc3";
-public static final String DVD_PLAYER_DISC3_ISCP = "CDVDISC3";
-
-/**
- * ISCP Command: CDVDISC4
- * DISC4
- */
-public static final String DVD_PLAYER_DISC4_ID = "dvd-player::disc4";
-public static final String DVD_PLAYER_DISC4_ISCP = "CDVDISC4";
-
-/**
- * ISCP Command: CDVDISC5
- * DISC5
- */
-public static final String DVD_PLAYER_DISC5_ID = "dvd-player::disc5";
-public static final String DVD_PLAYER_DISC5_ISCP = "CDVDISC5";
-
-/**
- * ISCP Command: CDVDISC6
- * DISC6
- */
-public static final String DVD_PLAYER_DISC6_ID = "dvd-player::disc6";
-public static final String DVD_PLAYER_DISC6_ISCP = "CDVDISC6";
-
-/**
- * ISCP Command: CDVDISP
- * DISPLAY
- */
-public static final String DVD_PLAYER_DISP_ID = "dvd-player::disp";
-public static final String DVD_PLAYER_DISP_ISCP = "CDVDISP";
-
-/**
- * ISCP Command: CDVDOWN
- * DOWN
- */
-public static final String DVD_PLAYER_DOWN_ID = "dvd-player::down";
-public static final String DVD_PLAYER_DOWN_ISCP = "CDVDOWN";
-
-/**
- * ISCP Command: CDVENTER
- * ENTER
- */
-public static final String DVD_PLAYER_ENTER_ID = "dvd-player::enter";
-public static final String DVD_PLAYER_ENTER_ISCP = "CDVENTER";
-
-/**
- * ISCP Command: CDVFF
- * FF >>
- */
-public static final String DVD_PLAYER_FF_ID = "dvd-player::ff";
-public static final String DVD_PLAYER_FF_ISCP = "CDVFF";
-
-/**
- * ISCP Command: CDVFOLDDN
- * FOLDER DOWN
- */
-public static final String DVD_PLAYER_FOLDDN_ID = "dvd-player::folddn";
-public static final String DVD_PLAYER_FOLDDN_ISCP = "CDVFOLDDN";
-
-/**
- * ISCP Command: CDVFOLDUP
- * FOLDER UP
- */
-public static final String DVD_PLAYER_FOLDUP_ID = "dvd-player::foldup";
-public static final String DVD_PLAYER_FOLDUP_ISCP = "CDVFOLDUP";
-
-/**
- * ISCP Command: CDVFUNMEM
- * FUNCTION MEMORY
- */
-public static final String DVD_PLAYER_FUNMEM_ID = "dvd-player::funmem";
-public static final String DVD_PLAYER_FUNMEM_ISCP = "CDVFUNMEM";
-
-/**
- * ISCP Command: CDVINIT
- * Return to Factory Settings
- */
-public static final String DVD_PLAYER_INIT_ID = "dvd-player::init";
-public static final String DVD_PLAYER_INIT_ISCP = "CDVINIT";
-
-/**
- * ISCP Command: CDVLASTPLAY
- * LAST PLAY
- */
-public static final String DVD_PLAYER_LASTPLAY_ID = "dvd-player::lastplay";
-public static final String DVD_PLAYER_LASTPLAY_ISCP = "CDVLASTPLAY";
-
-/**
- * ISCP Command: CDVLEFT
- * LEFT
- */
-public static final String DVD_PLAYER_LEFT_ID = "dvd-player::left";
-public static final String DVD_PLAYER_LEFT_ISCP = "CDVLEFT";
-
-/**
- * ISCP Command: CDVMEMORY
- * MEMORY
- */
-public static final String DVD_PLAYER_MEMORY_ID = "dvd-player::memory";
-public static final String DVD_PLAYER_MEMORY_ISCP = "CDVMEMORY";
-
-/**
- * ISCP Command: CDVMENU
- * MENU
- */
-public static final String DVD_PLAYER_MENU_ID = "dvd-player::menu";
-public static final String DVD_PLAYER_MENU_ISCP = "CDVMENU";
-
-/**
- * ISCP Command: CDVMSPDN
- * MULTI SPEED DOWN
- */
-public static final String DVD_PLAYER_MSPDN_ID = "dvd-player::mspdn";
-public static final String DVD_PLAYER_MSPDN_ISCP = "CDVMSPDN";
-
-/**
- * ISCP Command: CDVMSPUP
- * MULTI SPEED UP
- */
-public static final String DVD_PLAYER_MSPUP_ID = "dvd-player::mspup";
-public static final String DVD_PLAYER_MSPUP_ISCP = "CDVMSPUP";
-
-/**
- * ISCP Command: CDVOP/CL
- * OPEN/CLOSE
- */
-public static final String DVD_PLAYER_OP_CL_ID = "dvd-player::op-cl";
-public static final String DVD_PLAYER_OP_CL_ISCP = "CDVOP/CL";
-
-/**
- * ISCP Command: CDVP.MODE
- * PLAY MODE
- */
-public static final String DVD_PLAYER_P_MODE_ID = "dvd-player::p-mode";
-public static final String DVD_PLAYER_P_MODE_ISCP = "CDVP.MODE";
-
-/**
- * ISCP Command: CDVPAUSE
- * PAUSE
- */
-public static final String DVD_PLAYER_PAUSE_ID = "dvd-player::pause";
-public static final String DVD_PLAYER_PAUSE_ISCP = "CDVPAUSE";
-
-/**
- * ISCP Command: CDVPCT
- * PICTURE CONTROL
- */
-public static final String DVD_PLAYER_PCT_ID = "dvd-player::pct";
-public static final String DVD_PLAYER_PCT_ISCP = "CDVPCT";
-
-/**
- * ISCP Command: CDVPLAY
- * PLAY
- */
-public static final String DVD_PLAYER_PLAY_ID = "dvd-player::play";
-public static final String DVD_PLAYER_PLAY_ISCP = "CDVPLAY";
-
-/**
- * ISCP Command: CDVPOWER
- * POWER ON/OFF
- */
-public static final String DVD_PLAYER_POWER_ID = "dvd-player::power";
-public static final String DVD_PLAYER_POWER_ISCP = "CDVPOWER";
-
-/**
- * ISCP Command: CDVPROGRE
- * PROGRESSIVE
- */
-public static final String DVD_PLAYER_PROGRE_ID = "dvd-player::progre";
-public static final String DVD_PLAYER_PROGRE_ISCP = "CDVPROGRE";
-
-/**
- * ISCP Command: CDVPWROFF
- * POWER OFF
- */
-public static final String DVD_PLAYER_PWROFF_ID = "dvd-player::pwroff";
-public static final String DVD_PLAYER_PWROFF_ISCP = "CDVPWROFF";
-
-/**
- * ISCP Command: CDVPWRON
- * POWER ON
- */
-public static final String DVD_PLAYER_PWRON_ID = "dvd-player::pwron";
-public static final String DVD_PLAYER_PWRON_ISCP = "CDVPWRON";
-
-/**
- * ISCP Command: CDVRANDOM
- * RANDOM
- */
-public static final String DVD_PLAYER_RANDOM_ID = "dvd-player::random";
-public static final String DVD_PLAYER_RANDOM_ISCP = "CDVRANDOM";
-
-/**
- * ISCP Command: CDVREPEAT
- * REPEAT
- */
-public static final String DVD_PLAYER_REPEAT_ID = "dvd-player::repeat";
-public static final String DVD_PLAYER_REPEAT_ISCP = "CDVREPEAT";
-
-/**
- * ISCP Command: CDVRETURN
- * RETURN
- */
-public static final String DVD_PLAYER_RETURN_ID = "dvd-player::return";
-public static final String DVD_PLAYER_RETURN_ISCP = "CDVRETURN";
-
-/**
- * ISCP Command: CDVREW
- * REW <<
- */
-public static final String DVD_PLAYER_REW_ID = "dvd-player::rew";
-public static final String DVD_PLAYER_REW_ISCP = "CDVREW";
-
-/**
- * ISCP Command: CDVRIGHT
- * RIGHT
- */
-public static final String DVD_PLAYER_RIGHT_ID = "dvd-player::right";
-public static final String DVD_PLAYER_RIGHT_ISCP = "CDVRIGHT";
-
-/**
- * ISCP Command: CDVRSCTG
- * RESOLUTION(Toggle)
- */
-public static final String DVD_PLAYER_RSCTG_ID = "dvd-player::rsctg";
-public static final String DVD_PLAYER_RSCTG_ISCP = "CDVRSCTG";
-
-/**
- * ISCP Command: CDVSEARCH
- * SEARCH
- */
-public static final String DVD_PLAYER_SEARCH_ID = "dvd-player::search";
-public static final String DVD_PLAYER_SEARCH_ISCP = "CDVSEARCH";
-
-/**
- * ISCP Command: CDVSETUP
- * SETUP
- */
-public static final String DVD_PLAYER_SETUP_ID = "dvd-player::setup";
-public static final String DVD_PLAYER_SETUP_ISCP = "CDVSETUP";
-
-/**
- * ISCP Command: CDVSKIP.F
- * >>I
- */
-public static final String DVD_PLAYER_SKIP_F_ID = "dvd-player::skip-f";
-public static final String DVD_PLAYER_SKIP_F_ISCP = "CDVSKIP.F";
-
-/**
- * ISCP Command: CDVSKIP.R
- * I<<
- */
-public static final String DVD_PLAYER_SKIP_R_ID = "dvd-player::skip-r";
-public static final String DVD_PLAYER_SKIP_R_ISCP = "CDVSKIP.R";
-
-/**
- * ISCP Command: CDVSLOW.F
- * SLOW
- */
-public static final String DVD_PLAYER_SLOW_F_ID = "dvd-player::slow-f";
-public static final String DVD_PLAYER_SLOW_F_ISCP = "CDVSLOW.F";
-
-/**
- * ISCP Command: CDVSLOW.R
- * SLOW BACK
- */
-public static final String DVD_PLAYER_SLOW_R_ID = "dvd-player::slow-r";
-public static final String DVD_PLAYER_SLOW_R_ISCP = "CDVSLOW.R";
-
-/**
- * ISCP Command: CDVSTEP.F
- * STEP
- */
-public static final String DVD_PLAYER_STEP_F_ID = "dvd-player::step-f";
-public static final String DVD_PLAYER_STEP_F_ISCP = "CDVSTEP.F";
-
-/**
- * ISCP Command: CDVSTEP.R
- * STEP BACK
- */
-public static final String DVD_PLAYER_STEP_R_ID = "dvd-player::step-r";
-public static final String DVD_PLAYER_STEP_R_ISCP = "CDVSTEP.R";
-
-/**
- * ISCP Command: CDVSTOP
- * STOP
- */
-public static final String DVD_PLAYER_STOP_ID = "dvd-player::stop";
-public static final String DVD_PLAYER_STOP_ISCP = "CDVSTOP";
-
-/**
- * ISCP Command: CDVSUBTITLE
- * SUBTITLE
- */
-public static final String DVD_PLAYER_SUBTITLE_ID = "dvd-player::subtitle";
-public static final String DVD_PLAYER_SUBTITLE_ISCP = "CDVSUBTITLE";
-
-/**
- * ISCP Command: CDVSUBTON/OFF
- * SUBTITLE ON/OFF
- */
-public static final String DVD_PLAYER_SUBTON_OFF_ID = "dvd-player::subton-off";
-public static final String DVD_PLAYER_SUBTON_OFF_ISCP = "CDVSUBTON/OFF";
-
-/**
- * ISCP Command: CDVTOPMENU
- * TOPMENU
- */
-public static final String DVD_PLAYER_TOPMENU_ID = "dvd-player::topmenu";
-public static final String DVD_PLAYER_TOPMENU_ISCP = "CDVTOPMENU";
-
-/**
- * ISCP Command: CDVUP
- * UP
- */
-public static final String DVD_PLAYER_UP_ID = "dvd-player::up";
-public static final String DVD_PLAYER_UP_ISCP = "CDVUP";
-
-/**
- * ISCP Command: CDVVDOFF
- * VIDEO ON/OFF
- */
-public static final String DVD_PLAYER_VDOFF_ID = "dvd-player::vdoff";
-public static final String DVD_PLAYER_VDOFF_ISCP = "CDVVDOFF";
-
-/**
- * ISCP Command: CDVZOOMDN
- * ZOOM DOWN
- */
-public static final String DVD_PLAYER_ZOOMDN_ID = "dvd-player::zoomdn";
-public static final String DVD_PLAYER_ZOOMDN_ISCP = "CDVZOOMDN";
-
-/**
- * ISCP Command: CDVZOOMTG
- * ZOOM
- */
-public static final String DVD_PLAYER_ZOOMTG_ID = "dvd-player::zoomtg";
-public static final String DVD_PLAYER_ZOOMTG_ISCP = "CDVZOOMTG";
-
-/**
- * ISCP Command: CDVZOOMUP
- * ZOOM UP
- */
-public static final String DVD_PLAYER_ZOOMUP_ID = "dvd-player::zoomup";
-public static final String DVD_PLAYER_ZOOMUP_ISCP = "CDVZOOMUP";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_UP_ID = "eq-for-standing-wave-standing-wave::up";
+public static final String EQ_FOR_STANDING_WAVE_STANDING_WAVE_UP_ISCP = "STWUP";
 
 /**
  * CommandBlock
- * ISCP Command prefix: CEQ
- * Graphics Equalizer Operation Command
+ * ISCP Command prefix: EQS
+ * Equalizer Select(O/I:Equalizer, P:Manual EQ Select)
  */
-public static final String GRAPHICS_EQUALIZER_ID = "graphics-equalizer";
-public static final String GRAPHICS_EQUALIZER_ISCP = "CEQ";
+public static final String EQUALIZER_SELECT_ID = "equalizer-select";
+public static final String EQUALIZER_SELECT_ISCP = "EQS";
 
 /**
- * ISCP Command: CEQPOWER
- * POWER ON/OFF
+ * ISCP Command: EQSDOWN
+ * sets Equalizer Preset Wrap-Around Down
  */
-public static final String GRAPHICS_EQUALIZER_POWER_ID = "graphics-equalizer::power";
-public static final String GRAPHICS_EQUALIZER_POWER_ISCP = "CEQPOWER";
+public static final String EQUALIZER_SELECT_DOWN_ID = "equalizer-select::down";
+public static final String EQUALIZER_SELECT_DOWN_ISCP = "EQSDOWN";
 
 /**
- * ISCP Command: CEQPRESET
- * PRESET
+ * ISCP Command: EQS00
+ * sets Equalizer Off
  */
-public static final String GRAPHICS_EQUALIZER_PRESET_ID = "graphics-equalizer::preset";
-public static final String GRAPHICS_EQUALIZER_PRESET_ISCP = "CEQPRESET";
+public static final String EQUALIZER_SELECT_OFF_ID = "equalizer-select::off";
+public static final String EQUALIZER_SELECT_OFF_ISCP = "EQS00";
+
+/**
+ * ISCP Command: EQS01
+ * sets Equalizer Preset 1
+ */
+public static final String EQUALIZER_SELECT_PRESET_1_ID = "equalizer-select::preset-1";
+public static final String EQUALIZER_SELECT_PRESET_1_ISCP = "EQS01";
+
+/**
+ * ISCP Command: EQS02
+ * sets Equalizer Preset 2
+ */
+public static final String EQUALIZER_SELECT_PRESET_2_ID = "equalizer-select::preset-2";
+public static final String EQUALIZER_SELECT_PRESET_2_ISCP = "EQS02";
+
+/**
+ * ISCP Command: EQS03
+ * sets Equalizer Preset 3
+ */
+public static final String EQUALIZER_SELECT_PRESET_3_ID = "equalizer-select::preset-3";
+public static final String EQUALIZER_SELECT_PRESET_3_ISCP = "EQS03";
+
+/**
+ * ISCP Command: EQSQSTN
+ * gets The Equalizer Preset
+ */
+public static final String EQUALIZER_SELECT_QUERY_ID = "equalizer-select::query";
+public static final String EQUALIZER_SELECT_QUERY_ISCP = "EQSQSTN";
+
+/**
+ * ISCP Command: EQSUP
+ * sets Equalizer Preset Wrap-Around Up
+ */
+public static final String EQUALIZER_SELECT_UP_ID = "equalizer-select::up";
+public static final String EQUALIZER_SELECT_UP_ISCP = "EQSUP";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UHA
- * HD Radio Artist Name Info (Universal Port Dock Only)
+ * ISCP Command prefix: FWV
+ * Firmware Version
+ */
+public static final String FIRMWARE_VERSION_ID = "firmware-version";
+public static final String FIRMWARE_VERSION_ISCP = "FWV";
+
+/**
+ * ISCP Command: FWVQSTN
+ * gets The Firmware Version State
+ */
+public static final String FIRMWARE_VERSION_QUERY_ID = "firmware-version::query";
+public static final String FIRMWARE_VERSION_QUERY_ISCP = "FWVQSTN";
+
+/**
+ * ISCP Command: FWVabce-fhik-lmno-qrtu
+ * sets Firmware Version
+ */
+public static final String FIRMWARE_VERSION_VERSION_ID = "firmware-version::version";
+public static final String FIRMWARE_VERSION_VERSION_ISCP = "FWVabce-fhik-lmno-qrtu";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: FLD
+ * FL Display Information Command
+ */
+public static final String FL_DISPLAY_INFORMATION_ID = "fl-display-information";
+public static final String FL_DISPLAY_INFORMATION_ISCP = "FLD";
+
+/**
+ * ISCP Command: FLDQSTN
+ * gets FL Display Information
+ */
+public static final String FL_DISPLAY_INFORMATION_QUERY_ID = "fl-display-information::query";
+public static final String FL_DISPLAY_INFORMATION_QUERY_ISCP = "FLDQSTN";
+
+/**
+ * ISCP Command: FLD{xx}{xx}{xx}{xx}{xx}x
+ * FL Display Information
+Character Code for FL Display (UTF-8 encoded)
+ */
+public static final String FL_DISPLAY_INFORMATION_XX_XX_XX_XX_XX_X_ID = "fl-display-information::xx-xx-xx-xx-xx-x";
+public static final String FL_DISPLAY_INFORMATION_XX_XX_XX_XX_XX_X_ISCP = "FLD{xx}{xx}{xx}{xx}{xx}x";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: ECO
+ * for Smart Grid Command
+ */
+public static final String FOR_SMART_GRID_ID = "for-smart-grid";
+public static final String FOR_SMART_GRID_ISCP = "ECO";
+
+/**
+ * ISCP Command: ECO01
+ * sets Volume 1dB down and Dimmer Level "Dark"
+ */
+public static final String FOR_SMART_GRID_VOLUME_1DB_DOWN_AND_DIMMER_LEVEL_DARK_ID = "for-smart-grid::volume-1db-down-and-dimmer-level-dark";
+public static final String FOR_SMART_GRID_VOLUME_1DB_DOWN_AND_DIMMER_LEVEL_DARK_ISCP = "ECO01";
+
+/**
+ * ISCP Command: ECO03
+ * sets Volume 3dB down and Dimmer Level "Dark"
+ */
+public static final String FOR_SMART_GRID_VOLUME_3DB_DOWN_AND_DIMMER_LEVEL_DARK_ID = "for-smart-grid::volume-3db-down-and-dimmer-level-dark";
+public static final String FOR_SMART_GRID_VOLUME_3DB_DOWN_AND_DIMMER_LEVEL_DARK_ISCP = "ECO03";
+
+/**
+ * ISCP Command: ECO06
+ * sets Volume 6dB down and Dimmer Level "Dark"
+ */
+public static final String FOR_SMART_GRID_VOLUME_6DB_DOWN_AND_DIMMER_LEVEL_DARK_ID = "for-smart-grid::volume-6db-down-and-dimmer-level-dark";
+public static final String FOR_SMART_GRID_VOLUME_6DB_DOWN_AND_DIMMER_LEVEL_DARK_ISCP = "ECO06";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: MFB
+ * Fullband MCACC Calibration
+ */
+public static final String FULLBAND_MCACC_CALIBRATION_ID = "fullband-mcacc-calibration";
+public static final String FULLBAND_MCACC_CALIBRATION_ISCP = "MFB";
+
+/**
+ * ISCP Command: MFB00
+ * not complete Fullband MCACC calibration or
+not have Fullband MCACC function
+ */
+public static final String FULLBAND_MCACC_CALIBRATION_00_ID = "fullband-mcacc-calibration::00";
+public static final String FULLBAND_MCACC_CALIBRATION_00_ISCP = "MFB00";
+
+/**
+ * ISCP Command: MFB01
+ * complete Fullband MCACC calibration
+ */
+public static final String FULLBAND_MCACC_CALIBRATION_01_ID = "fullband-mcacc-calibration::01";
+public static final String FULLBAND_MCACC_CALIBRATION_01_ISCP = "MFB01";
+
+/**
+ * ISCP Command: MFBQSTN
+ * gets The Fullband MCACC calibration
+ */
+public static final String FULLBAND_MCACC_CALIBRATION_QUERY_ID = "fullband-mcacc-calibration::query";
+public static final String FULLBAND_MCACC_CALIBRATION_QUERY_ISCP = "MFBQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: HAT
+ * HD Radio Artist Name Info (HD Radio Model Only)
  */
 public static final String HD_RADIO_ARTIST_NAME_INFO_ID = "hd-radio-artist-name-info";
-public static final String HD_RADIO_ARTIST_NAME_INFO_ISCP = "UHA";
+public static final String HD_RADIO_ARTIST_NAME_INFO_ISCP = "HAT";
 
 /**
- * ISCP Command: UHAnnnnnnnnnn
- * HD Radio Artist Name (variable-length, 64 letters max)
+ * ISCP Command: HATnnnnnnnnnn
+ * HD Radio Artist Name (variable-length, 64 digits max)
  */
-public static final String HD_RADIO_ARTIST_NAME_INFO_NULL_ID = "hd-radio-artist-name-info::null";
-public static final String HD_RADIO_ARTIST_NAME_INFO_NULL_ISCP = "UHAnnnnnnnnnn";
+public static final String HD_RADIO_ARTIST_NAME_INFO_ARTIST_NAME_ID = "hd-radio-artist-name-info::artist-name";
+public static final String HD_RADIO_ARTIST_NAME_INFO_ARTIST_NAME_ISCP = "HATnnnnnnnnnn";
 
 /**
- * ISCP Command: UHAQSTN
+ * ISCP Command: HATQSTN
  * gets HD Radio Artist Name
  */
 public static final String HD_RADIO_ARTIST_NAME_INFO_QUERY_ID = "hd-radio-artist-name-info::query";
-public static final String HD_RADIO_ARTIST_NAME_INFO_QUERY_ISCP = "UHAQSTN";
+public static final String HD_RADIO_ARTIST_NAME_INFO_QUERY_ISCP = "HATQSTN";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UHB
- * HD Radio Blend Mode Command (Universal Port Dock Only)
+ * ISCP Command prefix: HBL
+ * HD Radio Blend Mode Command (HD Radio Model Only)
  */
 public static final String HD_RADIO_BLEND_MODE_ID = "hd-radio-blend-mode";
-public static final String HD_RADIO_BLEND_MODE_ISCP = "UHB";
+public static final String HD_RADIO_BLEND_MODE_ISCP = "HBL";
 
 /**
- * ISCP Command: UHB01
+ * ISCP Command: HBL01
  * sets HD Radio Blend Mode "Analog"
  */
 public static final String HD_RADIO_BLEND_MODE_ANALOG_ID = "hd-radio-blend-mode::analog";
-public static final String HD_RADIO_BLEND_MODE_ANALOG_ISCP = "UHB01";
+public static final String HD_RADIO_BLEND_MODE_ANALOG_ISCP = "HBL01";
 
 /**
- * ISCP Command: UHB00
+ * ISCP Command: HBL00
  * sets HD Radio Blend Mode "Auto"
  */
 public static final String HD_RADIO_BLEND_MODE_AUTO_ID = "hd-radio-blend-mode::auto";
-public static final String HD_RADIO_BLEND_MODE_AUTO_ISCP = "UHB00";
+public static final String HD_RADIO_BLEND_MODE_AUTO_ISCP = "HBL00";
 
 /**
- * ISCP Command: UHBQSTN
+ * ISCP Command: HBLQSTN
  * gets the HD Radio Blend Mode Status
  */
 public static final String HD_RADIO_BLEND_MODE_QUERY_ID = "hd-radio-blend-mode::query";
-public static final String HD_RADIO_BLEND_MODE_QUERY_ISCP = "UHBQSTN";
+public static final String HD_RADIO_BLEND_MODE_QUERY_ISCP = "HBLQSTN";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UHC
- * HD Radio Channel Name Info (Universal Port Dock Only)
+ * ISCP Command prefix: HCN
+ * HD Radio Channel Name Info (HD Radio Model Only)
  */
 public static final String HD_RADIO_CHANNEL_NAME_INFO_ID = "hd-radio-channel-name-info";
-public static final String HD_RADIO_CHANNEL_NAME_INFO_ISCP = "UHC";
+public static final String HD_RADIO_CHANNEL_NAME_INFO_ISCP = "HCN";
 
 /**
- * ISCP Command: UHCnnnnnnn
- * HD Radio Channel Name (Station Name) (7lettters)
+ * ISCP Command: HCNnnnnnnnnnn
+ * HD Radio Channel Name (Station Name) (7 digits)
  */
-public static final String HD_RADIO_CHANNEL_NAME_INFO_NULL_ID = "hd-radio-channel-name-info::null";
-public static final String HD_RADIO_CHANNEL_NAME_INFO_NULL_ISCP = "UHCnnnnnnn";
+public static final String HD_RADIO_CHANNEL_NAME_INFO_CHANNEL_NAME_ID = "hd-radio-channel-name-info::channel-name";
+public static final String HD_RADIO_CHANNEL_NAME_INFO_CHANNEL_NAME_ISCP = "HCNnnnnnnnnnn";
 
 /**
- * ISCP Command: UHCQSTN
+ * ISCP Command: HCNQSTN
  * gets HD Radio Channel Name
  */
 public static final String HD_RADIO_CHANNEL_NAME_INFO_QUERY_ID = "hd-radio-channel-name-info::query";
-public static final String HD_RADIO_CHANNEL_NAME_INFO_QUERY_ISCP = "UHCQSTN";
+public static final String HD_RADIO_CHANNEL_NAME_INFO_QUERY_ISCP = "HCNQSTN";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UHP
- * HD Radio Channel Program Command (Universal Port Dock Only)
+ * ISCP Command prefix: HPR
+ * HD Radio Channel Program Command (HD Radio Model Only)
  */
 public static final String HD_RADIO_CHANNEL_PROGRAM_ID = "hd-radio-channel-program";
-public static final String HD_RADIO_CHANNEL_PROGRAM_ISCP = "UHP";
+public static final String HD_RADIO_CHANNEL_PROGRAM_ISCP = "HPR";
 
 /**
- * ISCP Command: UHPQSTN
+ * ISCP Command: HPRQSTN
  * gets HD Radio Channel Program
  */
 public static final String HD_RADIO_CHANNEL_PROGRAM_QUERY_ID = "hd-radio-channel-program::query";
-public static final String HD_RADIO_CHANNEL_PROGRAM_QUERY_ISCP = "UHPQSTN";
+public static final String HD_RADIO_CHANNEL_PROGRAM_QUERY_ISCP = "HPRQSTN";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UHD
- * HD Radio Detail Info (Universal Port Dock Only)
+ * ISCP Command prefix: HDS
+ * HD Radio Detail Info (HD Radio Model Only)
  */
 public static final String HD_RADIO_DETAIL_INFO_ID = "hd-radio-detail-info";
-public static final String HD_RADIO_DETAIL_INFO_ISCP = "UHD";
+public static final String HD_RADIO_DETAIL_INFO_ISCP = "HDS";
 
 /**
- * ISCP Command: UHDnnnnnnnnnn
+ * ISCP Command: HDSnnnnnnnnnn
  * HD Radio Title
  */
-public static final String HD_RADIO_DETAIL_INFO_NULL_ID = "hd-radio-detail-info::null";
-public static final String HD_RADIO_DETAIL_INFO_NULL_ISCP = "UHDnnnnnnnnnn";
+public static final String HD_RADIO_DETAIL_INFO_INFO_ID = "hd-radio-detail-info::info";
+public static final String HD_RADIO_DETAIL_INFO_INFO_ISCP = "HDSnnnnnnnnnn";
 
 /**
- * ISCP Command: UHDQSTN
+ * ISCP Command: HDSQSTN
  * gets HD Radio Title
  */
 public static final String HD_RADIO_DETAIL_INFO_QUERY_ID = "hd-radio-detail-info::query";
-public static final String HD_RADIO_DETAIL_INFO_QUERY_ISCP = "UHDQSTN";
+public static final String HD_RADIO_DETAIL_INFO_QUERY_ISCP = "HDSQSTN";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UHT
- * HD Radio Title Info (Universal Port Dock Only)
+ * ISCP Command prefix: HTI
+ * HD Radio Title Info (HD Radio Model Only)
  */
 public static final String HD_RADIO_TITLE_INFO_ID = "hd-radio-title-info";
-public static final String HD_RADIO_TITLE_INFO_ISCP = "UHT";
+public static final String HD_RADIO_TITLE_INFO_ISCP = "HTI";
 
 /**
- * ISCP Command: UHTnnnnnnnnnn
- * HD Radio Title (variable-length, 64 letters max)
- */
-public static final String HD_RADIO_TITLE_INFO_NULL_ID = "hd-radio-title-info::null";
-public static final String HD_RADIO_TITLE_INFO_NULL_ISCP = "UHTnnnnnnnnnn";
-
-/**
- * ISCP Command: UHTQSTN
+ * ISCP Command: HTIQSTN
  * gets HD Radio Title
  */
 public static final String HD_RADIO_TITLE_INFO_QUERY_ID = "hd-radio-title-info::query";
-public static final String HD_RADIO_TITLE_INFO_QUERY_ISCP = "UHTQSTN";
+public static final String HD_RADIO_TITLE_INFO_QUERY_ISCP = "HTIQSTN";
+
+/**
+ * ISCP Command: HTInnnnnnnnnn
+ * HD Radio Title (variable-length, 64 digits max)
+ */
+public static final String HD_RADIO_TITLE_INFO_TITLE_ID = "hd-radio-title-info::title";
+public static final String HD_RADIO_TITLE_INFO_TITLE_ISCP = "HTInnnnnnnnnn";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UHS
- * HD Radio Tuner Status (Universal Port Dock Only)
+ * ISCP Command prefix: HTS
+ * HD Radio Tuner Status (HD Radio Model Only)
  */
 public static final String HD_RADIO_TUNER_STATUS_ID = "hd-radio-tuner-status";
-public static final String HD_RADIO_TUNER_STATUS_ISCP = "UHS";
+public static final String HD_RADIO_TUNER_STATUS_ISCP = "HTS";
 
 /**
- * ISCP Command: UHSmmnnoo
+ * ISCP Command: HTSmmnnoo
  * HD Radio Tuner Status (3 bytes)
 mm -> "00" not HD, "01" HD
 nn -> current Program "01"-"08"
 oo -> receivable Program (8 bits are represented in hexadecimal notation. Each bit shows receivable or not.)
  */
 public static final String HD_RADIO_TUNER_STATUS_MMNNOO_ID = "hd-radio-tuner-status::mmnnoo";
-public static final String HD_RADIO_TUNER_STATUS_MMNNOO_ISCP = "UHSmmnnoo";
+public static final String HD_RADIO_TUNER_STATUS_MMNNOO_ISCP = "HTSmmnnoo";
 
 /**
- * ISCP Command: UHSQSTN
+ * ISCP Command: HTSQSTN
  * gets the HD Radio Tuner Status
  */
 public static final String HD_RADIO_TUNER_STATUS_QUERY_ID = "hd-radio-tuner-status::query";
-public static final String HD_RADIO_TUNER_STATUS_QUERY_ISCP = "UHSQSTN";
+public static final String HD_RADIO_TUNER_STATUS_QUERY_ISCP = "HTSQSTN";
 
 /**
  * CommandBlock
  * ISCP Command prefix: HAO
- * HDMI Audio Out
+ * HDMI Audio Out (Main)
  */
 public static final String HDMI_AUDIO_OUT_ID = "hdmi-audio-out";
 public static final String HDMI_AUDIO_OUT_ISCP = "HAO";
@@ -1928,6 +2168,145 @@ public static final String HDMI_AUDIO_OUT_UP_ISCP = "HAOUP";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: HAS
+ * HDMI Audio Out (Sub)
+ */
+public static final String HDMI_AUDIO_OUT_SUB_ID = "hdmi-audio-out-sub";
+public static final String HDMI_AUDIO_OUT_SUB_ISCP = "HAS";
+
+/**
+ * ISCP Command: HAS00
+ * sets Off
+ */
+public static final String HDMI_AUDIO_OUT_SUB_OFF_ID = "hdmi-audio-out-sub::off";
+public static final String HDMI_AUDIO_OUT_SUB_OFF_ISCP = "HAS00";
+
+/**
+ * ISCP Command: HAS01
+ * sets On
+ */
+public static final String HDMI_AUDIO_OUT_SUB_ON_ID = "hdmi-audio-out-sub::on";
+public static final String HDMI_AUDIO_OUT_SUB_ON_ISCP = "HAS01";
+
+/**
+ * ISCP Command: HASQSTN
+ * gets HDMI Audio Out
+ */
+public static final String HDMI_AUDIO_OUT_SUB_QUERY_ID = "hdmi-audio-out-sub::query";
+public static final String HDMI_AUDIO_OUT_SUB_QUERY_ISCP = "HASQSTN";
+
+/**
+ * ISCP Command: HASUP
+ * sets HDMI Audio Out Wrap-Around Up
+ */
+public static final String HDMI_AUDIO_OUT_SUB_UP_ID = "hdmi-audio-out-sub::up";
+public static final String HDMI_AUDIO_OUT_SUB_UP_ISCP = "HASUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: CEC
+ * HDMI CEC
+ */
+public static final String HDMI_CEC_ID = "hdmi-cec";
+public static final String HDMI_CEC_ISCP = "CEC";
+
+/**
+ * ISCP Command: CEC00
+ * sets Off
+ */
+public static final String HDMI_CEC_OFF_ID = "hdmi-cec::off";
+public static final String HDMI_CEC_OFF_ISCP = "CEC00";
+
+/**
+ * ISCP Command: CEC01
+ * sets On
+ */
+public static final String HDMI_CEC_ON_ID = "hdmi-cec::on";
+public static final String HDMI_CEC_ON_ISCP = "CEC01";
+
+/**
+ * ISCP Command: CECQSTN
+ * gets HDMI CEC
+ */
+public static final String HDMI_CEC_QUERY_ID = "hdmi-cec::query";
+public static final String HDMI_CEC_QUERY_ISCP = "CECQSTN";
+
+/**
+ * ISCP Command: CECUP
+ * sets HDMI CEC Wrap-Around Up
+ */
+public static final String HDMI_CEC_UP_ID = "hdmi-cec::up";
+public static final String HDMI_CEC_UP_ISCP = "CECUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: CCM
+ * HDMI CEC Control Monitor
+ */
+public static final String HDMI_CEC_CONTROL_MONITOR_ID = "hdmi-cec-control-monitor";
+public static final String HDMI_CEC_CONTROL_MONITOR_ISCP = "CCM";
+
+/**
+ * ISCP Command: CCM01
+ * sets Main
+ */
+public static final String HDMI_CEC_CONTROL_MONITOR_MAIN_ID = "hdmi-cec-control-monitor::main";
+public static final String HDMI_CEC_CONTROL_MONITOR_MAIN_ISCP = "CCM01";
+
+/**
+ * ISCP Command: CCMQSTN
+ * gets Control Monitor
+ */
+public static final String HDMI_CEC_CONTROL_MONITOR_QUERY_ID = "hdmi-cec-control-monitor::query";
+public static final String HDMI_CEC_CONTROL_MONITOR_QUERY_ISCP = "CCMQSTN";
+
+/**
+ * ISCP Command: CCM10
+ * sets Sub
+ */
+public static final String HDMI_CEC_CONTROL_MONITOR_SUB_ID = "hdmi-cec-control-monitor::sub";
+public static final String HDMI_CEC_CONTROL_MONITOR_SUB_ISCP = "CCM10";
+
+/**
+ * ISCP Command: CCMUP
+ * sets Control Monitor Wrap-Around Up
+ */
+public static final String HDMI_CEC_CONTROL_MONITOR_UP_ID = "hdmi-cec-control-monitor::up";
+public static final String HDMI_CEC_CONTROL_MONITOR_UP_ISCP = "CCMUP";
+
+/**
+ * ISCP Command: CCM02
+ * sets Zone2
+ */
+public static final String HDMI_CEC_CONTROL_MONITOR_ZONE2_ID = "hdmi-cec-control-monitor::zone2";
+public static final String HDMI_CEC_CONTROL_MONITOR_ZONE2_ISCP = "CCM02";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: HOI
+ * HDMI Out Information
+ */
+public static final String HDMI_OUT_INFORMATION_ID = "hdmi-out-information";
+public static final String HDMI_OUT_INFORMATION_ISCP = "HOI";
+
+/**
+ * ISCP Command: HOIab
+ * sets HDMI Information
+a:HDMI Out MAIN 1:for Main Zone
+b:HDMI Out SUB 0:None,1:for Main Zone,2:for Zone 2
+ */
+public static final String HDMI_OUT_INFORMATION_A_1_FOR_ZONE_B_SUB_0_NONE_ID = "hdmi-out-information::a-1-for-zone-b-sub-0-none";
+public static final String HDMI_OUT_INFORMATION_A_1_FOR_ZONE_B_SUB_0_NONE_ISCP = "HOIab";
+
+/**
+ * ISCP Command: HOIQSTN
+ * gets The HDMI Out Information State
+ */
+public static final String HDMI_OUT_INFORMATION_QUERY_ID = "hdmi-out-information::query";
+public static final String HDMI_OUT_INFORMATION_QUERY_ISCP = "HOIQSTN";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: HDO
  * HDMI Output Selector
  */
@@ -1950,7 +2329,7 @@ public static final String HDMI_OUTPUT_SELECTOR_NO_ISCP = "HDO00";
 
 /**
  * ISCP Command: HDO02
- * sets Out Sub, HDMI Sub
+ * sets Out Sub, HDMI Sub, HDBaseT
  */
 public static final String HDMI_OUTPUT_SELECTOR_OUT_SUB_ID = "hdmi-output-selector::out-sub";
 public static final String HDMI_OUTPUT_SELECTOR_OUT_SUB_ISCP = "HDO02";
@@ -1971,10 +2350,146 @@ public static final String HDMI_OUTPUT_SELECTOR_UP_ISCP = "HDOUP";
 
 /**
  * ISCP Command: HDO01
- * sets Yes/Out Main, HDMI Main
+ * sets Yes/Out Main, HDMI Main, HDMI
  */
 public static final String HDMI_OUTPUT_SELECTOR_YES_ID = "hdmi-output-selector::yes";
 public static final String HDMI_OUTPUT_SELECTOR_YES_ISCP = "HDO01";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: HST
+ * HDMI Standby Through
+ */
+public static final String HDMI_STANDBY_THROUGH_ID = "hdmi-standby-through";
+public static final String HDMI_STANDBY_THROUGH_ISCP = "HST";
+
+/**
+ * ISCP Command: HSTATE
+ * sets HDMI Standby Through Auto(Eco)
+ */
+public static final String HDMI_STANDBY_THROUGH_AUTO_ID = "hdmi-standby-through::auto";
+public static final String HDMI_STANDBY_THROUGH_AUTO_ISCP = "HSTATE";
+
+/**
+ * ISCP Command: HSTLAST
+ * sets HDMI Standby Through Last
+ */
+public static final String HDMI_STANDBY_THROUGH_LAST_ID = "hdmi-standby-through::last";
+public static final String HDMI_STANDBY_THROUGH_LAST_ISCP = "HSTLAST";
+
+/**
+ * ISCP Command: HSTOFF
+ * sets HDMI Standby Through Off
+ */
+public static final String HDMI_STANDBY_THROUGH_OFF_ID = "hdmi-standby-through::off";
+public static final String HDMI_STANDBY_THROUGH_OFF_ISCP = "HSTOFF";
+
+/**
+ * ISCP Command: HSTQSTN
+ * gets The HDMI Standby Through State
+ */
+public static final String HDMI_STANDBY_THROUGH_QUERY_ID = "hdmi-standby-through::query";
+public static final String HDMI_STANDBY_THROUGH_QUERY_ISCP = "HSTQSTN";
+
+/**
+ * ISCP Command: HSTAT
+ * sets HDMI Standby Throguh Auto
+ */
+public static final String HDMI_STANDBY_THROUGH_THROGUH_AUTO_ID = "hdmi-standby-through::throguh-auto";
+public static final String HDMI_STANDBY_THROUGH_THROGUH_AUTO_ISCP = "HSTAT";
+
+/**
+ * ISCP Command: HSTUP
+ * sets HDMI Standby Through Wrap-Around
+ */
+public static final String HDMI_STANDBY_THROUGH_UP_ID = "hdmi-standby-through::up";
+public static final String HDMI_STANDBY_THROUGH_UP_ISCP = "HSTUP";
+
+/**
+ * ISCP Command: HSTxx
+ * sets HDMI Standby Through xx=SLI Number
+ */
+public static final String HDMI_STANDBY_THROUGH_XX_SLI_NUMBER_ID = "hdmi-standby-through::xx-sli-number";
+public static final String HDMI_STANDBY_THROUGH_XX_SLI_NUMBER_ISCP = "HSTxx";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: HBT
+ * Hi-Bit
+ */
+public static final String HI_BIT_ID = "hi-bit";
+public static final String HI_BIT_ISCP = "HBT";
+
+/**
+ * ISCP Command: HBT00
+ * sets Hi-Bit Off
+ */
+public static final String HI_BIT_OFF_ID = "hi-bit::off";
+public static final String HI_BIT_OFF_ISCP = "HBT00";
+
+/**
+ * ISCP Command: HBT01
+ * sets Hi-Bit On
+ */
+public static final String HI_BIT_ON_ID = "hi-bit::on";
+public static final String HI_BIT_ON_ISCP = "HBT01";
+
+/**
+ * ISCP Command: HBTQSTN
+ * gets The Hi-Bit State
+ */
+public static final String HI_BIT_QUERY_ID = "hi-bit::query";
+public static final String HI_BIT_QUERY_ISCP = "HBTQSTN";
+
+/**
+ * ISCP Command: HBTUP
+ * sets Hi-Bit Wrap-Around Up
+ */
+public static final String HI_BIT_UP_ID = "hi-bit::up";
+public static final String HI_BIT_UP_ISCP = "HBTUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: DMN
+ * Input Channel (Multiplex) / Dual Mono
+ */
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_ID = "input-channel-multiplex-dual-mono";
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_ISCP = "DMN";
+
+/**
+ * ISCP Command: DMN00
+ * sets DUAL MONO MAIN
+ */
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_MAIN_ID = "input-channel-multiplex-dual-mono::main";
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_MAIN_ISCP = "DMN00";
+
+/**
+ * ISCP Command: DMN02
+ * sets DUAL MONO MAIN+SUB
+ */
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_MAIN_SUB_ID = "input-channel-multiplex-dual-mono::main-sub";
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_MAIN_SUB_ISCP = "DMN02";
+
+/**
+ * ISCP Command: DMNQSTN
+ * gets The Panorama State
+ */
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_QUERY_ID = "input-channel-multiplex-dual-mono::query";
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_QUERY_ISCP = "DMNQSTN";
+
+/**
+ * ISCP Command: DMN01
+ * sets DUAL MONO SUB
+ */
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_SUB_ID = "input-channel-multiplex-dual-mono::sub";
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_SUB_ISCP = "DMN01";
+
+/**
+ * ISCP Command: DMNUP
+ * sets Panorama Wrap-Around
+ */
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_UP_ID = "input-channel-multiplex-dual-mono::up";
+public static final String INPUT_CHANNEL_MULTIPLEX_DUAL_MONO_UP_ISCP = "DMNUP";
 
 /**
  * CommandBlock
@@ -1986,10 +2501,17 @@ public static final String INPUT_SELECTOR_ISCP = "SLI";
 
 /**
  * ISCP Command: SLI07
- * Hidden1
+ * Hidden1     EXTRA1
  */
 public static final String INPUT_SELECTOR_07_ID = "input-selector::07";
 public static final String INPUT_SELECTOR_07_ISCP = "SLI07";
+
+/**
+ * ISCP Command: SLI2D
+ * sets Aiplay
+ */
+public static final String INPUT_SELECTOR_AIPLAY_ID = "input-selector::aiplay";
+public static final String INPUT_SELECTOR_AIPLAY_ISCP = "SLI2D";
 
 /**
  * ISCP Command: SLI25
@@ -1999,11 +2521,32 @@ public static final String INPUT_SELECTOR_AM_ID = "input-selector::am";
 public static final String INPUT_SELECTOR_AM_ISCP = "SLI25";
 
 /**
+ * ISCP Command: SLI2E
+ * sets Bluetooth
+ */
+public static final String INPUT_SELECTOR_BLUETOOTH_ID = "input-selector::bluetooth";
+public static final String INPUT_SELECTOR_BLUETOOTH_ISCP = "SLI2E";
+
+/**
  * ISCP Command: SLI23
  * sets CD, TV/CD
  */
 public static final String INPUT_SELECTOR_CD_ID = "input-selector::cd";
 public static final String INPUT_SELECTOR_CD_ISCP = "SLI23";
+
+/**
+ * ISCP Command: SLI45
+ * sets COAXIAL
+ */
+public static final String INPUT_SELECTOR_COAXIAL_ID = "input-selector::coaxial";
+public static final String INPUT_SELECTOR_COAXIAL_ISCP = "SLI45";
+
+/**
+ * ISCP Command: SLI33
+ * sets DAB 
+ */
+public static final String INPUT_SELECTOR_DAB_ID = "input-selector::dab";
+public static final String INPUT_SELECTOR_DAB_ISCP = "SLI33";
 
 /**
  * ISCP Command: SLIDOWN
@@ -2027,11 +2570,46 @@ public static final String INPUT_SELECTOR_FM_ID = "input-selector::fm";
 public static final String INPUT_SELECTOR_FM_ISCP = "SLI24";
 
 /**
+ * ISCP Command: SLI55
+ * sets HDMI 5
+ */
+public static final String INPUT_SELECTOR_HDMI_5_ID = "input-selector::hdmi-5";
+public static final String INPUT_SELECTOR_HDMI_5_ISCP = "SLI55";
+
+/**
+ * ISCP Command: SLI56
+ * sets HDMI 6
+ */
+public static final String INPUT_SELECTOR_HDMI_6_ID = "input-selector::hdmi-6";
+public static final String INPUT_SELECTOR_HDMI_6_ISCP = "SLI56";
+
+/**
+ * ISCP Command: SLI57
+ * sets HDMI 7
+ */
+public static final String INPUT_SELECTOR_HDMI_7_ID = "input-selector::hdmi-7";
+public static final String INPUT_SELECTOR_HDMI_7_ISCP = "SLI57";
+
+/**
  * ISCP Command: SLI28
  * sets INTERNET RADIO, iRadio Favorite
  */
 public static final String INPUT_SELECTOR_INTERNET_RADIO_ID = "input-selector::internet-radio";
 public static final String INPUT_SELECTOR_INTERNET_RADIO_ISCP = "SLI28";
+
+/**
+ * ISCP Command: SLI41
+ * sets LINE
+ */
+public static final String INPUT_SELECTOR_LINE_ID = "input-selector::line";
+public static final String INPUT_SELECTOR_LINE_ISCP = "SLI41";
+
+/**
+ * ISCP Command: SLI42
+ * sets LINE2
+ */
+public static final String INPUT_SELECTOR_LINE2_ID = "input-selector::line2";
+public static final String INPUT_SELECTOR_LINE2_ISCP = "SLI42";
 
 /**
  * ISCP Command: SLI30
@@ -2055,6 +2633,13 @@ public static final String INPUT_SELECTOR_NETWORK_ID = "input-selector::network"
 public static final String INPUT_SELECTOR_NETWORK_ISCP = "SLI2B";
 
 /**
+ * ISCP Command: SLI44
+ * sets OPTICAL
+ */
+public static final String INPUT_SELECTOR_OPTICAL_ID = "input-selector::optical";
+public static final String INPUT_SELECTOR_OPTICAL_ISCP = "SLI44";
+
+/**
  * ISCP Command: SLI22
  * sets PHONO
  */
@@ -2074,6 +2659,13 @@ public static final String INPUT_SELECTOR_QUERY_ISCP = "SLIQSTN";
  */
 public static final String INPUT_SELECTOR_SIRIUS_ID = "input-selector::sirius";
 public static final String INPUT_SELECTOR_SIRIUS_ISCP = "SLI32";
+
+/**
+ * ISCP Command: SLI11
+ * sets STRM BOX
+ */
+public static final String INPUT_SELECTOR_STRM_BOX_ID = "input-selector::strm-box";
+public static final String INPUT_SELECTOR_STRM_BOX_ISCP = "SLI11";
 
 /**
  * ISCP Command: SLI20
@@ -2097,6 +2689,13 @@ public static final String INPUT_SELECTOR_TUNER_ID = "input-selector::tuner";
 public static final String INPUT_SELECTOR_TUNER_ISCP = "SLI26";
 
 /**
+ * ISCP Command: SLI12
+ * sets TV
+ */
+public static final String INPUT_SELECTOR_TV_ID = "input-selector::tv";
+public static final String INPUT_SELECTOR_TV_ISCP = "SLI12";
+
+/**
  * ISCP Command: SLI40
  * sets Universal PORT
  */
@@ -2111,15 +2710,22 @@ public static final String INPUT_SELECTOR_UP_ID = "input-selector::up";
 public static final String INPUT_SELECTOR_UP_ISCP = "SLIUP";
 
 /**
- * ISCP Command: SLI2C
- * sets USB(toggle)
+ * ISCP Command: SLI29
+ * sets USB/USB(Front)
  */
 public static final String INPUT_SELECTOR_USB_ID = "input-selector::usb";
-public static final String INPUT_SELECTOR_USB_ISCP = "SLI2C";
+public static final String INPUT_SELECTOR_USB_ISCP = "SLI29";
+
+/**
+ * ISCP Command: SLI2F
+ * sets USB DAC In
+ */
+public static final String INPUT_SELECTOR_USB_DAC_IN_ID = "input-selector::usb-dac-in";
+public static final String INPUT_SELECTOR_USB_DAC_IN_ISCP = "SLI2F";
 
 /**
  * ISCP Command: SLI00
- * sets VIDEO1, VCR/DVR
+ * sets VIDEO1, VCR/DVR, STB/DVR
  */
 public static final String INPUT_SELECTOR_VIDEO1_ID = "input-selector::video1";
 public static final String INPUT_SELECTOR_VIDEO1_ISCP = "SLI00";
@@ -2133,7 +2739,7 @@ public static final String INPUT_SELECTOR_VIDEO2_ISCP = "SLI01";
 
 /**
  * ISCP Command: SLI02
- * sets VIDEO3, GAME/TV, GAME
+ * sets VIDEO3, GAME/TV, GAME, GAME1
  */
 public static final String INPUT_SELECTOR_VIDEO3_ID = "input-selector::video3";
 public static final String INPUT_SELECTOR_VIDEO3_ISCP = "SLI02";
@@ -2147,7 +2753,7 @@ public static final String INPUT_SELECTOR_VIDEO4_ISCP = "SLI03";
 
 /**
  * ISCP Command: SLI04
- * sets VIDEO5, AUX2
+ * sets VIDEO5, AUX2, GAME2
  */
 public static final String INPUT_SELECTOR_VIDEO5_ID = "input-selector::video5";
 public static final String INPUT_SELECTOR_VIDEO5_ISCP = "SLI04";
@@ -2175,6 +2781,52 @@ public static final String INPUT_SELECTOR_XM_ISCP = "SLI31";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: IRN
+ * Input Selector Rename / Input Function Rename
+ */
+public static final String INPUT_SELECTOR_RENAME_INPUT_FUNCTION_RENAME_ID = "input-selector-rename-input-function-rename";
+public static final String INPUT_SELECTOR_RENAME_INPUT_FUNCTION_RENAME_ISCP = "IRN";
+
+/**
+ * ISCP Command: IRNiixxxxxxxxxx
+ * sets Input Selector Name (10 characters)
+ii: Selector Number (the same as for SLI command)
+xxxxxxxxxx: Name(Max 10 characters)
+ */
+public static final String INPUT_SELECTOR_RENAME_INPUT_FUNCTION_RENAME_NAME_10_CHARACTERS_II_NUMBER_THE_SAME_AS_FOR_SLI_COMMAND_XXXXXXXXXX_NAME_ID = "input-selector-rename-input-function-rename::name-10-characters-ii-number-the-same-as-for-sli-command-xxxxxxxxxx-name";
+public static final String INPUT_SELECTOR_RENAME_INPUT_FUNCTION_RENAME_NAME_10_CHARACTERS_II_NUMBER_THE_SAME_AS_FOR_SLI_COMMAND_XXXXXXXXXX_NAME_ISCP = "IRNiixxxxxxxxxx";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: ITV
+ * IntelliVolume / Input Volume Absorber
+ */
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_ID = "intellivolume-input-volume-absorber";
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_ISCP = "ITV";
+
+/**
+ * ISCP Command: ITVDOWN
+ * sets IntelliVolume Down
+ */
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_DOWN_ID = "intellivolume-input-volume-absorber::down";
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_DOWN_ISCP = "ITVDOWN";
+
+/**
+ * ISCP Command: ITVQSTN
+ * gets The IntelliVolume State
+ */
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_QUERY_ID = "intellivolume-input-volume-absorber::query";
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_QUERY_ISCP = "ITVQSTN";
+
+/**
+ * ISCP Command: ITVUP
+ * sets IntelliVolume Up
+ */
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_UP_ID = "intellivolume-input-volume-absorber::up";
+public static final String INTELLIVOLUME_INPUT_VOLUME_ABSORBER_UP_ISCP = "ITVUP";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: NPR
  * Internet Radio Preset Command
  */
@@ -2190,197 +2842,39 @@ public static final String INTERNET_RADIO_PRESET_SET_ISCP = "NPRSET";
 
 /**
  * CommandBlock
- * ISCP Command prefix: IAL
- * iPod Album Name Info (Universal Port Dock Only)
- */
-public static final String IPOD_ALBUM_NAME_INFO_ID = "ipod-album-name-info";
-public static final String IPOD_ALBUM_NAME_INFO_ISCP = "IAL";
-
-/**
- * ISCP Command: IALnnnnnnn
- * iPod Album Name (variable-length, 64 letters max ASCII letter only)
- */
-public static final String IPOD_ALBUM_NAME_INFO_NULL_ID = "ipod-album-name-info::null";
-public static final String IPOD_ALBUM_NAME_INFO_NULL_ISCP = "IALnnnnnnn";
-
-/**
- * ISCP Command: IALQSTN
- * gets iPod Album Name
- */
-public static final String IPOD_ALBUM_NAME_INFO_QUERY_ID = "ipod-album-name-info::query";
-public static final String IPOD_ALBUM_NAME_INFO_QUERY_ISCP = "IALQSTN";
-
-/**
- * CommandBlock
- * ISCP Command prefix: IAT
- * iPod Artist Name Info (Universal Port Dock Only)
- */
-public static final String IPOD_ARTIST_NAME_INFO_ID = "ipod-artist-name-info";
-public static final String IPOD_ARTIST_NAME_INFO_ISCP = "IAT";
-
-/**
- * ISCP Command: IATnnnnnnnnnn
- * iPod Artist Name (variable-length, 64 letters max ASCII letter only)
- */
-public static final String IPOD_ARTIST_NAME_INFO_NULL_ID = "ipod-artist-name-info::null";
-public static final String IPOD_ARTIST_NAME_INFO_NULL_ISCP = "IATnnnnnnnnnn";
-
-/**
- * ISCP Command: IATQSTN
- * gets iPod Artist Name
- */
-public static final String IPOD_ARTIST_NAME_INFO_QUERY_ID = "ipod-artist-name-info::query";
-public static final String IPOD_ARTIST_NAME_INFO_QUERY_ISCP = "IATQSTN";
-
-/**
- * CommandBlock
- * ISCP Command prefix: ILS
- * iPod List Info (Universal Port Dock Extend Mode Only)
- */
-public static final String IPOD_LIST_INFO_ID = "ipod-list-info";
-public static final String IPOD_LIST_INFO_ISCP = "ILS";
-
-/**
- * ISCP Command: ILStlpnnnnnnnnnn
- * iPod List Info
-t ->Information Type (A : ASCII letter, C : Cursor Info)
-when t = A,
-  l ->Line Info (0-9 : 1st to 10th Line)
-  nnnnnnnnn:Listed data (variable-length, 64 letters max ASCII letter only)
-  p ->Property (- : no)
-when t = C,
-  l ->Cursor Position (0-9 : 1st to 10th Line, - : No Cursor)
-  p ->Update Type (P : Page Infomation Update ( Page Clear or Disable List Info) , C : Cursor Position Update)
- */
-public static final String IPOD_LIST_INFO_NULL_ID = "ipod-list-info::null";
-public static final String IPOD_LIST_INFO_NULL_ISCP = "ILStlpnnnnnnnnnn";
-
-/**
- * CommandBlock
- * ISCP Command prefix: IMD
- * iPod Mode Change (Universal Port Dock Only)
+ * ISCP Command prefix: NMD
+ * iPod Mode Change (with USB Connection Only)
  */
 public static final String IPOD_MODE_CHANGE_ID = "ipod-mode-change";
-public static final String IPOD_MODE_CHANGE_ISCP = "IMD";
+public static final String IPOD_MODE_CHANGE_ISCP = "NMD";
 
 /**
- * ISCP Command: IMDEXT
+ * ISCP Command: NMDEXT
  * Extend Mode(If available)
  */
 public static final String IPOD_MODE_CHANGE_EXT_ID = "ipod-mode-change::ext";
-public static final String IPOD_MODE_CHANGE_EXT_ISCP = "IMDEXT";
+public static final String IPOD_MODE_CHANGE_EXT_ISCP = "NMDEXT";
 
 /**
- * ISCP Command: IMDQSTN
+ * ISCP Command: NMDQSTN
  * gets iPod Mode Status
  */
 public static final String IPOD_MODE_CHANGE_QUERY_ID = "ipod-mode-change::query";
-public static final String IPOD_MODE_CHANGE_QUERY_ISCP = "IMDQSTN";
+public static final String IPOD_MODE_CHANGE_QUERY_ISCP = "NMDQSTN";
 
 /**
- * ISCP Command: IMDSTD
+ * ISCP Command: NMDSTD
  * Standerd Mode
  */
 public static final String IPOD_MODE_CHANGE_STD_ID = "ipod-mode-change::std";
-public static final String IPOD_MODE_CHANGE_STD_ISCP = "IMDSTD";
+public static final String IPOD_MODE_CHANGE_STD_ISCP = "NMDSTD";
 
 /**
- * ISCP Command: IMDVDC
+ * ISCP Command: NMDVDC
  * Video Contents in Extended Mode
  */
 public static final String IPOD_MODE_CHANGE_VDC_ID = "ipod-mode-change::vdc";
-public static final String IPOD_MODE_CHANGE_VDC_ISCP = "IMDVDC";
-
-/**
- * CommandBlock
- * ISCP Command prefix: IST
- * iPod Play Status (Universal Port Dock Only)
- */
-public static final String IPOD_PLAY_STATUS_ID = "ipod-play-status";
-public static final String IPOD_PLAY_STATUS_ISCP = "IST";
-
-/**
- * ISCP Command: ISTprs
- * iPod Play Status (3 letters)
-p -> Play Status "S" STOP, "P" Play, "p" Pause, "F" FF, "R" FR
-r -> Repeat Status "-" no Repeat, "R" All Repeat, "1" Repeat 1,
-s -> Shuffle Status "-" no Shuffle, "S" Shuffle, "A" Album Shuffle
- */
-public static final String IPOD_PLAY_STATUS_PRS_ID = "ipod-play-status::prs";
-public static final String IPOD_PLAY_STATUS_PRS_ISCP = "ISTprs";
-
-/**
- * ISCP Command: ISTQSTN
- * gets the iPod Play Status
- */
-public static final String IPOD_PLAY_STATUS_QUERY_ID = "ipod-play-status::query";
-public static final String IPOD_PLAY_STATUS_QUERY_ISCP = "ISTQSTN";
-
-/**
- * CommandBlock
- * ISCP Command prefix: ITM
- * iPod Time Info (Universal Port Dock Only)
- */
-public static final String IPOD_TIME_INFO_ID = "ipod-time-info";
-public static final String IPOD_TIME_INFO_ISCP = "ITM";
-
-/**
- * ISCP Command: ITMmm:ss/mm:ss
- * iPod Time Info (Elapsed time/Track Time Max 99:59)
- */
-public static final String IPOD_TIME_INFO_MM_SS_MM_SS_ID = "ipod-time-info::mm-ss-mm-ss";
-public static final String IPOD_TIME_INFO_MM_SS_MM_SS_ISCP = "ITMmm:ss/mm:ss";
-
-/**
- * ISCP Command: ITMQSTN
- * gets iPod Time Info
- */
-public static final String IPOD_TIME_INFO_QUERY_ID = "ipod-time-info::query";
-public static final String IPOD_TIME_INFO_QUERY_ISCP = "ITMQSTN";
-
-/**
- * CommandBlock
- * ISCP Command prefix: ITI
- * iPod Title Name (Universal Port Dock Only)
- */
-public static final String IPOD_TITLE_NAME_ID = "ipod-title-name";
-public static final String IPOD_TITLE_NAME_ISCP = "ITI";
-
-/**
- * ISCP Command: ITInnnnnnnnnn
- * iPod Title Name (variable-length, 64 letters max ASCII letter only)
- */
-public static final String IPOD_TITLE_NAME_NULL_ID = "ipod-title-name::null";
-public static final String IPOD_TITLE_NAME_NULL_ISCP = "ITInnnnnnnnnn";
-
-/**
- * ISCP Command: ITIQSTN
- * gets iPod Title Name
- */
-public static final String IPOD_TITLE_NAME_QUERY_ID = "ipod-title-name::query";
-public static final String IPOD_TITLE_NAME_QUERY_ISCP = "ITIQSTN";
-
-/**
- * CommandBlock
- * ISCP Command prefix: ITR
- * iPod Track Info (Universal Port Dock Only)
- */
-public static final String IPOD_TRACK_INFO_ID = "ipod-track-info";
-public static final String IPOD_TRACK_INFO_ISCP = "ITR";
-
-/**
- * ISCP Command: ITRcccc/tttt
- * iPod Track Info (Current Track/Toral Track Max 9999)
- */
-public static final String IPOD_TRACK_INFO_CCCC_TTTT_ID = "ipod-track-info::cccc-tttt";
-public static final String IPOD_TRACK_INFO_CCCC_TTTT_ISCP = "ITRcccc/tttt";
-
-/**
- * ISCP Command: ITRQSTN
- * gets iPod Time Info
- */
-public static final String IPOD_TRACK_INFO_QUERY_ID = "ipod-track-info::query";
-public static final String IPOD_TRACK_INFO_QUERY_ISCP = "ITRQSTN";
+public static final String IPOD_MODE_CHANGE_VDC_ISCP = "NMDVDC";
 
 /**
  * CommandBlock
@@ -2477,6 +2971,88 @@ public static final String LATE_NIGHT_UP_ISCP = "LTNUP";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: LFE
+ * LFE Level / LFE Mute Level
+ */
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_ID = "lfe-level-lfe-mute-level";
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_ISCP = "LFE";
+
+/**
+ * ISCP Command: LFExx
+ * sets LFE Mute Level
+00:0dB
+01:-1dB
+02:-2dB
+03:-3dB
+04:-4dB
+05:-5dB
+0A:-10dB
+0F:-15dB
+14:-20dB
+FF:-oodB
+ */
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_00_0DB_01_1DB_02_2DB_03_3DB_04_4DB_05_5DB_0A_10DB_0F_15DB_14_20DB_FF_OODB_ID = "lfe-level-lfe-mute-level::00-0db-01-1db-02-2db-03-3db-04-4db-05-5db-0a-10db-0f-15db-14-20db-ff-oodb";
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_00_0DB_01_1DB_02_2DB_03_3DB_04_4DB_05_5DB_0A_10DB_0F_15DB_14_20DB_FF_OODB_ISCP = "LFExx";
+
+/**
+ * ISCP Command: LFEDOWN
+ * sets LFE Mute Level Down
+ */
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_DOWN_ID = "lfe-level-lfe-mute-level::down";
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_DOWN_ISCP = "LFEDOWN";
+
+/**
+ * ISCP Command: LFEQSTN
+ * gets The LFE Mute Level
+ */
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_QUERY_ID = "lfe-level-lfe-mute-level::query";
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_QUERY_ISCP = "LFEQSTN";
+
+/**
+ * ISCP Command: LFEUP
+ * sets LFE Mute Level Up
+ */
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_UP_ID = "lfe-level-lfe-mute-level::up";
+public static final String LFE_LEVEL_LFE_MUTE_LEVEL_UP_ISCP = "LFEUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: LPS
+ * Lip Sync / Auto Delay
+ */
+public static final String LIP_SYNC_AUTO_DELAY_ID = "lip-sync-auto-delay";
+public static final String LIP_SYNC_AUTO_DELAY_ISCP = "LPS";
+
+/**
+ * ISCP Command: LPS00
+ * sets Lip Sync Off
+ */
+public static final String LIP_SYNC_AUTO_DELAY_OFF_ID = "lip-sync-auto-delay::off";
+public static final String LIP_SYNC_AUTO_DELAY_OFF_ISCP = "LPS00";
+
+/**
+ * ISCP Command: LPS01
+ * sets Lip Sync On
+ */
+public static final String LIP_SYNC_AUTO_DELAY_ON_ID = "lip-sync-auto-delay::on";
+public static final String LIP_SYNC_AUTO_DELAY_ON_ISCP = "LPS01";
+
+/**
+ * ISCP Command: LPSQSTN
+ * gets The Lip Sync State
+ */
+public static final String LIP_SYNC_AUTO_DELAY_QUERY_ID = "lip-sync-auto-delay::query";
+public static final String LIP_SYNC_AUTO_DELAY_QUERY_ISCP = "LPSQSTN";
+
+/**
+ * ISCP Command: LPSUP
+ * sets Lip Sync Wrap-Around
+ */
+public static final String LIP_SYNC_AUTO_DELAY_UP_ID = "lip-sync-auto-delay::up";
+public static final String LIP_SYNC_AUTO_DELAY_UP_ISCP = "LPSUP";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: LMD
  * Listening Mode Command
  */
@@ -2484,11 +3060,11 @@ public static final String LISTENING_MODE_ID = "listening-mode";
 public static final String LISTENING_MODE_ISCP = "LMD";
 
 /**
- * ISCP Command: LMD05
- * sets ACTION, Game-Action
+ * ISCP Command: LMD25
+ * sets Action (when Genre Control is Enable in Japan Model)
  */
 public static final String LISTENING_MODE_ACTION_ID = "listening-mode::action";
-public static final String LISTENING_MODE_ACTION_ISCP = "LMD05";
+public static final String LISTENING_MODE_ACTION_ISCP = "LMD25";
 
 /**
  * ISCP Command: LMD0C
@@ -2503,6 +3079,20 @@ public static final String LISTENING_MODE_ALL_CH_STEREO_ISCP = "LMD0C";
  */
 public static final String LISTENING_MODE_AUDYSSEY_DSX_ID = "listening-mode::audyssey-dsx";
 public static final String LISTENING_MODE_AUDYSSEY_DSX_ISCP = "LMD16";
+
+/**
+ * ISCP Command: LMDAUTO
+ * sets Listening Mode Wrap-Around Up
+ */
+public static final String LISTENING_MODE_AUTO_ID = "listening-mode::auto";
+public static final String LISTENING_MODE_AUTO_ISCP = "LMDAUTO";
+
+/**
+ * ISCP Command: LMDFF
+ * sets Auto Surround
+ */
+public static final String LISTENING_MODE_AUTO_SURROUND_ID = "listening-mode::auto-surround";
+public static final String LISTENING_MODE_AUTO_SURROUND_ISCP = "LMDFF";
 
 /**
  * ISCP Command: LMD01
@@ -2527,7 +3117,7 @@ public static final String LISTENING_MODE_DOLBY_EX_AUDYSSEY_DSX_ISCP = "LMDA7";
 
 /**
  * ISCP Command: LMD14
- * sets DOLBY VIRTUAL
+ * sets DOLBY VIRTUAL / Surround Enhancer
  */
 public static final String LISTENING_MODE_DOLBY_VIRTUAL_ID = "listening-mode::dolby-virtual";
 public static final String LISTENING_MODE_DOLBY_VIRTUAL_ISCP = "LMD14";
@@ -2618,14 +3208,14 @@ public static final String LISTENING_MODE_MUSICAL_ISCP = "LMD06";
 
 /**
  * ISCP Command: LMD8C
- * sets Neo:6/Neo:X THX Music
+ * sets Neo:6/Neo:X THX Music, DTS Neural:X THX Music
  */
 public static final String LISTENING_MODE_NEO_6_ID = "listening-mode::neo-6";
 public static final String LISTENING_MODE_NEO_6_ISCP = "LMD8C";
 
 /**
  * ISCP Command: LMD82
- * sets Neo:6 Cinema/Neo:X Cinema
+ * sets Neo:6 Cinema/Neo:X Cinema, DTS:X/Neural:X
  */
 public static final String LISTENING_MODE_NEO_6_CINEMA_ID = "listening-mode::neo-6-cinema";
 public static final String LISTENING_MODE_NEO_6_CINEMA_ISCP = "LMD82";
@@ -2730,17 +3320,17 @@ public static final String LISTENING_MODE_NEURAL_THX_MUSIC_ISCP = "LMD8E";
 
 /**
  * ISCP Command: LMD84
- * sets PLII/PLIIx THX Cinema
+ * sets PLII/PLIIx THX Cinema, Dolby Surround THX Cinema
  */
 public static final String LISTENING_MODE_PLII_ID = "listening-mode::plii";
 public static final String LISTENING_MODE_PLII_ISCP = "LMD84";
 
 /**
- * ISCP Command: LMDA0
- * sets PLIIx/PLII Movie + Audyssey DSX
+ * ISCP Command: LMDA2
+ * sets PLIIx/PLII Game + Audyssey DSX
  */
 public static final String LISTENING_MODE_PLIIX_ID = "listening-mode::pliix";
-public static final String LISTENING_MODE_PLIIX_ISCP = "LMDA0";
+public static final String LISTENING_MODE_PLIIX_ISCP = "LMDA2";
 
 /**
  * ISCP Command: LMD90
@@ -2771,11 +3361,11 @@ public static final String LISTENING_MODE_PLIIZ_HEIGHT_THX_MUSIC_ID = "listening
 public static final String LISTENING_MODE_PLIIZ_HEIGHT_THX_MUSIC_ISCP = "LMD95";
 
 /**
- * ISCP Command: LMD97
- * sets PLIIz Height + THX U2/S2 Cinema
+ * ISCP Command: LMD99
+ * sets PLIIz Height + THX U2/S2 Games
  */
 public static final String LISTENING_MODE_PLIIZ_HEIGHT_THX_U2_ID = "listening-mode::pliiz-height-thx-u2";
-public static final String LISTENING_MODE_PLIIZ_HEIGHT_THX_U2_ISCP = "LMD97";
+public static final String LISTENING_MODE_PLIIZ_HEIGHT_THX_U2_ISCP = "LMD99";
 
 /**
  * ISCP Command: LMD11
@@ -2790,6 +3380,27 @@ public static final String LISTENING_MODE_PURE_AUDIO_ISCP = "LMD11";
  */
 public static final String LISTENING_MODE_QUERY_ID = "listening-mode::query";
 public static final String LISTENING_MODE_QUERY_ISCP = "LMDQSTN";
+
+/**
+ * ISCP Command: LMD2E
+ * sets Sports (when Genre Control is Enable in Japan Model)
+ */
+public static final String LISTENING_MODE_SPORTS_ID = "listening-mode::sports";
+public static final String LISTENING_MODE_SPORTS_ISCP = "LMD2E";
+
+/**
+ * ISCP Command: LMD23
+ * sets Stage (when Genre Control is Enable in Japan Model)
+ */
+public static final String LISTENING_MODE_STAGE_ID = "listening-mode::stage";
+public static final String LISTENING_MODE_STAGE_ISCP = "LMD23";
+
+/**
+ * ISCP Command: LMDSTEREO
+ * sets Listening Mode Wrap-Around Up
+ */
+public static final String LISTENING_MODE_STER_ID = "listening-mode::ster";
+public static final String LISTENING_MODE_STER_ISCP = "LMDSTEREO";
 
 /**
  * ISCP Command: LMD00
@@ -2813,6 +3424,13 @@ public static final String LISTENING_MODE_STUDIO_MIX_ID = "listening-mode::studi
 public static final String LISTENING_MODE_STUDIO_MIX_ISCP = "LMD0A";
 
 /**
+ * ISCP Command: LMDSURR
+ * sets Listening Mode Wrap-Around Up
+ */
+public static final String LISTENING_MODE_SURR_ID = "listening-mode::surr";
+public static final String LISTENING_MODE_SURR_ISCP = "LMDSURR";
+
+/**
  * ISCP Command: LMD02
  * sets SURROUND
  */
@@ -2827,11 +3445,11 @@ public static final String LISTENING_MODE_THEATER_DIMENSIONAL_ID = "listening-mo
 public static final String LISTENING_MODE_THEATER_DIMENSIONAL_ISCP = "LMD0D";
 
 /**
- * ISCP Command: LMD04
- * sets THX
+ * ISCP Command: LMDTHX
+ * sets Listening Mode Wrap-Around Up
  */
 public static final String LISTENING_MODE_THX_ID = "listening-mode::thx";
-public static final String LISTENING_MODE_THX_ISCP = "LMD04";
+public static final String LISTENING_MODE_THX_ISCP = "LMDTHX";
 
 /**
  * ISCP Command: LMD42
@@ -2841,11 +3459,11 @@ public static final String LISTENING_MODE_THX_CINEMA_ID = "listening-mode::thx-c
 public static final String LISTENING_MODE_THX_CINEMA_ISCP = "LMD42";
 
 /**
- * ISCP Command: LMD45
- * sets THX Games
+ * ISCP Command: LMD52
+ * sets THX Games Mode,THX U2/S2/I/S Games
  */
 public static final String LISTENING_MODE_THX_GAMES_ID = "listening-mode::thx-games";
-public static final String LISTENING_MODE_THX_GAMES_ISCP = "LMD45";
+public static final String LISTENING_MODE_THX_GAMES_ISCP = "LMD52";
 
 /**
  * ISCP Command: LMD44
@@ -2898,6 +3516,71 @@ public static final String LISTENING_MODE_WHOLE_HOUSE_ISCP = "LMD1F";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: LRA
+ * Lock Range Adjust
+ */
+public static final String LOCK_RANGE_ADJUST_ID = "lock-range-adjust";
+public static final String LOCK_RANGE_ADJUST_ISCP = "LRA";
+
+/**
+ * ISCP Command: LRADown
+ * sets Lock Range Adjust Down
+ */
+public static final String LOCK_RANGE_ADJUST_DOWN_ID = "lock-range-adjust::down";
+public static final String LOCK_RANGE_ADJUST_DOWN_ISCP = "LRADown";
+
+/**
+ * ISCP Command: LRAQSTN
+ * gets The Lock Range Adjust State
+ */
+public static final String LOCK_RANGE_ADJUST_QUERY_ID = "lock-range-adjust::query";
+public static final String LOCK_RANGE_ADJUST_QUERY_ISCP = "LRAQSTN";
+
+/**
+ * ISCP Command: LRAUP
+ * sets Lock Range Adjust Up
+ */
+public static final String LOCK_RANGE_ADJUST_UP_ID = "lock-range-adjust::up";
+public static final String LOCK_RANGE_ADJUST_UP_ISCP = "LRAUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: LDM
+ * Loudness Management
+ */
+public static final String LOUDNESS_MANAGEMENT_ID = "loudness-management";
+public static final String LOUDNESS_MANAGEMENT_ISCP = "LDM";
+
+/**
+ * ISCP Command: LDM00
+ * sets Loudness Management Off
+ */
+public static final String LOUDNESS_MANAGEMENT_OFF_ID = "loudness-management::off";
+public static final String LOUDNESS_MANAGEMENT_OFF_ISCP = "LDM00";
+
+/**
+ * ISCP Command: LDM01
+ * sets Loudness management On
+ */
+public static final String LOUDNESS_MANAGEMENT_ON_ID = "loudness-management::on";
+public static final String LOUDNESS_MANAGEMENT_ON_ISCP = "LDM01";
+
+/**
+ * ISCP Command: LDMQSTN
+ * gets The Panorama State
+ */
+public static final String LOUDNESS_MANAGEMENT_QUERY_ID = "loudness-management::query";
+public static final String LOUDNESS_MANAGEMENT_QUERY_ISCP = "LDMQSTN";
+
+/**
+ * ISCP Command: LDMUP
+ * sets Panorama Wrap-Around
+ */
+public static final String LOUDNESS_MANAGEMENT_UP_ID = "loudness-management::up";
+public static final String LOUDNESS_MANAGEMENT_UP_ISCP = "LDMUP";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: MVL
  * Master Volume Command
  */
@@ -2941,242 +3624,103 @@ public static final String MASTER_VOLUME_QUERY_ISCP = "MVLQSTN";
 
 /**
  * CommandBlock
- * ISCP Command prefix: CMD
- * MD Recorder Operation Command
+ * ISCP Command prefix: MCC
+ * MCACC Calibration
  */
-public static final String MD_RECORDER_ID = "md-recorder";
-public static final String MD_RECORDER_ISCP = "CMD";
+public static final String MCACC_CALIBRATION_ID = "mcacc-calibration";
+public static final String MCACC_CALIBRATION_ISCP = "MCC";
 
 /**
- * ISCP Command: CMD1
- * 1.0
+ * ISCP Command: MCC00
+ * not complete MCACC calibration
  */
-public static final String MD_RECORDER_1_ID = "md-recorder::1";
-public static final String MD_RECORDER_1_ISCP = "CMD1";
+public static final String MCACC_CALIBRATION_00_ID = "mcacc-calibration::00";
+public static final String MCACC_CALIBRATION_00_ISCP = "MCC00";
 
 /**
- * ISCP Command: CMD10/0
- * 10/0
+ * ISCP Command: MCC01
+ * complete MCACC calibration
  */
-public static final String MD_RECORDER_10_0_ID = "md-recorder::10-0";
-public static final String MD_RECORDER_10_0_ISCP = "CMD10/0";
+public static final String MCACC_CALIBRATION_01_ID = "mcacc-calibration::01";
+public static final String MCACC_CALIBRATION_01_ISCP = "MCC01";
 
 /**
- * ISCP Command: CMD2
- * 2.0
+ * ISCP Command: MCCQSTN
+ * gets The MCACC calibration
  */
-public static final String MD_RECORDER_2_ID = "md-recorder::2";
-public static final String MD_RECORDER_2_ISCP = "CMD2";
+public static final String MCACC_CALIBRATION_QUERY_ID = "mcacc-calibration::query";
+public static final String MCACC_CALIBRATION_QUERY_ISCP = "MCCQSTN";
 
 /**
- * ISCP Command: CMD3
- * 3.0
+ * CommandBlock
+ * ISCP Command prefix: MCM
+ * MCACC EQ
  */
-public static final String MD_RECORDER_3_ID = "md-recorder::3";
-public static final String MD_RECORDER_3_ISCP = "CMD3";
+public static final String MCACC_EQ_ID = "mcacc-eq";
+public static final String MCACC_EQ_ISCP = "MCM";
 
 /**
- * ISCP Command: CMD4
- * 4.0
+ * ISCP Command: MCMDOWN
+ * sets MCACC MEMORY Wrap-Around Down
  */
-public static final String MD_RECORDER_4_ID = "md-recorder::4";
-public static final String MD_RECORDER_4_ISCP = "CMD4";
+public static final String MCACC_EQ_DOWN_ID = "mcacc-eq::down";
+public static final String MCACC_EQ_DOWN_ISCP = "MCMDOWN";
 
 /**
- * ISCP Command: CMD5
- * 5.0
+ * ISCP Command: MCM01
+ * sets MCACC MEMORY 1
  */
-public static final String MD_RECORDER_5_ID = "md-recorder::5";
-public static final String MD_RECORDER_5_ISCP = "CMD5";
+public static final String MCACC_EQ_MEMORY_1_ID = "mcacc-eq::memory-1";
+public static final String MCACC_EQ_MEMORY_1_ISCP = "MCM01";
 
 /**
- * ISCP Command: CMD6
- * 6.0
+ * ISCP Command: MCM02
+ * sets MCACC MEMORY 2
  */
-public static final String MD_RECORDER_6_ID = "md-recorder::6";
-public static final String MD_RECORDER_6_ISCP = "CMD6";
+public static final String MCACC_EQ_MEMORY_2_ID = "mcacc-eq::memory-2";
+public static final String MCACC_EQ_MEMORY_2_ISCP = "MCM02";
 
 /**
- * ISCP Command: CMD7
- * 7.0
+ * ISCP Command: MCM03
+ * sets MCACC MEMORY 3
  */
-public static final String MD_RECORDER_7_ID = "md-recorder::7";
-public static final String MD_RECORDER_7_ISCP = "CMD7";
+public static final String MCACC_EQ_MEMORY_3_ID = "mcacc-eq::memory-3";
+public static final String MCACC_EQ_MEMORY_3_ISCP = "MCM03";
 
 /**
- * ISCP Command: CMD8
- * 8.0
+ * ISCP Command: MCM04
+ * sets MCACC MEMORY 4
  */
-public static final String MD_RECORDER_8_ID = "md-recorder::8";
-public static final String MD_RECORDER_8_ISCP = "CMD8";
+public static final String MCACC_EQ_MEMORY_4_ID = "mcacc-eq::memory-4";
+public static final String MCACC_EQ_MEMORY_4_ISCP = "MCM04";
 
 /**
- * ISCP Command: CMD9
- * 9.0
+ * ISCP Command: MCM05
+ * sets MCACC MEMORY 5
  */
-public static final String MD_RECORDER_9_ID = "md-recorder::9";
-public static final String MD_RECORDER_9_ISCP = "CMD9";
+public static final String MCACC_EQ_MEMORY_5_ID = "mcacc-eq::memory-5";
+public static final String MCACC_EQ_MEMORY_5_ISCP = "MCM05";
 
 /**
- * ISCP Command: CMDCLEAR
- * CLEAR
+ * ISCP Command: MCM06
+ * sets MCACC MEMORY 6
  */
-public static final String MD_RECORDER_CLEAR_ID = "md-recorder::clear";
-public static final String MD_RECORDER_CLEAR_ISCP = "CMDCLEAR";
+public static final String MCACC_EQ_MEMORY_6_ID = "mcacc-eq::memory-6";
+public static final String MCACC_EQ_MEMORY_6_ISCP = "MCM06";
 
 /**
- * ISCP Command: CMDDISP
- * DISPLAY
+ * ISCP Command: MCMQSTN
+ * gets The MCACC MEMORY
  */
-public static final String MD_RECORDER_DISP_ID = "md-recorder::disp";
-public static final String MD_RECORDER_DISP_ISCP = "CMDDISP";
+public static final String MCACC_EQ_QUERY_ID = "mcacc-eq::query";
+public static final String MCACC_EQ_QUERY_ISCP = "MCMQSTN";
 
 /**
- * ISCP Command: CMDEJECT
- * EJECT
+ * ISCP Command: MCMUP
+ * sets MCACC MEMORY Wrap-Around Up
  */
-public static final String MD_RECORDER_EJECT_ID = "md-recorder::eject";
-public static final String MD_RECORDER_EJECT_ISCP = "CMDEJECT";
-
-/**
- * ISCP Command: CMDENTER
- * ENTER
- */
-public static final String MD_RECORDER_ENTER_ID = "md-recorder::enter";
-public static final String MD_RECORDER_ENTER_ISCP = "CMDENTER";
-
-/**
- * ISCP Command: CMDFF
- * FF >>
- */
-public static final String MD_RECORDER_FF_ID = "md-recorder::ff";
-public static final String MD_RECORDER_FF_ISCP = "CMDFF";
-
-/**
- * ISCP Command: CMDGROUP
- * GROUP
- */
-public static final String MD_RECORDER_GROUP_ID = "md-recorder::group";
-public static final String MD_RECORDER_GROUP_ISCP = "CMDGROUP";
-
-/**
- * ISCP Command: CMDM.SCAN
- * MUSIC SCAN
- */
-public static final String MD_RECORDER_M_SCAN_ID = "md-recorder::m-scan";
-public static final String MD_RECORDER_M_SCAN_ISCP = "CMDM.SCAN";
-
-/**
- * ISCP Command: CMDMEMORY
- * MEMORY
- */
-public static final String MD_RECORDER_MEMORY_ID = "md-recorder::memory";
-public static final String MD_RECORDER_MEMORY_ISCP = "CMDMEMORY";
-
-/**
- * ISCP Command: CMDNAME
- * NAME
- */
-public static final String MD_RECORDER_NAME_ID = "md-recorder::name";
-public static final String MD_RECORDER_NAME_ISCP = "CMDNAME";
-
-/**
- * ISCP Command: CMDnn/nnn
- * --/---
- */
-public static final String MD_RECORDER_NULL_ID = "md-recorder::null";
-public static final String MD_RECORDER_NULL_ISCP = "CMDnn/nnn";
-
-/**
- * ISCP Command: CMDP.MODE
- * PLAY MODE
- */
-public static final String MD_RECORDER_P_MODE_ID = "md-recorder::p-mode";
-public static final String MD_RECORDER_P_MODE_ISCP = "CMDP.MODE";
-
-/**
- * ISCP Command: CMDPAUSE
- * PAUSE
- */
-public static final String MD_RECORDER_PAUSE_ID = "md-recorder::pause";
-public static final String MD_RECORDER_PAUSE_ISCP = "CMDPAUSE";
-
-/**
- * ISCP Command: CMDPLAY
- * PLAY
- */
-public static final String MD_RECORDER_PLAY_ID = "md-recorder::play";
-public static final String MD_RECORDER_PLAY_ISCP = "CMDPLAY";
-
-/**
- * ISCP Command: CMDPOWER
- * POWER ON/OFF
- */
-public static final String MD_RECORDER_POWER_ID = "md-recorder::power";
-public static final String MD_RECORDER_POWER_ISCP = "CMDPOWER";
-
-/**
- * ISCP Command: CMDRANDOM
- * RANDOM
- */
-public static final String MD_RECORDER_RANDOM_ID = "md-recorder::random";
-public static final String MD_RECORDER_RANDOM_ISCP = "CMDRANDOM";
-
-/**
- * ISCP Command: CMDREC
- * REC
- */
-public static final String MD_RECORDER_REC_ID = "md-recorder::rec";
-public static final String MD_RECORDER_REC_ISCP = "CMDREC";
-
-/**
- * ISCP Command: CMDREPEAT
- * REPEAT
- */
-public static final String MD_RECORDER_REPEAT_ID = "md-recorder::repeat";
-public static final String MD_RECORDER_REPEAT_ISCP = "CMDREPEAT";
-
-/**
- * ISCP Command: CMDREW
- * REW <<
- */
-public static final String MD_RECORDER_REW_ID = "md-recorder::rew";
-public static final String MD_RECORDER_REW_ISCP = "CMDREW";
-
-/**
- * ISCP Command: CMDSCROLL
- * SCROLL
- */
-public static final String MD_RECORDER_SCROLL_ID = "md-recorder::scroll";
-public static final String MD_RECORDER_SCROLL_ISCP = "CMDSCROLL";
-
-/**
- * ISCP Command: CMDSKIP.F
- * >>I
- */
-public static final String MD_RECORDER_SKIP_F_ID = "md-recorder::skip-f";
-public static final String MD_RECORDER_SKIP_F_ISCP = "CMDSKIP.F";
-
-/**
- * ISCP Command: CMDSKIP.R
- * I<<
- */
-public static final String MD_RECORDER_SKIP_R_ID = "md-recorder::skip-r";
-public static final String MD_RECORDER_SKIP_R_ISCP = "CMDSKIP.R";
-
-/**
- * ISCP Command: CMDSTBY
- * STANDBY
- */
-public static final String MD_RECORDER_STBY_ID = "md-recorder::stby";
-public static final String MD_RECORDER_STBY_ISCP = "CMDSTBY";
-
-/**
- * ISCP Command: CMDSTOP
- * STOP
- */
-public static final String MD_RECORDER_STOP_ID = "md-recorder::stop";
-public static final String MD_RECORDER_STOP_ISCP = "CMDSTOP";
+public static final String MCACC_EQ_UP_ID = "mcacc-eq::up";
+public static final String MCACC_EQ_UP_ISCP = "MCMUP";
 
 /**
  * CommandBlock
@@ -3230,11 +3774,25 @@ public static final String MONITOR_OUT_RESOLUTION_1080I_ID = "monitor-out-resolu
 public static final String MONITOR_OUT_RESOLUTION_1080I_ISCP = "RES04";
 
 /**
- * ISCP Command: RES07
- * sets 1080p/24fs(HDMI Output Only)
+ * ISCP Command: RES05
+ * sets 1080p(HDMI Output Only)
  */
 public static final String MONITOR_OUT_RESOLUTION_1080P_ID = "monitor-out-resolution::1080p";
-public static final String MONITOR_OUT_RESOLUTION_1080P_ISCP = "RES07";
+public static final String MONITOR_OUT_RESOLUTION_1080P_ISCP = "RES05";
+
+/**
+ * ISCP Command: RES13
+ * sets 1680x720p
+ */
+public static final String MONITOR_OUT_RESOLUTION_1680X720P_ID = "monitor-out-resolution::1680x720p";
+public static final String MONITOR_OUT_RESOLUTION_1680X720P_ISCP = "RES13";
+
+/**
+ * ISCP Command: RES15
+ * sets 2560x1080p
+ */
+public static final String MONITOR_OUT_RESOLUTION_2560X1080P_ID = "monitor-out-resolution::2560x1080p";
+public static final String MONITOR_OUT_RESOLUTION_2560X1080P_ISCP = "RES15";
 
 /**
  * ISCP Command: RES02
@@ -3288,38 +3846,67 @@ public static final String MONITOR_OUT_RESOLUTION_UP_ISCP = "RESUP";
 /**
  * CommandBlock
  * ISCP Command prefix: MOT
- * Music Optimizer
+ * Music Optimizer / Sound Retriever
  */
-public static final String MUSIC_OPTIMIZER_ID = "music-optimizer";
-public static final String MUSIC_OPTIMIZER_ISCP = "MOT";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_ID = "music-optimizer-sound-retriever";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_ISCP = "MOT";
 
 /**
  * ISCP Command: MOT00
  * sets Music Optimizer Off
  */
-public static final String MUSIC_OPTIMIZER_OFF_ID = "music-optimizer::off";
-public static final String MUSIC_OPTIMIZER_OFF_ISCP = "MOT00";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_OFF_ID = "music-optimizer-sound-retriever::off";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_OFF_ISCP = "MOT00";
 
 /**
  * ISCP Command: MOT01
  * sets Music Optimizer On
  */
-public static final String MUSIC_OPTIMIZER_ON_ID = "music-optimizer::on";
-public static final String MUSIC_OPTIMIZER_ON_ISCP = "MOT01";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_ON_ID = "music-optimizer-sound-retriever::on";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_ON_ISCP = "MOT01";
 
 /**
  * ISCP Command: MOTQSTN
- * gets The Dolby Volume State
+ * gets The Music Optimizer State
  */
-public static final String MUSIC_OPTIMIZER_QUERY_ID = "music-optimizer::query";
-public static final String MUSIC_OPTIMIZER_QUERY_ISCP = "MOTQSTN";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_QUERY_ID = "music-optimizer-sound-retriever::query";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_QUERY_ISCP = "MOTQSTN";
 
 /**
  * ISCP Command: MOTUP
  * sets Music Optimizer State Wrap-Around Up
  */
-public static final String MUSIC_OPTIMIZER_UP_ID = "music-optimizer::up";
-public static final String MUSIC_OPTIMIZER_UP_ISCP = "MOTUP";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_UP_ID = "music-optimizer-sound-retriever::up";
+public static final String MUSIC_OPTIMIZER_SOUND_RETRIEVER_UP_ISCP = "MOTUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NDS
+ * NET Connection/USB Device Status
+ */
+public static final String NET_CONNECTION_USB_DEVICE_STATUS_ID = "net-connection-usb-device-status";
+public static final String NET_CONNECTION_USB_DEVICE_STATUS_ISCP = "NDS";
+
+/**
+ * ISCP Command: NDSnfr
+ * NET Connection/USB Device Status (3 letters)
+n -> NET Connection status: "-": no connection, "E": Ether, "W": Wireless
+f -> Front USB(USB1) Device Status: "-": no device, "i": iPod/iPhone, 
+      "M": Memory/NAS, "W": Wireless Adaptor, "B": Bluetooth Adaptor,
+      "x": disable
+r -> Rear USB(USB2) Device Status: "-": no device, "i": iPod/iPhone, 
+      "M": Memory/NAS, "W": Wireless Adaptor, "B": Bluetooth Adaptor, 
+      "x": disable
+ */
+public static final String NET_CONNECTION_USB_DEVICE_STATUS_NFR_ID = "net-connection-usb-device-status::nfr";
+public static final String NET_CONNECTION_USB_DEVICE_STATUS_NFR_ISCP = "NDSnfr";
+
+/**
+ * ISCP Command: NDSQSTN
+ * gets the Net/USB Status
+ */
+public static final String NET_CONNECTION_USB_DEVICE_STATUS_QUERY_ID = "net-connection-usb-device-status::query";
+public static final String NET_CONNECTION_USB_DEVICE_STATUS_QUERY_ISCP = "NDSQSTN";
 
 /**
  * CommandBlock
@@ -3328,6 +3915,14 @@ public static final String MUSIC_OPTIMIZER_UP_ISCP = "MOTUP";
  */
 public static final String NET_KEYBOARD_ID = "net-keyboard";
 public static final String NET_KEYBOARD_ISCP = "NKY";
+
+/**
+ * ISCP Command: NKYnnnnnnnnn
+ * set Keyboard Input letter
+"nnnnnnnn" is variable-length, 128 Unicode letters [UTF-8 encoded] max
+ */
+public static final String NET_KEYBOARD_INPUT_ID = "net-keyboard::input";
+public static final String NET_KEYBOARD_INPUT_ISCP = "NKYnnnnnnnnn";
 
 /**
  * ISCP Command: NKYll
@@ -3346,17 +3941,10 @@ ll -> category
  0A: Pin Code (some digit Number [0-9])
  0B: User Name (available ISO 8859-1 character set)
  0C: Password (available ISO 8859-1 character set)
+ 0D: URL
  */
 public static final String NET_KEYBOARD_LL_ID = "net-keyboard::ll";
 public static final String NET_KEYBOARD_LL_ISCP = "NKYll";
-
-/**
- * ISCP Command: NKYnnnnnnnnn
- * set Keyboard Input letter
-"nnnnnnnn" is variable-length, 128 Unicode letters [UTF-8 encoded] max
- */
-public static final String NET_KEYBOARD_NULL_ID = "net-keyboard::null";
-public static final String NET_KEYBOARD_NULL_ISCP = "NKYnnnnnnnnn";
 
 /**
  * CommandBlock
@@ -3391,8 +3979,8 @@ bbb...bbb -> Text of Button
     Text of Button 1 [0x00] Text of Button 2 [0x00]
     (valiable-length Unicode letter [UTF-8 encoded] )
  */
-public static final String NET_POPUP_MESSAGE_NULL_ID = "net-popup-message::null";
-public static final String NET_POPUP_MESSAGE_NULL_ISCP = "NPUxaaa…aaaybbb…bbb";
+public static final String NET_POPUP_MESSAGE_POPUP_ID = "net-popup-message::popup";
+public static final String NET_POPUP_MESSAGE_POPUP_ISCP = "NPUxaaa…aaaybbb…bbb";
 
 /**
  * CommandBlock
@@ -3406,29 +3994,33 @@ public static final String NET_SERVICE_ISCP = "NSV";
  * ISCP Command: NSVssiaaaa…aaaabbbb…bbbb
  * select Network Service directly
 ss -> Network Serveice
- 00:Media Server (DLNA)
- 01:Favorite
- 02:vTuner
- 03:SIRIUS
- 04:Pandora
- 05:Rhapsody
- 06:Last.fm
- 07:Napster
- 08:Slacker
- 09:Mediafly
- 0A:Spotify
- 0B:AUPEO!
- 0C:Radiko
- 0D:e-onkyo
-
+ 00:Music Server (DLNA), 01:Favorite, 02:vTuner, 03:SiriusXM, 04:Pandora, 05:Rhapsody, 06:Last.fm,
+ 07:Napster, 08:Slacker, 09:Mediafly, 0A:Spotify, 0B:AUPEO!, 0C:Radiko, 0D:e-onkyo,
+ 0E:TuneIn Radio, 0F:mp3tunes, 10:Simfy, 11:Home Media, 12:Deezer, 13:iHeartRadio, 18:Airplay, 19:TIDAL, 1A:onkyo music, F0;USB/USB(Front), F1:USB(Rear)
 i-> Acount Info
  0: No
  1: Yes
 "aaaa...aaaa": User Name ( 128 Unicode letters [UTF-8 encoded] max )
 "bbbb...bbbb": Password ( 128 Unicode letters [UTF-8 encoded] max )
  */
-public static final String NET_SERVICE_NULL_ID = "net-service::null";
-public static final String NET_SERVICE_NULL_ISCP = "NSVssiaaaa…aaaabbbb…bbbb";
+public static final String NET_SERVICE_SERVICE_ID_ID = "net-service::service-id";
+public static final String NET_SERVICE_SERVICE_ID_ISCP = "NSVssiaaaa…aaaabbbb…bbbb";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NAF
+ * NET/USB Add Favorite List in List View
+ */
+public static final String NET_USB_ADD_FAVORITE_LIST_IN_LIST_VIEW_ID = "net-usb-add-favorite-list-in-list-view";
+public static final String NET_USB_ADD_FAVORITE_LIST_IN_LIST_VIEW_ISCP = "NAF";
+
+/**
+ * ISCP Command: NAF{xx}{xx}
+ * Add Favorite Lsit in List View (from Network Control Only)
+xxxx -> index number (0000-FFFF : 1st to 65536th Item [4 HEX digits] )
+ */
+public static final String NET_USB_ADD_FAVORITE_LIST_IN_LIST_VIEW_XX_XX_ID = "net-usb-add-favorite-list-in-list-view::xx-xx";
+public static final String NET_USB_ADD_FAVORITE_LIST_IN_LIST_VIEW_XX_XX_ISCP = "NAF{xx}{xx}";
 
 /**
  * CommandBlock
@@ -3442,12 +4034,12 @@ public static final String NET_USB_ALBUM_NAME_INFO_ISCP = "NAL";
  * ISCP Command: NALnnnnnnn
  * NET/USB Album Name (variable-length, 64 Unicode letters [UTF-8 encoded] max , for Network Control only)
  */
-public static final String NET_USB_ALBUM_NAME_INFO_NULL_ID = "net-usb-album-name-info::null";
-public static final String NET_USB_ALBUM_NAME_INFO_NULL_ISCP = "NALnnnnnnn";
+public static final String NET_USB_ALBUM_NAME_INFO_ALBUM_NAME_ID = "net-usb-album-name-info::album-name";
+public static final String NET_USB_ALBUM_NAME_INFO_ALBUM_NAME_ISCP = "NALnnnnnnn";
 
 /**
  * ISCP Command: NALQSTN
- * gets iPod Album Name
+ * gets NET/USB Album Name
  */
 public static final String NET_USB_ALBUM_NAME_INFO_QUERY_ID = "net-usb-album-name-info::query";
 public static final String NET_USB_ALBUM_NAME_INFO_QUERY_ISCP = "NALQSTN";
@@ -3464,12 +4056,12 @@ public static final String NET_USB_ARTIST_NAME_INFO_ISCP = "NAT";
  * ISCP Command: NATnnnnnnnnnn
  * NET/USB Artist Name (variable-length, 64 Unicode letters [UTF-8 encoded] max , for Network Control only)
  */
-public static final String NET_USB_ARTIST_NAME_INFO_NULL_ID = "net-usb-artist-name-info::null";
-public static final String NET_USB_ARTIST_NAME_INFO_NULL_ISCP = "NATnnnnnnnnnn";
+public static final String NET_USB_ARTIST_NAME_INFO_ARTIST_NAME_ID = "net-usb-artist-name-info::artist-name";
+public static final String NET_USB_ARTIST_NAME_INFO_ARTIST_NAME_ISCP = "NATnnnnnnnnnn";
 
 /**
  * ISCP Command: NATQSTN
- * gets iPod Artist Name
+ * gets NET/USB Artist Name
  */
 public static final String NET_USB_ARTIST_NAME_INFO_QUERY_ID = "net-usb-artist-name-info::query";
 public static final String NET_USB_ARTIST_NAME_INFO_QUERY_ISCP = "NATQSTN";
@@ -3483,14 +4075,63 @@ public static final String NET_USB_JACKET_ART_ID = "net-usb-jacket-art";
 public static final String NET_USB_JACKET_ART_ISCP = "NJA";
 
 /**
+ * ISCP Command: NJADIS
+ * sets Jacket Art disable
+ */
+public static final String NET_USB_JACKET_ART_DISABLE_ID = "net-usb-jacket-art::disable";
+public static final String NET_USB_JACKET_ART_DISABLE_ISCP = "NJADIS";
+
+/**
+ * ISCP Command: NJAENA
+ * sets Jacket Art enable
+ */
+public static final String NET_USB_JACKET_ART_ENABLE_ID = "net-usb-jacket-art::enable";
+public static final String NET_USB_JACKET_ART_ENABLE_ISCP = "NJAENA";
+
+/**
+ * ISCP Command: NJABMP
+ * sets Jacket Art enable and Image type BMP
+ */
+public static final String NET_USB_JACKET_ART_ENABLE_AND_IMAGE_TYPE_BMP_ID = "net-usb-jacket-art::enable-and-image-type-bmp";
+public static final String NET_USB_JACKET_ART_ENABLE_AND_IMAGE_TYPE_BMP_ISCP = "NJABMP";
+
+/**
+ * ISCP Command: NJALINK
+ * sets Jacket Art enable and Image type LINK
+ */
+public static final String NET_USB_JACKET_ART_ENABLE_AND_IMAGE_TYPE_LINK_ID = "net-usb-jacket-art::enable-and-image-type-link";
+public static final String NET_USB_JACKET_ART_ENABLE_AND_IMAGE_TYPE_LINK_ISCP = "NJALINK";
+
+/**
+ * ISCP Command: NJAQSTN
+ * gets Jacket Art enable/disable
+ */
+public static final String NET_USB_JACKET_ART_QUERY_ID = "net-usb-jacket-art::query";
+public static final String NET_USB_JACKET_ART_QUERY_ISCP = "NJAQSTN";
+
+/**
+ * ISCP Command: NJAREQ
+ * gets Jacket Art data
+ */
+public static final String NET_USB_JACKET_ART_REQ_ID = "net-usb-jacket-art::req";
+public static final String NET_USB_JACKET_ART_REQ_ISCP = "NJAREQ";
+
+/**
  * ISCP Command: NJAtp{xx}{xx}{xx}{xx}{xx}{xx}
  * NET/USB Jacket Art/Album Art Data
-t-> Image type 0:BMP,1:JPEG
-p-> Packet flag 0:Start, 1:Next, 2:End
+t-> Image type 0:BMP, 1:JPEG, 2:URL, n:No Image
+p-> Packet flag 0:Start, 1:Next, 2:End, -:not used
 xxxxxxxxxxxxxx -> Jacket/Album Art Data (valiable length, 1024 ASCII HEX letters max)
  */
 public static final String NET_USB_JACKET_ART_TP_XX_XX_XX_XX_XX_XX_ID = "net-usb-jacket-art::tp-xx-xx-xx-xx-xx-xx";
 public static final String NET_USB_JACKET_ART_TP_XX_XX_XX_XX_XX_XX_ISCP = "NJAtp{xx}{xx}{xx}{xx}{xx}{xx}";
+
+/**
+ * ISCP Command: NJAUP
+ * sets Jacket Art Wrap-Around Up
+ */
+public static final String NET_USB_JACKET_ART_UP_ID = "net-usb-jacket-art::up";
+public static final String NET_USB_JACKET_ART_UP_ISCP = "NJAUP";
 
 /**
  * CommandBlock
@@ -3507,23 +4148,29 @@ t ->Information Type (A : ASCII letter, C : Cursor Info, U : Unicode letter)
 when t = A,
   l ->Line Info (0-9 : 1st to 10th Line)
   nnnnnnnnn:Listed data (variable-length, 64 ASCII letters max)
-    when AVR is not displayed NET/USB List(Ketboard,Menu,Popup…), "nnnnnnnnn" is "See TV".
-  p ->Property (- : no)
+    when AVR is not displayed NET/USB List(Keyboard,Menu,Popup…), "nnnnnnnnn" is "See TV".
+  p ->Property
+         - : no
+         0 : Playing, A : Artist, B : Album, F : Folder, M : Music, P : Playlist, S : Search
+         a : Account, b : Playlist-C, c : Starred, d : Unstarred, e : What's New
 when t = C,
   l ->Cursor Position (0-9 : 1st to 10th Line, - : No Cursor)
-  p ->Update Type (P : Page Infomation Update ( Page Clear or Disable List Info) , C : Cursor Position Update)
+  p ->Update Type (P : Page Information Update ( Page Clear or Disable List Info) , C : Cursor Position Update)
 when t = U, (for Network Control Only)
   l ->Line Info (0-9 : 1st to 10th Line)
   nnnnnnnnn:Listed data (variable-length, 64 Unicode letters [UTF-8 encoded] max)
-    when AVR is not displayed NET/USB List(Ketboard,Menu,Popup…), "nnnnnnnnn" is "See TV".
-  p ->Property (- : no)
+    when AVR is not displayed NET/USB List(Keyboard,Menu,Popup…), "nnnnnnnnn" is "See TV".
+  p ->Property
+         - : no
+         0 : Playing, A : Artist, B : Album, F : Folder, M : Music, P : Playlist, S : Search
+         a : Account, b : Playlist-C, c : Starred, d : Unstarred, e : What's New
  */
-public static final String NET_USB_LIST_INFO_NULL_ID = "net-usb-list-info::null";
-public static final String NET_USB_LIST_INFO_NULL_ISCP = "NLStlpnnnnnnnnnn";
+public static final String NET_USB_LIST_INFO_INFO_ID = "net-usb-list-info::info";
+public static final String NET_USB_LIST_INFO_INFO_ISCP = "NLStlpnnnnnnnnnn";
 
 /**
  * ISCP Command: NLSti
- * select the listed item (from Network Control Only)
+ * select the listed item
  t -> Index Type (L : Line, I : Index)
 when t = L,
   i -> Line number (0-9 : 1st to 10th Line [1 digit] )
@@ -3532,6 +4179,153 @@ when t = I,
  */
 public static final String NET_USB_LIST_INFO_TI_ID = "net-usb-list-info::ti";
 public static final String NET_USB_LIST_INFO_TI_ISCP = "NLSti";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NLT
+ * NET/USB List Title Info(for Network Control Only)
+ */
+public static final String NET_USB_LIST_TITLE_INFO_ID = "net-usb-list-title-info";
+public static final String NET_USB_LIST_TITLE_INFO_ISCP = "NLT";
+
+/**
+ * ISCP Command: NLT{xx}uycccciiiillsraabbssnnn...nnn
+ * NET/USB List Title Info
+xx : Service Type
+ 00 : Music Server (DLNA), 01 : Favorite, 02 : vTuner, 03 : SiriusXM, 04 : Pandora, 05 : Rhapsody, 06 : Last.fm,
+ 07 : Napster, 08 : Slacker, 09 : Mediafly, 0A : Spotify, 0B : AUPEO!, 0C : radiko, 0D : e-onkyo,
+ 0E : TuneIn Radio, 0F : MP3tunes, 10 : Simfy, 11:Home Media, 12:Deezer, 13:iHeartRadio, 18:Airplay, 19:TIDAL, 1A:onkyo music,
+ F0 : USB/USB(Front) F1 : USB(Rear), F2 : Internet Radio, F3 : NET, FF : None
+u : UI Type
+ 0 : List, 1 : Menu, 2 : Playback, 3 : Popup, 4 : Keyboard, "5" : Menu List
+y : Layer Info
+ 0 : NET TOP, 1 : Service Top,DLNA/USB/iPod Top, 2 : under 2nd Layer
+cccc : Current Cursor Position (HEX 4 letters)
+iiii : Number of List Items (HEX 4 letters)
+ll : Number of Layer(HEX 2 letters)
+s : Start Flag
+ 0 : Not First, 1 : First
+r : Reserved (1 leters, don't care)
+aa : Icon on Left of Title Bar
+ 00 : Internet Radio, 01 : Server, 02 : USB, 03 : iPod, 04 : DLNA, 05 : WiFi, 06 : Favorite
+ 10 : Account(Spotify), 11 : Album(Spotify), 12 : Playlist(Spotify), 13 : Playlist-C(Spotify)
+ 14 : Starred(Spotify), 15 : What's New(Spotify), 16 : Track(Spotify), 17 : Artist(Spotify)
+ 18 : Play(Spotify), 19 : Search(Spotify), 1A : Folder(Spotify)
+ FF : None
+bb : Icon on Right of Title Bar
+ 00 : Muisc Server (DLNA), 01 : Favorite, 02 : vTuner, 03 : SiriusXM, 04 : Pandora, 05 : Rhapsody, 06 : Last.fm,
+ 07 : Napster, 08 : Slacker, 09 : Mediafly, 0A : Spotify, 0B : AUPEO!, 0C : radiko, 0D : e-onkyo,
+ 0E : TuneIn Radio, 0F : MP3tunes, 10 : Simfy, 11:Home Media, 12:Deezer, 13:iHeartRadio, 18:Airplay, 19:TIDAL, 1A:onkyo music,
+F0:USB/USB(Front), F1:USB(Rear),
+ FF : None
+ss : Status Info
+ 00 : None, 01 : Connecting, 02 : Acquiring License, 03 : Buffering
+ 04 : Cannot Play, 05 : Searching, 06 : Profile update, 07 : Operation disabled
+ 08 : Server Start-up, 09 : Song rated as Favorite, 0A : Song banned from station,
+ 0B : Authentication Failed, 0C : Spotify Paused(max 1 device), 0D : Track Not Available, 0E : Cannot Skip
+nnn...nnn : Character of Title Bar (variable-length, 64 Unicode letters [UTF-8 encoded] max)
+ */
+public static final String NET_USB_LIST_TITLE_INFO_NULL_ID = "net-usb-list-title-info::null";
+public static final String NET_USB_LIST_TITLE_INFO_NULL_ISCP = "NLT{xx}uycccciiiillsraabbssnnn...nnn";
+
+/**
+ * ISCP Command: NLTQSTN
+ * gets List Title Info
+ */
+public static final String NET_USB_LIST_TITLE_INFO_QUERY_ID = "net-usb-list-title-info::query";
+public static final String NET_USB_LIST_TITLE_INFO_QUERY_ISCP = "NLTQSTN";
+
+/**
+ * ISCP Command: NLT{xx}uycccciiiillrraabbssnnn...nnn
+ * NET/USB List Title Info
+xx : Service Type
+ 00 : DLNA, 01 : Favorite, 02 : vTuner, 03 : SiriusXM, 04 : Pandora, 05 : Rhapsody, 06 : Last.fm,
+ 07 : Napster, 08 : Slacker, 09 : Mediafly, 0A : Spotify, 0B : AUPEO!, 0C : radiko, 0D : e-onkyo,
+ 0E : TuneIn Radio, 0F : MP3tunes, 10 : Simfy, 11:Home Media, 12:Deezer, 13:iHeartRadio,
+ F0 : USB Front, F1 : USB Rear, F2 : Internet Radio, F3 : NET, FF : None
+u : UI Type
+ 0 : List, 1 : Menu, 2 : Playback, 3 : Popup, 4 : Keyboard, "5" : Menu List
+y : Layer Info
+ 0 : NET TOP, 1 : Service Top,DLNA/USB/iPod Top, 2 : under 2nd Layer
+cccc : Current Cursor Position (HEX 4 letters)
+iiii : Number of List Items (HEX 4 letters)
+ll : Number of Layer(HEX 2 letters)
+rr : Reserved (2 leters)
+aa : Icon on Left of Title Bar
+ 00 : Internet Radio, 01 : Server, 02 : USB, 03 : iPod, 04 : DLNA, 05 : WiFi, 06 : Favorite
+ 10 : Account(Spotify), 11 : Album(Spotify), 12 : Playlist(Spotify), 13 : Playlist-C(Spotify)
+ 14 : Starred(Spotify), 15 : What's New(Spotify), 16 : Track(Spotify), 17 : Artist(Spotify)
+ 18 : Play(Spotify), 19 : Search(Spotify), 1A : Folder(Spotify)
+ FF : None
+bb : Icon on Right of Title Bar
+ 00 : DLNA, 01 : Favorite, 02 : vTuner, 03 : SiriusXM, 04 : Pandora, 05 : Rhapsody, 06 : Last.fm,
+ 07 : Napster, 08 : Slacker, 09 : Mediafly, 0A : Spotify, 0B : AUPEO!, 0C : radiko, 0D : e-onkyo,
+ 0E : TuneIn Radio, 0F : MP3tunes, 10 : Simfy, 11:Home Media, 12:Deezer, 13:iHeartRadio,
+ FF : None
+ss : Status Info
+ 00 : None, 01 : Connecting, 02 : Acquiring License, 03 : Buffering
+ 04 : Cannot Play, 05 : Searching, 06 : Profile update, 07 : Operation disabled
+ 08 : Server Start-up, 09 : Song rated as Favorite, 0A : Song banned from station,
+ 0B : Authentication Failed, 0C : Spotify Paused(max 1 device), 0D : Track Not Available, 0E : Cannot Skip
+nnn...nnn : Character of Title Bar (variable-length, 64 Unicode letters [UTF-8 encoded] max)
+ */
+public static final String NET_USB_LIST_TITLE_INFO_TITLE_INFO_ID = "net-usb-list-title-info::title-info";
+public static final String NET_USB_LIST_TITLE_INFO_TITLE_INFO_ISCP = "NLT{xx}uycccciiiillrraabbssnnn...nnn";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NMS
+ * NET/USB Menu Status
+ */
+public static final String NET_USB_MENU_STATUS_ID = "net-usb-menu-status";
+public static final String NET_USB_MENU_STATUS_ISCP = "NMS";
+
+/**
+ * ISCP Command: NMSmaabbstii
+ * NET/USB Menu Status (9 letters)
+m -> Track Menu: "M": Menu is enable, "x": Menu is disable
+aa -> F1 button icon (Positive Feed or Mark/Unmark)
+bb -> F2 button icon (Negative Feed)
+ aa or bb : "xx":disable, "01":Like, "02":don't like, "03":Love, "04":Ban,
+                  "05":episode, "06":ratings, "07":Ban(black), "08":Ban(white),
+                  "09":Favorite(black), "0A":Favorite(white), "0B":Favorite(yellow)
+s -> Time Seek "S": Time Seek is enable "x": Time Seek is disable
+t -> Time Display "1": Elapsed Time/Total Time, "2": Elapsed Time, "x": disable
+ii-> Service icon
+ ii : "00":Music Server (DLNA), "01":My Favorite, "02":vTuner, 
+      "03":SiriusXM, "04":Pandora,
+      "05":Rhapsody, "06":Last.fm, "07":Napster, "08":Slacker, "09":Mediafly,
+      "0A":Spotify, "0B":AUPEO!,
+      "0C":radiko, "0D":e-onkyo, "0E":TuneIn, "0F":MP3tunes, "10":Simfy,
+      "11":Home Media, "12":Deezer, "13":iHeartRadio, "18":Airplay,
+      “1A”: onkyo Music, “1B”:TIDAL, “41”:FireConnect,
+      "F0": USB/USB(Front), "F1: USB(Rear), "F2":Internet Radio
+      "F3":NET, "F4":Bluetooth
+ */
+public static final String NET_USB_MENU_STATUS_MAABBSTII_ID = "net-usb-menu-status::maabbstii";
+public static final String NET_USB_MENU_STATUS_MAABBSTII_ISCP = "NMSmaabbstii";
+
+/**
+ * ISCP Command: NMSQSTN
+ * gets the Net/USB Menu Status
+ */
+public static final String NET_USB_MENU_STATUS_QUERY_ID = "net-usb-menu-status::query";
+public static final String NET_USB_MENU_STATUS_QUERY_ISCP = "NMSQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NSD
+ * NET/USB Music Server(DLNA) Search List
+ */
+public static final String NET_USB_MUSIC_SERVER_DLNA_SEARCH_LIST_ID = "net-usb-music-server-dlna-search-list";
+public static final String NET_USB_MUSIC_SERVER_DLNA_SEARCH_LIST_ISCP = "NSD";
+
+/**
+ * ISCP Command: NSD{xx}{xx}{xx}{xx}{xx}x
+ * Search Word (Max 128 Character)
+ */
+public static final String NET_USB_MUSIC_SERVER_DLNA_SEARCH_LIST_XX_XX_XX_XX_XX_X_ID = "net-usb-music-server-dlna-search-list::xx-xx-xx-xx-xx-x";
+public static final String NET_USB_MUSIC_SERVER_DLNA_SEARCH_LIST_XX_XX_XX_XX_XX_X_ISCP = "NSD{xx}{xx}{xx}{xx}{xx}x";
 
 /**
  * CommandBlock
@@ -3544,19 +4338,55 @@ public static final String NET_USB_PLAY_STATUS_ISCP = "NST";
 /**
  * ISCP Command: NSTprs
  * NET/USB Play Status (3 letters)
-p -> Play Status: "S": STOP, "P": Play, "p": Pause, "F": FF, "R": FR
-r -> Repeat Status: "-": Off, "R": All, "F": Folder, "1": Repeat 1,
-s -> Shuffle Status: "-": Off, "S": All , "A": Album, "F": Folder
+p -> Play Status: "S": STOP, "P": Play, "p": Pause, "F": FF, "R": FR, "E": EOF
+r -> Repeat Status: "-": Off, "R": All, "F": Folder, "1": Repeat 1, "x": disable
+s -> Shuffle Status: "-": Off, "S": All , "A": Album, "F": Folder, "x": disable
  */
 public static final String NET_USB_PLAY_STATUS_PRS_ID = "net-usb-play-status::prs";
 public static final String NET_USB_PLAY_STATUS_PRS_ISCP = "NSTprs";
 
 /**
  * ISCP Command: NSTQSTN
- * gets the Net/USB Status
+ * gets the Net/USB Play Status
  */
 public static final String NET_USB_PLAY_STATUS_QUERY_ID = "net-usb-play-status::query";
 public static final String NET_USB_PLAY_STATUS_QUERY_ISCP = "NSTQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NPB
+ * NET/USB Playback view Button
+ */
+public static final String NET_USB_PLAYBACK_VIEW_BUTTON_ID = "net-usb-playback-view-button";
+public static final String NET_USB_PLAYBACK_VIEW_BUTTON_ISCP = "NPB";
+
+/**
+ * ISCP Command: NPBpudtsrrr
+ * NET/USB Playback view Status (5 letters)
+p -> Play/Pause button: "1": button is enable, "0": button is disable
+u ->  Skip up button : "1": button is enable, "0": button is disable
+d -> Skip down button : "1": button is enable, "0": button is disable
+t -> Timer button : "1": button is enable, "0": button is disable
+s -> Preset button : "1": button is enable, "0": button is disable
+ rrr-> reserved
+ */
+public static final String NET_USB_PLAYBACK_VIEW_BUTTON_PUDTSRRR_ID = "net-usb-playback-view-button::pudtsrrr";
+public static final String NET_USB_PLAYBACK_VIEW_BUTTON_PUDTSRRR_ISCP = "NPBpudtsrrr";
+
+/**
+ * ISCP Command: NPBQSTN
+ * gets the Net/USB Playback view Button
+ */
+public static final String NET_USB_PLAYBACK_VIEW_BUTTON_QUERY_ID = "net-usb-playback-view-button::query";
+public static final String NET_USB_PLAYBACK_VIEW_BUTTON_QUERY_ISCP = "NPBQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NRF
+ * NET/USB Remove Favorite List
+ */
+public static final String NET_USB_REMOVE_FAVORITE_LIST_ID = "net-usb-remove-favorite-list";
+public static final String NET_USB_REMOVE_FAVORITE_LIST_ISCP = "NRF";
 
 /**
  * CommandBlock
@@ -3567,18 +4397,52 @@ public static final String NET_USB_TIME_INFO_ID = "net-usb-time-info";
 public static final String NET_USB_TIME_INFO_ISCP = "NTM";
 
 /**
+ * ISCP Command: NTMhh:mm:ss/hh:mm:ss
+ * NET/USB Time Info (Elapsed time/Track Time Max 99:59:59. If time is unknown, this response is --:--)
+ */
+public static final String NET_USB_TIME_INFO_HH_MM_SS_HH_MM_SS_ID = "net-usb-time-info::hh-mm-ss-hh-mm-ss";
+public static final String NET_USB_TIME_INFO_HH_MM_SS_HH_MM_SS_ISCP = "NTMhh:mm:ss/hh:mm:ss";
+
+/**
  * ISCP Command: NTMmm:ss/mm:ss
- * NET/USB Time Info (Elapsed time/Track Time Max 99:59)
+ * NET/USB Time Info (Elapsed time/Track Time Max 99:59. If time is unknown, this response is --:--)
  */
 public static final String NET_USB_TIME_INFO_MM_SS_MM_SS_ID = "net-usb-time-info::mm-ss-mm-ss";
 public static final String NET_USB_TIME_INFO_MM_SS_MM_SS_ISCP = "NTMmm:ss/mm:ss";
 
 /**
  * ISCP Command: NTMQSTN
- * gets iPod Time Info
+ * gets NET/USB Time Info
  */
 public static final String NET_USB_TIME_INFO_QUERY_ID = "net-usb-time-info::query";
 public static final String NET_USB_TIME_INFO_QUERY_ISCP = "NTMQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NTS
+ * NET/USB Time Seek
+ */
+public static final String NET_USB_TIME_SEEK_ID = "net-usb-time-seek";
+public static final String NET_USB_TIME_SEEK_ISCP = "NTS";
+
+/**
+ * ISCP Command: NTShh:mm:ss
+ * hh: hours(00-99)
+mm: munites (00-59)
+ss: seconds (00-59)
+This command is only available when Time Seek is enable.
+ */
+public static final String NET_USB_TIME_SEEK_HH_MM_SS_ID = "net-usb-time-seek::hh-mm-ss";
+public static final String NET_USB_TIME_SEEK_HH_MM_SS_ISCP = "NTShh:mm:ss";
+
+/**
+ * ISCP Command: NTSmm:ss
+ * mm: munites (00-99)
+ss: seconds (00-59)
+This command is only available when Time Seek is enable.
+ */
+public static final String NET_USB_TIME_SEEK_MM_SS_ID = "net-usb-time-seek::mm-ss";
+public static final String NET_USB_TIME_SEEK_MM_SS_ISCP = "NTSmm:ss";
 
 /**
  * CommandBlock
@@ -3589,18 +4453,18 @@ public static final String NET_USB_TITLE_NAME_ID = "net-usb-title-name";
 public static final String NET_USB_TITLE_NAME_ISCP = "NTI";
 
 /**
- * ISCP Command: NTInnnnnnnnnn
- * NET/USB Title Name (variable-length, 64 Unicode letters [UTF-8 encoded] max , for Network Control only)
- */
-public static final String NET_USB_TITLE_NAME_NULL_ID = "net-usb-title-name::null";
-public static final String NET_USB_TITLE_NAME_NULL_ISCP = "NTInnnnnnnnnn";
-
-/**
  * ISCP Command: NTIQSTN
- * gets HD Radio Title
+ * gets NET/USB Title Name
  */
 public static final String NET_USB_TITLE_NAME_QUERY_ID = "net-usb-title-name::query";
 public static final String NET_USB_TITLE_NAME_QUERY_ISCP = "NTIQSTN";
+
+/**
+ * ISCP Command: NTInnnnnnnnnn
+ * NET/USB Title Name (variable-length, 64 Unicode letters [UTF-8 encoded] max , for Network Control only)
+ */
+public static final String NET_USB_TITLE_NAME_TITLE_ID = "net-usb-title-name::title";
+public static final String NET_USB_TITLE_NAME_TITLE_ISCP = "NTInnnnnnnnnn";
 
 /**
  * CommandBlock
@@ -3612,17 +4476,46 @@ public static final String NET_USB_TRACK_INFO_ISCP = "NTR";
 
 /**
  * ISCP Command: NTRcccc/tttt
- * NET/USB Track Info (Current Track/Toral Track Max 9999)
+ * NET/USB Track Info (Current Track/Toral Track Max 9999. If Track is unknown, this response is ----)
  */
 public static final String NET_USB_TRACK_INFO_CCCC_TTTT_ID = "net-usb-track-info::cccc-tttt";
 public static final String NET_USB_TRACK_INFO_CCCC_TTTT_ISCP = "NTRcccc/tttt";
 
 /**
  * ISCP Command: NTRQSTN
- * gets iPod Time Info
+ * gets NET/USB Track Info
  */
 public static final String NET_USB_TRACK_INFO_QUERY_ID = "net-usb-track-info::query";
 public static final String NET_USB_TRACK_INFO_QUERY_ISCP = "NTRQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NSB
+ * Network Standby Settings (for Network Control Only and Available in AVR is PowerOn)
+ */
+public static final String NETWORK_STANDBY_SETTINGS_ID = "network-standby-settings";
+public static final String NETWORK_STANDBY_SETTINGS_ISCP = "NSB";
+
+/**
+ * ISCP Command: NSBOFF
+ * sets Network Standby is Off
+ */
+public static final String NETWORK_STANDBY_SETTINGS_IS_OFF_ID = "network-standby-settings::is-off";
+public static final String NETWORK_STANDBY_SETTINGS_IS_OFF_ISCP = "NSBOFF";
+
+/**
+ * ISCP Command: NSBON
+ * sets Network Standby is On
+ */
+public static final String NETWORK_STANDBY_SETTINGS_IS_ON_ID = "network-standby-settings::is-on";
+public static final String NETWORK_STANDBY_SETTINGS_IS_ON_ISCP = "NSBON";
+
+/**
+ * ISCP Command: NSBQSTN
+ * gets Network Standby Setting
+ */
+public static final String NETWORK_STANDBY_SETTINGS_QUERY_ID = "network-standby-settings::query";
+public static final String NETWORK_STANDBY_SETTINGS_QUERY_ISCP = "NSBQSTN";
 
 /**
  * CommandBlock
@@ -3759,6 +4652,20 @@ public static final String NETWORK_USB_DOWN_ID = "network-usb::down";
 public static final String NETWORK_USB_DOWN_ISCP = "NTCDOWN";
 
 /**
+ * ISCP Command: NTCF1
+ * Positive Feed or Mark/Unmark 
+ */
+public static final String NETWORK_USB_F1_ID = "network-usb::f1";
+public static final String NETWORK_USB_F1_ISCP = "NTCF1";
+
+/**
+ * ISCP Command: NTCF2
+ * Negative Feed 
+ */
+public static final String NETWORK_USB_F2_ID = "network-usb::f2";
+public static final String NETWORK_USB_F2_ISCP = "NTCF2";
+
+/**
  * ISCP Command: NTCFF
  * FF KEY (CONTINUOUS*)
  */
@@ -3801,6 +4708,13 @@ public static final String NETWORK_USB_LOCATION_ID = "network-usb::location";
 public static final String NETWORK_USB_LOCATION_ISCP = "NTCLOCATION";
 
 /**
+ * ISCP Command: NTCMEMORY
+ * MEMORY (add Favorite)
+ */
+public static final String NETWORK_USB_MEMORY_ID = "network-usb::memory";
+public static final String NETWORK_USB_MEMORY_ISCP = "NTCMEMORY";
+
+/**
  * ISCP Command: NTCMENU
  * MENU
  */
@@ -3813,6 +4727,13 @@ public static final String NETWORK_USB_MENU_ISCP = "NTCMENU";
  */
 public static final String NETWORK_USB_MODE_ID = "network-usb::mode";
 public static final String NETWORK_USB_MODE_ISCP = "NTCMODE";
+
+/**
+ * ISCP Command: NTCP/P
+ * PLAY/PAUSE KEY
+ */
+public static final String NETWORK_USB_P_P_ID = "network-usb::p-p";
+public static final String NETWORK_USB_P_P_ISCP = "NTCP/P";
 
 /**
  * ISCP Command: NTCPAUSE
@@ -3841,6 +4762,13 @@ public static final String NETWORK_USB_PLAYLIST_ISCP = "NTCPLAYLIST";
  */
 public static final String NETWORK_USB_RANDOM_ID = "network-usb::random";
 public static final String NETWORK_USB_RANDOM_ISCP = "NTCRANDOM";
+
+/**
+ * ISCP Command: NTCREP/SHF
+ * REPEAT/SHUFFLE KEY
+ */
+public static final String NETWORK_USB_REP_SHF_ID = "network-usb::rep-shf";
+public static final String NETWORK_USB_REP_SHF_ISCP = "NTCREP/SHF";
 
 /**
  * ISCP Command: NTCREPEAT
@@ -3921,6 +4849,344 @@ public static final String NETWORK_USB_UP_ISCP = "NTCUP";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: PBS
+ * P.BASS
+ */
+public static final String P_BASS_ID = "p-bass";
+public static final String P_BASS_ISCP = "PBS";
+
+/**
+ * ISCP Command: PBS00
+ * sets P.BASS Off
+ */
+public static final String P_BASS_OFF_ID = "p-bass::off";
+public static final String P_BASS_OFF_ISCP = "PBS00";
+
+/**
+ * ISCP Command: PBS01
+ * sets P.BASS On
+ */
+public static final String P_BASS_ON_ID = "p-bass::on";
+public static final String P_BASS_ON_ISCP = "PBS01";
+
+/**
+ * ISCP Command: PBSQSTN
+ * gets The P.BASS State
+ */
+public static final String P_BASS_QUERY_ID = "p-bass::query";
+public static final String P_BASS_QUERY_ISCP = "PBSQSTN";
+
+/**
+ * ISCP Command: PBSUP
+ * sets P.BASS Wrap-Around Up
+ */
+public static final String P_BASS_TOGGLE_ID = "p-bass::toggle";
+public static final String P_BASS_TOGGLE_ISCP = "PBSUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: PNR
+ * Panorama for PLII Music
+ */
+public static final String PANORAMA_FOR_PLII_MUSIC_ID = "panorama-for-plii-music";
+public static final String PANORAMA_FOR_PLII_MUSIC_ISCP = "PNR";
+
+/**
+ * ISCP Command: PNR00
+ * sets Panorama Off
+ */
+public static final String PANORAMA_FOR_PLII_MUSIC_OFF_ID = "panorama-for-plii-music::off";
+public static final String PANORAMA_FOR_PLII_MUSIC_OFF_ISCP = "PNR00";
+
+/**
+ * ISCP Command: PNR01
+ * sets Panorama On
+ */
+public static final String PANORAMA_FOR_PLII_MUSIC_ON_ID = "panorama-for-plii-music::on";
+public static final String PANORAMA_FOR_PLII_MUSIC_ON_ISCP = "PNR01";
+
+/**
+ * ISCP Command: PNRQSTN
+ * gets The Panorama State
+ */
+public static final String PANORAMA_FOR_PLII_MUSIC_QUERY_ID = "panorama-for-plii-music::query";
+public static final String PANORAMA_FOR_PLII_MUSIC_QUERY_ISCP = "PNRQSTN";
+
+/**
+ * ISCP Command: PNRTG
+ * sets Panorama Wrap-Around
+ */
+public static final String PANORAMA_FOR_PLII_MUSIC_TOGGLE_ID = "panorama-for-plii-music::toggle";
+public static final String PANORAMA_FOR_PLII_MUSIC_TOGGLE_ISCP = "PNRTG";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: FXP
+ * PCM Fixed Mode / Fixed PCM Mode
+ */
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_ID = "pcm-fixed-mode-fixed-pcm-mode";
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_ISCP = "FXP";
+
+/**
+ * ISCP Command: FXP00
+ * sets PCM Fixed Mode Off
+ */
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_OFF_ID = "pcm-fixed-mode-fixed-pcm-mode::off";
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_OFF_ISCP = "FXP00";
+
+/**
+ * ISCP Command: FXP01
+ * sets PCM Fixed Mode On
+ */
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_ON_ID = "pcm-fixed-mode-fixed-pcm-mode::on";
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_ON_ISCP = "FXP01";
+
+/**
+ * ISCP Command: FXPQSTN
+ * gets The PCM Fixed Mode State
+ */
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_QUERY_ID = "pcm-fixed-mode-fixed-pcm-mode::query";
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_QUERY_ISCP = "FXPQSTN";
+
+/**
+ * ISCP Command: FXPUP
+ * sets PCM Fixed Mode Wrap-Around
+ */
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_UP_ID = "pcm-fixed-mode-fixed-pcm-mode::up";
+public static final String PCM_FIXED_MODE_FIXED_PCM_MODE_UP_ISCP = "FXPUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: PCT
+ * Phase Control
+ */
+public static final String PHASE_CONTROL_ID = "phase-control";
+public static final String PHASE_CONTROL_ISCP = "PCT";
+
+/**
+ * ISCP Command: PCT02
+ * sets Full Band Phase Control On
+ */
+public static final String PHASE_CONTROL_FULL_BAND_ON_ID = "phase-control::full-band-on";
+public static final String PHASE_CONTROL_FULL_BAND_ON_ISCP = "PCT02";
+
+/**
+ * ISCP Command: PCT00
+ * sets Phase Control Off
+ */
+public static final String PHASE_CONTROL_OFF_ID = "phase-control::off";
+public static final String PHASE_CONTROL_OFF_ISCP = "PCT00";
+
+/**
+ * ISCP Command: PCT01
+ * sets Phase Control On
+ */
+public static final String PHASE_CONTROL_ON_ID = "phase-control::on";
+public static final String PHASE_CONTROL_ON_ISCP = "PCT01";
+
+/**
+ * ISCP Command: PCTQSTN
+ * gets The Phase Control
+ */
+public static final String PHASE_CONTROL_QUERY_ID = "phase-control::query";
+public static final String PHASE_CONTROL_QUERY_ISCP = "PCTQSTN";
+
+/**
+ * ISCP Command: PCTUP
+ * sets Phase Control Wrap-Around Up
+ */
+public static final String PHASE_CONTROL_UP_ID = "phase-control::up";
+public static final String PHASE_CONTROL_UP_ISCP = "PCTUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: PCP
+ * Phase Control Plus
+ */
+public static final String PHASE_CONTROL_PLUS_ID = "phase-control-plus";
+public static final String PHASE_CONTROL_PLUS_ISCP = "PCP";
+
+/**
+ * ISCP Command: PCPAT
+ * sets Auto Phase Control Plus
+ */
+public static final String PHASE_CONTROL_PLUS_AUTO_ID = "phase-control-plus::auto";
+public static final String PHASE_CONTROL_PLUS_AUTO_ISCP = "PCPAT";
+
+/**
+ * ISCP Command: PCPDOWN
+ * sets Phase Control Plus Down
+ */
+public static final String PHASE_CONTROL_PLUS_DOWN_ID = "phase-control-plus::down";
+public static final String PHASE_CONTROL_PLUS_DOWN_ISCP = "PCPDOWN";
+
+/**
+ * ISCP Command: PCPQSTN
+ * gets The Phase Control Plus
+ */
+public static final String PHASE_CONTROL_PLUS_QUERY_ID = "phase-control-plus::query";
+public static final String PHASE_CONTROL_PLUS_QUERY_ISCP = "PCPQSTN";
+
+/**
+ * ISCP Command: PCPUP
+ * sets Phase Control Plus Up
+ */
+public static final String PHASE_CONTROL_PLUS_UP_ID = "phase-control-plus::up";
+public static final String PHASE_CONTROL_PLUS_UP_ISCP = "PCPUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: PMB
+ * Phase Matching Bass Command
+ */
+public static final String PHASE_MATCHING_BASS_ID = "phase-matching-bass";
+public static final String PHASE_MATCHING_BASS_ISCP = "PMB";
+
+/**
+ * ISCP Command: PMB00
+ * sets Off
+ */
+public static final String PHASE_MATCHING_BASS_OFF_ID = "phase-matching-bass::off";
+public static final String PHASE_MATCHING_BASS_OFF_ISCP = "PMB00";
+
+/**
+ * ISCP Command: PMB01
+ * sets On
+ */
+public static final String PHASE_MATCHING_BASS_ON_ID = "phase-matching-bass::on";
+public static final String PHASE_MATCHING_BASS_ON_ISCP = "PMB01";
+
+/**
+ * ISCP Command: PMBQSTN
+ * gets Phase Matching Bass
+ */
+public static final String PHASE_MATCHING_BASS_QUERY_ID = "phase-matching-bass::query";
+public static final String PHASE_MATCHING_BASS_QUERY_ISCP = "PMBQSTN";
+
+/**
+ * ISCP Command: PMBTG
+ * sets Phase Matching Bass Wrap-Around Up
+ */
+public static final String PHASE_MATCHING_BASS_TOGGLE_ID = "phase-matching-bass::toggle";
+public static final String PHASE_MATCHING_BASS_TOGGLE_ISCP = "PMBTG";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: POP
+ * Popup Message
+ */
+public static final String POPUP_MESSAGE_ID = "popup-message";
+public static final String POPUP_MESSAGE_ISCP = "POP";
+
+/**
+ * ISCP Command: POPt----<.....>
+ * t -> message type 'X' : XML
+---- -> reserved
+<.....> : XML data ( [CR] and [LF] are removed )
+ */
+public static final String POPUP_MESSAGE_T_ID = "popup-message::t";
+public static final String POPUP_MESSAGE_T_ISCP = "POPt----<.....>";
+
+/**
+ * ISCP Command: POPUllt<.....>
+ * U : UI Type
+ 0 : List, 1 : Menu, 2 : Playback, 3 : Popup, 4 : Keyboard, 5 : Menu List
+ll -> number of layer (00-FF)
+t : Update Type
+ 0 : All, 1 : Button, 2 : Textbox, 3 : Listbox
+<.....> : XML data ( [CR] and [LF] are removed )
+ */
+public static final String POPUP_MESSAGE_ULLT_ID = "popup-message::ullt";
+public static final String POPUP_MESSAGE_ULLT_ISCP = "POPUllt<.....>";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: PQL
+ * PQLS
+ */
+public static final String PQLS_ID = "pqls";
+public static final String PQLS_ISCP = "PQL";
+
+/**
+ * ISCP Command: PQL00
+ * sets PQLS Off
+ */
+public static final String PQLS_OFF_ID = "pqls::off";
+public static final String PQLS_OFF_ISCP = "PQL00";
+
+/**
+ * ISCP Command: PQL01
+ * sets PQLS On
+ */
+public static final String PQLS_ON_ID = "pqls::on";
+public static final String PQLS_ON_ISCP = "PQL01";
+
+/**
+ * ISCP Command: PQLQSTN
+ * gets The PQLS State
+ */
+public static final String PQLS_QUERY_ID = "pqls::query";
+public static final String PQLS_QUERY_ISCP = "PQLQSTN";
+
+/**
+ * ISCP Command: PQLUP
+ * sets PQLS Wrap-Around
+ */
+public static final String PQLS_UP_ID = "pqls::up";
+public static final String PQLS_UP_ISCP = "PQLUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: PAM
+ * Pre Amp Mode / AMP Mode
+ */
+public static final String PRE_AMP_MODE_AMP_MODE_ID = "pre-amp-mode-amp-mode";
+public static final String PRE_AMP_MODE_AMP_MODE_ISCP = "PAM";
+
+/**
+ * ISCP Command: PAM07
+ * sets Pre Amp Mode All
+ */
+public static final String PRE_AMP_MODE_AMP_MODE_ALL_ID = "pre-amp-mode-amp-mode::all";
+public static final String PRE_AMP_MODE_AMP_MODE_ALL_ISCP = "PAM07";
+
+/**
+ * ISCP Command: PAM01
+ * sets Pre Amp Mode Front
+ */
+public static final String PRE_AMP_MODE_AMP_MODE_FRONT_ID = "pre-amp-mode-amp-mode::front";
+public static final String PRE_AMP_MODE_AMP_MODE_FRONT_ISCP = "PAM01";
+
+/**
+ * ISCP Command: PAM03
+ * sets Pre Amp Mode Front+Center
+ */
+public static final String PRE_AMP_MODE_AMP_MODE_FRONT_CENTER_ID = "pre-amp-mode-amp-mode::front-center";
+public static final String PRE_AMP_MODE_AMP_MODE_FRONT_CENTER_ISCP = "PAM03";
+
+/**
+ * ISCP Command: PAM00
+ * sets Pre Amp Mode Off
+ */
+public static final String PRE_AMP_MODE_AMP_MODE_OFF_ID = "pre-amp-mode-amp-mode::off";
+public static final String PRE_AMP_MODE_AMP_MODE_OFF_ISCP = "PAM00";
+
+/**
+ * ISCP Command: PAMQSTN
+ * gets The Auto Power Down State
+ */
+public static final String PRE_AMP_MODE_AMP_MODE_QUERY_ID = "pre-amp-mode-amp-mode::query";
+public static final String PRE_AMP_MODE_AMP_MODE_QUERY_ISCP = "PAMQSTN";
+
+/**
+ * ISCP Command: PAMUP
+ * sets Auto Power Down Wrap-Around
+ */
+public static final String PRE_AMP_MODE_AMP_MODE_UP_ID = "pre-amp-mode-amp-mode::up";
+public static final String PRE_AMP_MODE_AMP_MODE_UP_ISCP = "PAMUP";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: PRS
  * Preset Command (Include Tuner Pack Model Only)
  */
@@ -3950,11 +5216,11 @@ public static final String PRESET_UP_ISCP = "PRSUP";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UPM
- * Preset Memory Command (Universal Port Dock Only)
+ * ISCP Command prefix: PRM
+ * Preset Memory Command (Include Tuner Pack Model Only)
  */
 public static final String PRESET_MEMORY_ID = "preset-memory";
-public static final String PRESET_MEMORY_ISCP = "UPM";
+public static final String PRESET_MEMORY_ISCP = "PRM";
 
 /**
  * CommandBlock
@@ -4006,6 +5272,49 @@ public static final String RDS_INFORMATION_02_ISCP = "RDS02";
  */
 public static final String RDS_INFORMATION_UP_ID = "rds-information::up";
 public static final String RDS_INFORMATION_UP_ISCP = "RDSUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: NRI
+ * Receiver Information (for Network Control Only)
+ */
+public static final String RECEIVER_INFORMATION_ID = "receiver-information";
+public static final String RECEIVER_INFORMATION_ISCP = "NRI";
+
+/**
+ * ISCP Command: NRIQSTN
+ * gets the Receiver Information Status
+ */
+public static final String RECEIVER_INFORMATION_QUERY_ID = "receiver-information::query";
+public static final String RECEIVER_INFORMATION_QUERY_ISCP = "NRIQSTN";
+
+/**
+ * ISCP Command: NRIt----<.....>
+ * t -> message type 'X' : XML
+---- -> reserved
+<.....> : XML data ( [CR] and [LF] are removed )
+ */
+public static final String RECEIVER_INFORMATION_T_ID = "receiver-information::t";
+public static final String RECEIVER_INFORMATION_T_ISCP = "NRIt----<.....>";
+
+/**
+ * ISCP Command: NRIUllt<.....>
+ * U : UI Type
+ 0 : List, 1 : Menu, 2 : Playback, 3 : Popup, 4 : Keyboard, 5 : Menu List
+ll -> number of layer (00-FF)
+t : Update Type
+ 0 : All, 1 : Button, 2 : Textbox, 3 : Listbox
+<.....> : XML data ( [CR] and [LF] are removed )
+ */
+public static final String RECEIVER_INFORMATION_ULLT_ID = "receiver-information::ullt";
+public static final String RECEIVER_INFORMATION_ULLT_ISCP = "NRIUllt<.....>";
+
+/**
+ * ISCP Command: NRI<…>
+ * <…>: XML Data <?xml…>
+ */
+public static final String RECEIVER_INFORMATION_XML_ID = "receiver-information::xml";
+public static final String RECEIVER_INFORMATION_XML_ISCP = "NRI<…>";
 
 /**
  * CommandBlock
@@ -4171,6 +5480,108 @@ public static final String RECOUT_SELECTOR_XM_ISCP = "SLR31";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: RST
+ * Reset Command
+ */
+public static final String RESET_ID = "reset";
+public static final String RESET_ISCP = "RST";
+
+/**
+ * ISCP Command: RSTALL
+ * Reset All
+ */
+public static final String RESET_ALL_ID = "reset::all";
+public static final String RESET_ALL_ISCP = "RSTALL";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: SBS
+ * S.BASS
+ */
+public static final String S_BASS_ID = "s-bass";
+public static final String S_BASS_ISCP = "SBS";
+
+/**
+ * ISCP Command: SBS00
+ * sets S.BASS Off
+ */
+public static final String S_BASS_OFF_ID = "s-bass::off";
+public static final String S_BASS_OFF_ISCP = "SBS00";
+
+/**
+ * ISCP Command: SBS01
+ * sets S.BASS On
+ */
+public static final String S_BASS_ON_ID = "s-bass::on";
+public static final String S_BASS_ON_ISCP = "SBS01";
+
+/**
+ * ISCP Command: SBSQSTN
+ * gets The S.BASS State
+ */
+public static final String S_BASS_QUERY_ID = "s-bass::query";
+public static final String S_BASS_QUERY_ISCP = "SBSQSTN";
+
+/**
+ * ISCP Command: SBSUP
+ * sets S.BASS Wrap-Around Up
+ */
+public static final String S_BASS_TOGGLE_ID = "s-bass::toggle";
+public static final String S_BASS_TOGGLE_ISCP = "SBSUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: SCD
+ * Screen Centered Dialog / Dialog Enahncement
+ */
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_ID = "screen-centered-dialog-dialog-enahncement";
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_ISCP = "SCD";
+
+/**
+ * ISCP Command: SCD00
+ * sets Dialog Enhancement Off
+ */
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_ENHANCEMENT_OFF_ID = "screen-centered-dialog-dialog-enahncement::enhancement-off";
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_ENHANCEMENT_OFF_ISCP = "SCD00";
+
+/**
+ * ISCP Command: SCD01
+ * sets Dialog Enhancement On
+ */
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_ENHANCEMENT_ON_ID = "screen-centered-dialog-dialog-enahncement::enhancement-on";
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_ENHANCEMENT_ON_ISCP = "SCD01";
+
+/**
+ * ISCP Command: SCDQSTN
+ * gets The Dialog Enhancement State
+ */
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_QUERY_ID = "screen-centered-dialog-dialog-enahncement::query";
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_QUERY_ISCP = "SCDQSTN";
+
+/**
+ * ISCP Command: SCDUP
+ * sets Dialog Enhancement Wrap-Around
+ */
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_UP_ID = "screen-centered-dialog-dialog-enahncement::up";
+public static final String SCREEN_CENTERED_DIALOG_DIALOG_ENAHNCEMENT_UP_ISCP = "SCDUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: SCE
+ * Set　CD Elapsed　Time
+ */
+public static final String SET_CD_ELAPSED_TIME_ID = "set-cd-elapsed-time";
+public static final String SET_CD_ELAPSED_TIME_ISCP = "SCE";
+
+/**
+ * ISCP Command: SCEmm:ss
+ * Specified　Elapsed CD Time
+ */
+public static final String SET_CD_ELAPSED_TIME_TIME_MM_SS_ID = "set-cd-elapsed-time::time-mm-ss";
+public static final String SET_CD_ELAPSED_TIME_TIME_MM_SS_ISCP = "SCEmm:ss";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: OSD
  * Setup Operation Command
  */
@@ -4213,6 +5624,13 @@ public static final String SETUP_HOME_ID = "setup::home";
 public static final String SETUP_HOME_ISCP = "OSDHOME";
 
 /**
+ * ISCP Command: OSDIPV
+ * Instaprevue Key
+ */
+public static final String SETUP_IPV_ID = "setup::ipv";
+public static final String SETUP_IPV_ISCP = "OSDIPV";
+
+/**
  * ISCP Command: OSDLEFT
  * Left Key
  */
@@ -4221,10 +5639,17 @@ public static final String SETUP_LEFT_ISCP = "OSDLEFT";
 
 /**
  * ISCP Command: OSDMENU
- * Menu Key
+ * Menu Key              Setup Key
  */
 public static final String SETUP_MENU_ID = "setup::menu";
 public static final String SETUP_MENU_ISCP = "OSDMENU";
+
+/**
+ * ISCP Command: OSDQUICK
+ * Quick Setup Key     Quick Menu Key/AV Adjust Key
+ */
+public static final String SETUP_QUICK_ID = "setup::quick";
+public static final String SETUP_QUICK_ISCP = "OSDQUICK";
 
 /**
  * ISCP Command: OSDRIGHT
@@ -4259,8 +5684,8 @@ public static final String SIRIUS_ARTIST_NAME_INFO_ISCP = "SAT";
  * ISCP Command: SATnnnnnnnnnn
  * SIRIUS Artist Name
  */
-public static final String SIRIUS_ARTIST_NAME_INFO_NULL_ID = "sirius-artist-name-info::null";
-public static final String SIRIUS_ARTIST_NAME_INFO_NULL_ISCP = "SATnnnnnnnnnn";
+public static final String SIRIUS_ARTIST_NAME_INFO_ARTIST_NAME_ID = "sirius-artist-name-info::artist-name";
+public static final String SIRIUS_ARTIST_NAME_INFO_ARTIST_NAME_ISCP = "SATnnnnnnnnnn";
 
 /**
  * ISCP Command: SATQSTN
@@ -4278,18 +5703,18 @@ public static final String SIRIUS_CATEGORY_ID = "sirius-category";
 public static final String SIRIUS_CATEGORY_ISCP = "SCT";
 
 /**
+ * ISCP Command: SCTnnnnnnnnnn
+ * SIRIUS Category Info
+ */
+public static final String SIRIUS_CATEGORY_CATEGORY_INFO_ID = "sirius-category::category-info";
+public static final String SIRIUS_CATEGORY_CATEGORY_INFO_ISCP = "SCTnnnnnnnnnn";
+
+/**
  * ISCP Command: SCTDOWN
  * sets SIRIUS Category Wrap-Around Down
  */
 public static final String SIRIUS_CATEGORY_DOWN_ID = "sirius-category::down";
 public static final String SIRIUS_CATEGORY_DOWN_ISCP = "SCTDOWN";
-
-/**
- * ISCP Command: SCTnnnnnnnnnn
- * SIRIUS Category Info
- */
-public static final String SIRIUS_CATEGORY_NULL_ID = "sirius-category::null";
-public static final String SIRIUS_CATEGORY_NULL_ISCP = "SCTnnnnnnnnnn";
 
 /**
  * ISCP Command: SCTQSTN
@@ -4317,8 +5742,8 @@ public static final String SIRIUS_CHANNEL_NAME_INFO_ISCP = "SCN";
  * ISCP Command: SCNnnnnnnnnnn
  * SIRIUS Channel Name
  */
-public static final String SIRIUS_CHANNEL_NAME_INFO_NULL_ID = "sirius-channel-name-info::null";
-public static final String SIRIUS_CHANNEL_NAME_INFO_NULL_ISCP = "SCNnnnnnnnnnn";
+public static final String SIRIUS_CHANNEL_NAME_INFO_CHANNEL_NAME_ID = "sirius-channel-name-info::channel-name";
+public static final String SIRIUS_CHANNEL_NAME_INFO_CHANNEL_NAME_ISCP = "SCNnnnnnnnnnn";
 
 /**
  * ISCP Command: SCNQSTN
@@ -4375,8 +5800,8 @@ public static final String SIRIUS_PARENTAL_LOCK_INPUT_ISCP = "SLKINPUT";
  * ISCP Command: SLKnnnn
  * Lock Password (4Digits)
  */
-public static final String SIRIUS_PARENTAL_LOCK_NULL_ID = "sirius-parental-lock::null";
-public static final String SIRIUS_PARENTAL_LOCK_NULL_ISCP = "SLKnnnn";
+public static final String SIRIUS_PARENTAL_LOCK_PASSWORD_ID = "sirius-parental-lock::password";
+public static final String SIRIUS_PARENTAL_LOCK_PASSWORD_ISCP = "SLKnnnn";
 
 /**
  * ISCP Command: SLKWRONG
@@ -4394,18 +5819,18 @@ public static final String SIRIUS_TITLE_INFO_ID = "sirius-title-info";
 public static final String SIRIUS_TITLE_INFO_ISCP = "STI";
 
 /**
- * ISCP Command: STInnnnnnnnnn
- * SIRIUS Title
- */
-public static final String SIRIUS_TITLE_INFO_NULL_ID = "sirius-title-info::null";
-public static final String SIRIUS_TITLE_INFO_NULL_ISCP = "STInnnnnnnnnn";
-
-/**
  * ISCP Command: STIQSTN
  * gets SIRIUS Title
  */
 public static final String SIRIUS_TITLE_INFO_QUERY_ID = "sirius-title-info::query";
 public static final String SIRIUS_TITLE_INFO_QUERY_ISCP = "STIQSTN";
+
+/**
+ * ISCP Command: STInnnnnnnnnn
+ * SIRIUS Title
+ */
+public static final String SIRIUS_TITLE_INFO_TITLE_ID = "sirius-title-info::title";
+public static final String SIRIUS_TITLE_INFO_TITLE_ISCP = "STInnnnnnnnnn";
 
 /**
  * CommandBlock
@@ -4419,8 +5844,8 @@ public static final String SLEEP_SET_ISCP = "SLP";
  * ISCP Command: SLPQSTN
  * gets The Sleep Time
  */
-public static final String SLEEP_SET_QUERY_ID = "sleep-set::query";
-public static final String SLEEP_SET_QUERY_ISCP = "SLPQSTN";
+public static final String SLEEP_SET_QSTN_ID = "sleep-set::qstn";
+public static final String SLEEP_SET_QSTN_ISCP = "SLPQSTN";
 
 /**
  * ISCP Command: SLPOFF
@@ -4510,11 +5935,101 @@ public static final String SPEAKER_B_UP_ISCP = "SPBUP";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: SPD
+ * Speaker Distance Command
+ */
+public static final String SPEAKER_DISTANCE_ID = "speaker-distance";
+public static final String SPEAKER_DISTANCE_ISCP = "SPD";
+
+/**
+ * ISCP Command: SPDMuaaabbbcccdddeeefffggghhhiiijjjkkklllmmm
+ * sets Speaker Distance
+xxx=001-384 (0.01m - 9.00m unit is meters)
+xxx=001-12C (0.1ft - 30.0ft unit is feet)
+xxx=001-2D0 (0'0-1/2" - 30'0" unit is feet/inch)
+for not exist channel is always 000.
+
+M:MCACC Memory 1-6
+u:Unit 0:feet,1:meters,2:feet/inch
+aaa:Front Left
+bbb:Front Right
+ccc:Center
+ddd:Surround Left
+eee:Surround Right
+fff:Surround Back Left
+ggg:Surround Back Right
+hhh:Subwoofer 1
+iii:Height 1 Left
+jjj:Height 1 Right
+kkk:Height 2 Left
+lll:Height2 Right
+mmm:Subwoofer 2
+ */
+public static final String SPEAKER_DISTANCE_NULL_ID = "speaker-distance::null";
+public static final String SPEAKER_DISTANCE_NULL_ISCP = "SPDMuaaabbbcccdddeeefffggghhhiiijjjkkklllmmm";
+
+/**
+ * ISCP Command: SPDQSTN
+ * gets the Speaker Distance
+ */
+public static final String SPEAKER_DISTANCE_QUERY_ID = "speaker-distance::query";
+public static final String SPEAKER_DISTANCE_QUERY_ISCP = "SPDQSTN";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: SPI
+ * Speaker Information
+ */
+public static final String SPEAKER_INFORMATION_ID = "speaker-information";
+public static final String SPEAKER_INFORMATION_ISCP = "SPI";
+
+/**
+ * ISCP Command: SPIabcdefghhhijk
+ * sets Speaker Information
+
+a:Subwoofer 0:No,1:Yes/1ch,2:2ch
+b:Front 1:Small,2:Large
+c:Center 0:None,1:Small,2:Lage
+d:Surround 0:None,1:Small,2:Lage
+e:Surround Back 0:None,1:Small,2:Lage
+f:Height 1 0:None,1:Small,2:Lage
+g:Height 2 0:None,1:Small,2:Lage
+hhh:Crossover 50,80,100,150,200
+i:Height 1 Position 0:No,1:FH,2:TF,3:TM,4:TR,5:RH,6:DD SP(F),7:DD SP(S),8:DD SP(B)
+j:Height 2 Position 0:No,1:FH,2:TF,3:TM,4:TR,5:RH,6:DD SP(F),7:DD SP(S),8:DD SP(B)
+k:Bi-Amp 0:No,1:F,3:F+C,5:F+S,6:C+S,7:F+C+S
+ */
+public static final String SPEAKER_INFORMATION_A_SUBWOOFER_0_NO_ID = "speaker-information::a-subwoofer-0-no";
+public static final String SPEAKER_INFORMATION_A_SUBWOOFER_0_NO_ISCP = "SPIabcdefghhhijk";
+
+/**
+ * ISCP Command: SPIQSTN
+ * gets The Speaker Information
+ */
+public static final String SPEAKER_INFORMATION_QUERY_ID = "speaker-information::query";
+public static final String SPEAKER_INFORMATION_QUERY_ISCP = "SPIQSTN";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: SPL
  * Speaker Layout Command
  */
 public static final String SPEAKER_LAYOUT_ID = "speaker-layout";
 public static final String SPEAKER_LAYOUT_ISCP = "SPL";
+
+/**
+ * ISCP Command: SPLBH
+ * sets Back+Height1 Speakers
+ */
+public static final String SPEAKER_LAYOUT_BACK_HEIGHT1_SPEAKERS_ID = "speaker-layout::back-height1-speakers";
+public static final String SPEAKER_LAYOUT_BACK_HEIGHT1_SPEAKERS_ISCP = "SPLBH";
+
+/**
+ * ISCP Command: SPLBW
+ * sets Back+Wide Speakers
+ */
+public static final String SPEAKER_LAYOUT_BACK_WIDE_SPEAKERS_ID = "speaker-layout::back-wide-speakers";
+public static final String SPEAKER_LAYOUT_BACK_WIDE_SPEAKERS_ISCP = "SPLBW";
 
 /**
  * ISCP Command: SPLFH
@@ -4538,11 +6053,53 @@ public static final String SPEAKER_LAYOUT_FRONT_WIDE_ID = "speaker-layout::front
 public static final String SPEAKER_LAYOUT_FRONT_WIDE_ISCP = "SPLFW";
 
 /**
+ * ISCP Command: SPLHH
+ * sets Height1+Height2 Speakers
+ */
+public static final String SPEAKER_LAYOUT_HEIGHT1_HEIGHT2_SPEAKERS_ID = "speaker-layout::height1-height2-speakers";
+public static final String SPEAKER_LAYOUT_HEIGHT1_HEIGHT2_SPEAKERS_ISCP = "SPLHH";
+
+/**
+ * ISCP Command: SPLH1
+ * sets Height1 Speakers
+ */
+public static final String SPEAKER_LAYOUT_HEIGHT1_SPEAKERS_ID = "speaker-layout::height1-speakers";
+public static final String SPEAKER_LAYOUT_HEIGHT1_SPEAKERS_ISCP = "SPLH1";
+
+/**
+ * ISCP Command: SPLH2
+ * sets Height2 Speakers
+ */
+public static final String SPEAKER_LAYOUT_HEIGHT2_SPEAKERS_ID = "speaker-layout::height2-speakers";
+public static final String SPEAKER_LAYOUT_HEIGHT2_SPEAKERS_ISCP = "SPLH2";
+
+/**
  * ISCP Command: SPLQSTN
- * gets the Speaker State
+ * gets the Spea  ker State
  */
 public static final String SPEAKER_LAYOUT_QUERY_ID = "speaker-layout::query";
 public static final String SPEAKER_LAYOUT_QUERY_ISCP = "SPLQSTN";
+
+/**
+ * ISCP Command: SPLA
+ * sets Speakers A
+ */
+public static final String SPEAKER_LAYOUT_SPEAKERS_A_ID = "speaker-layout::speakers-a";
+public static final String SPEAKER_LAYOUT_SPEAKERS_A_ISCP = "SPLA";
+
+/**
+ * ISCP Command: SPLAB
+ * sets Speakers A+B
+ */
+public static final String SPEAKER_LAYOUT_SPEAKERS_A_B_ID = "speaker-layout::speakers-a-b";
+public static final String SPEAKER_LAYOUT_SPEAKERS_A_B_ISCP = "SPLAB";
+
+/**
+ * ISCP Command: SPLB
+ * sets Speakers B
+ */
+public static final String SPEAKER_LAYOUT_SPEAKERS_B_ID = "speaker-layout::speakers-b";
+public static final String SPEAKER_LAYOUT_SPEAKERS_B_ISCP = "SPLB";
 
 /**
  * ISCP Command: SPLSB
@@ -4588,11 +6145,47 @@ public static final String SPEAKER_LEVEL_CALIBRATION_TEST_ID = "speaker-level-ca
 public static final String SPEAKER_LEVEL_CALIBRATION_TEST_ISCP = "SLCTEST";
 
 /**
+ * ISCP Command: SLCOFF
+ * sets TEST TONE OFF
+ */
+public static final String SPEAKER_LEVEL_CALIBRATION_TEST_TONE_OFF_ID = "speaker-level-calibration::test-tone-off";
+public static final String SPEAKER_LEVEL_CALIBRATION_TEST_TONE_OFF_ISCP = "SLCOFF";
+
+/**
  * ISCP Command: SLCUP
  * LEVEL + Key
  */
 public static final String SPEAKER_LEVEL_CALIBRATION_UP_ID = "speaker-level-calibration::up";
 public static final String SPEAKER_LEVEL_CALIBRATION_UP_ISCP = "SLCUP";
+
+/**
+ * CommandBlock
+ * ISCP Command prefix: SW2
+ * Subwoofer 2 (temporary) Level Command
+ */
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_ID = "subwoofer-2-temporary-level";
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_ISCP = "SW2";
+
+/**
+ * ISCP Command: SW2DOWN
+ * LEVEL – KEY
+ */
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_DOWN_ID = "subwoofer-2-temporary-level::down";
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_DOWN_ISCP = "SW2DOWN";
+
+/**
+ * ISCP Command: SW2QSTN
+ * gets the Subwoofer Level
+ */
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_QUERY_ID = "subwoofer-2-temporary-level::query";
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_QUERY_ISCP = "SW2QSTN";
+
+/**
+ * ISCP Command: SW2UP
+ * LEVEL + Key
+ */
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_UP_ID = "subwoofer-2-temporary-level::up";
+public static final String SUBWOOFER_2_TEMPORARY_LEVEL_UP_ISCP = "SW2UP";
 
 /**
  * CommandBlock
@@ -4625,6 +6218,35 @@ public static final String SUBWOOFER_TEMPORARY_LEVEL_UP_ISCP = "SWLUP";
 
 /**
  * CommandBlock
+ * ISCP Command prefix: SPR
+ * Super Resolution
+ */
+public static final String SUPER_RESOLUTION_ID = "super-resolution";
+public static final String SUPER_RESOLUTION_ISCP = "SPR";
+
+/**
+ * ISCP Command: SPRDOWN
+ * sets Super Resolution Wrap-Around DOWN
+ */
+public static final String SUPER_RESOLUTION_DOWN_ID = "super-resolution::down";
+public static final String SUPER_RESOLUTION_DOWN_ISCP = "SPRDOWN";
+
+/**
+ * ISCP Command: SPRQSTN
+ * gets The Super Resolution State
+ */
+public static final String SUPER_RESOLUTION_QUERY_ID = "super-resolution::query";
+public static final String SUPER_RESOLUTION_QUERY_ISCP = "SPRQSTN";
+
+/**
+ * ISCP Command: SPRUP
+ * sets Super Resolution Wrap-Around Up
+ */
+public static final String SUPER_RESOLUTION_UP_ID = "super-resolution::up";
+public static final String SUPER_RESOLUTION_UP_ISCP = "SPRUP";
+
+/**
+ * CommandBlock
  * ISCP Command prefix: PWR
  * System Power Command
  */
@@ -4653,132 +6275,87 @@ public static final String SYSTEM_POWER_STANDBY_ID = "system-power::standby";
 public static final String SYSTEM_POWER_STANDBY_ISCP = "PWR00";
 
 /**
- * CommandBlock
- * ISCP Command prefix: CT1
- * TAPE1(A) Operation Command
+ * ISCP Command: PWRALL
+ * All Zone(including Main Zone) Standby
  */
-public static final String TAPE1_A_ID = "tape1-a";
-public static final String TAPE1_A_ISCP = "CT1";
-
-/**
- * ISCP Command: CT1FF
- * FF >>
- */
-public static final String TAPE1_A_FF_ID = "tape1-a::ff";
-public static final String TAPE1_A_FF_ISCP = "CT1FF";
-
-/**
- * ISCP Command: CT1PLAY.F
- * PLAY >
- */
-public static final String TAPE1_A_PLAY_F_ID = "tape1-a::play-f";
-public static final String TAPE1_A_PLAY_F_ISCP = "CT1PLAY.F";
-
-/**
- * ISCP Command: CT1PLAY.R
- * PLAY <
- */
-public static final String TAPE1_A_PLAY_R_ID = "tape1-a::play-r";
-public static final String TAPE1_A_PLAY_R_ISCP = "CT1PLAY.R";
-
-/**
- * ISCP Command: CT1RC/PAU
- * REC/PAUSE
- */
-public static final String TAPE1_A_RC_PAU_ID = "tape1-a::rc-pau";
-public static final String TAPE1_A_RC_PAU_ISCP = "CT1RC/PAU";
-
-/**
- * ISCP Command: CT1REW
- * REW <<
- */
-public static final String TAPE1_A_REW_ID = "tape1-a::rew";
-public static final String TAPE1_A_REW_ISCP = "CT1REW";
-
-/**
- * ISCP Command: CT1STOP
- * STOP
- */
-public static final String TAPE1_A_STOP_ID = "tape1-a::stop";
-public static final String TAPE1_A_STOP_ISCP = "CT1STOP";
+public static final String SYSTEM_POWER_STANDBY_ALL_ID = "system-power::standby-all";
+public static final String SYSTEM_POWER_STANDBY_ALL_ISCP = "PWRALL";
 
 /**
  * CommandBlock
- * ISCP Command prefix: CT2
- * TAPE2(B) Operation Command
+ * ISCP Command prefix: TPD
+ * Temperature Data
  */
-public static final String TAPE2_B_ID = "tape2-b";
-public static final String TAPE2_B_ISCP = "CT2";
+public static final String TEMPERATURE_DATA_ID = "temperature-data";
+public static final String TEMPERATURE_DATA_ISCP = "TPD";
 
 /**
- * ISCP Command: CT2FF
- * FF >>
+ * ISCP Command: TPDQSTN
+ * gets the Temperature Data
  */
-public static final String TAPE2_B_FF_ID = "tape2-b::ff";
-public static final String TAPE2_B_FF_ISCP = "CT2FF";
+public static final String TEMPERATURE_DATA_QUERY_ID = "temperature-data::query";
+public static final String TEMPERATURE_DATA_QUERY_ISCP = "TPDQSTN";
 
 /**
- * ISCP Command: CT2OP/CL
- * OPEN/CLOSE
+ * ISCP Command: TPD-99-999
+ * The temperature Data(Fahrenheit and Celsius) 0 – 999
+"F-99C-73": -99 degree Fahrenheit / -73 degree Celsius
+"F 32C  0": 32 degree Fahrenheit / 0 degree Celsius
+"F 41C  5": 41 degree Fahrenheit / 5 degree Celsius
+"F 50C 10": 50 degree Fahrenheit / 10 degree Celsius
+"F122C 50": 122 degree Fahrenheit / 50 degree Celsius
+"F212C100": 212 degree Fahrenheit / 100 degree Celsius
+"F302C150": 302 degree Fahrenheit / 150 degree Celsius
+
+Reference Information:
+[TX-NR474/NR575E/8270/NR575/NR676/NR676E/RZ620/NR777/RZ720/RZ820, DTM-7, DRX-2.1/3.1/4.1/5.1 VSX-832/932/LX102/LX302]
+ Yellow Zone: "F150C 66" or more & "F210C 99" or less
+ Red Zone:" F212C100" or more
+[TX-RZ920, DRX-7.1/R1.1, DRC-R1.1]
+ Yellow Zone: "F176C 80" or more & "F246C119" or less
+ Red Zone: "F248C120" or more
  */
-public static final String TAPE2_B_OP_CL_ID = "tape2-b::op-cl";
-public static final String TAPE2_B_OP_CL_ISCP = "CT2OP/CL";
+public static final String TEMPERATURE_DATA_TEMP_ID = "temperature-data::temp";
+public static final String TEMPERATURE_DATA_TEMP_ISCP = "TPD-99-999";
 
 /**
- * ISCP Command: CT2PLAY.F
- * PLAY >
+ * CommandBlock
+ * ISCP Command prefix: TCL
+ * Temporary Channel Level Command
  */
-public static final String TAPE2_B_PLAY_F_ID = "tape2-b::play-f";
-public static final String TAPE2_B_PLAY_F_ISCP = "CT2PLAY.F";
+public static final String TEMPORARY_CHANNEL_LEVEL_ID = "temporary-channel-level";
+public static final String TEMPORARY_CHANNEL_LEVEL_ISCP = "TCL";
 
 /**
- * ISCP Command: CT2PLAY.R
- * PLAY <
+ * ISCP Command: TCLaaabbbcccdddeeefffggghhhiiijjjkkklllmmm
+ * sets Temporary Channel Level
+Subwoofer1/2 xxx=-1E(-15.0dB)~000(0.0dB)~+18(+12.0dB)
+Other Ch xxx=-18(-12.0dB)~000(0.0dB)~+18(+12.0dB)
+for not exist channel is always 000.
+
+aaa:Front Left
+bbb:Front Right
+ccc:Center
+ddd:Surround Left
+eee:Surround Right
+fff:Surround Back Left
+ggg:Surround Back Right
+hhh:Subwoofer 1
+iii:Height 1 Left
+jjj:Height 1 Right
+kkk:Height 2 Left
+lll:Height2 Right
+mmm:Subwoofer 2
  */
-public static final String TAPE2_B_PLAY_R_ID = "tape2-b::play-r";
-public static final String TAPE2_B_PLAY_R_ISCP = "CT2PLAY.R";
+public static final String TEMPORARY_CHANNEL_LEVEL_LEVELS_ID = "temporary-channel-level::levels";
+public static final String TEMPORARY_CHANNEL_LEVEL_LEVELS_ISCP = "TCLaaabbbcccdddeeefffggghhhiiijjjkkklllmmm";
 
 /**
- * ISCP Command: CT2RC/PAU
- * REC/PAUSE
+ * ISCP Command: TCLQSTN
+ * gets the Subwoofer Level
  */
-public static final String TAPE2_B_RC_PAU_ID = "tape2-b::rc-pau";
-public static final String TAPE2_B_RC_PAU_ISCP = "CT2RC/PAU";
-
-/**
- * ISCP Command: CT2REC
- * REC
- */
-public static final String TAPE2_B_REC_ID = "tape2-b::rec";
-public static final String TAPE2_B_REC_ISCP = "CT2REC";
-
-/**
- * ISCP Command: CT2REW
- * REW <<
- */
-public static final String TAPE2_B_REW_ID = "tape2-b::rew";
-public static final String TAPE2_B_REW_ISCP = "CT2REW";
-
-/**
- * ISCP Command: CT2SKIP.F
- * >>I
- */
-public static final String TAPE2_B_SKIP_F_ID = "tape2-b::skip-f";
-public static final String TAPE2_B_SKIP_F_ISCP = "CT2SKIP.F";
-
-/**
- * ISCP Command: CT2SKIP.R
- * I<<
- */
-public static final String TAPE2_B_SKIP_R_ID = "tape2-b::skip-r";
-public static final String TAPE2_B_SKIP_R_ISCP = "CT2SKIP.R";
-
-/**
- * ISCP Command: CT2STOP
- * STOP
- */
-public static final String TAPE2_B_STOP_ID = "tape2-b::stop";
-public static final String TAPE2_B_STOP_ISCP = "CT2STOP";
+public static final String TEMPORARY_CHANNEL_LEVEL_QUERY_ID = "temporary-channel-level::query";
+public static final String TEMPORARY_CHANNEL_LEVEL_QUERY_ISCP = "TCLQSTN";
 
 /**
  * CommandBlock
@@ -4847,21 +6424,21 @@ public static final String TONE_FRONT_ISCP = "TFR";
 
 /**
  * ISCP Command: TFRB{xx}
- * Front Bass (xx is "-A"..."00"..."+A"[-10...0...+10 2 step]
+ * Front Bass (xx is "-A"..."00"..."+A"[-10...0...+10 1 step]
  */
 public static final String TONE_FRONT_B_XX_ID = "tone-front::b-xx";
 public static final String TONE_FRONT_B_XX_ISCP = "TFRB{xx}";
 
 /**
  * ISCP Command: TFRBDOWN
- * sets Front Bass down(2 step)
+ * sets Front Bass down(1 step)
  */
 public static final String TONE_FRONT_BASS_DOWN_ID = "tone-front::bass-down";
 public static final String TONE_FRONT_BASS_DOWN_ISCP = "TFRBDOWN";
 
 /**
  * ISCP Command: TFRBUP
- * sets Front Bass up(2 step)
+ * sets Front Bass up(1 step)
  */
 public static final String TONE_FRONT_BASS_UP_ID = "tone-front::bass-up";
 public static final String TONE_FRONT_BASS_UP_ISCP = "TFRBUP";
@@ -4875,21 +6452,21 @@ public static final String TONE_FRONT_QUERY_ISCP = "TFRQSTN";
 
 /**
  * ISCP Command: TFRT{xx}
- * Front Treble (xx is "-A"..."00"..."+A"[-10...0...+10 2 step]
+ * Front Treble (xx is "-A"..."00"..."+A"[-10...0...+10 1 step]
  */
 public static final String TONE_FRONT_T_XX_ID = "tone-front::t-xx";
 public static final String TONE_FRONT_T_XX_ISCP = "TFRT{xx}";
 
 /**
  * ISCP Command: TFRTDOWN
- * sets Front Treble down(2 step)
+ * sets Front Treble down(1 step)
  */
 public static final String TONE_FRONT_TREBLE_DOWN_ID = "tone-front::treble-down";
 public static final String TONE_FRONT_TREBLE_DOWN_ISCP = "TFRTDOWN";
 
 /**
  * ISCP Command: TFRTUP
- * sets Front Treble up(2 step)
+ * sets Front Treble up(1 step)
  */
 public static final String TONE_FRONT_TREBLE_UP_ID = "tone-front::treble-up";
 public static final String TONE_FRONT_TREBLE_UP_ISCP = "TFRTUP";
@@ -5170,298 +6747,297 @@ public static final String TP_SCAN_ISCP = "TPS";
  * ISCP Command: TPSENTER
  * Finish TP Scan
  */
-public static final String TP_SCAN_ENTER_ID = "tp-scan::enter";
-public static final String TP_SCAN_ENTER_ISCP = "TPSENTER";
+public static final String TP_SCAN_FINISH_ID = "tp-scan::finish";
+public static final String TP_SCAN_FINISH_ISCP = "TPSENTER";
 
 /**
  * ISCP Command: TPS
  * Start TP Scan (When Don’t Have Parameter)
  */
-public static final String TP_SCAN_NULL_ID = "tp-scan::null";
-public static final String TP_SCAN_NULL_ISCP = "TPS";
+public static final String TP_SCAN_START_ID = "tp-scan::start";
+public static final String TP_SCAN_START_ISCP = "TPS";
 
 /**
  * CommandBlock
- * ISCP Command prefix: UTN
- * Tuning Command (Universal Port Dock Only)
+ * ISCP Command prefix: TUN
+ * Tuning Command (Include Tuner Pack Model Only)
  */
 public static final String TUNING_ID = "tuning";
-public static final String TUNING_ISCP = "UTN";
+public static final String TUNING_ISCP = "TUN";
 
 /**
- * ISCP Command: UTNDOWN
+ * ISCP Command: TUN0
+ * sets 0 in Direct Tuning Mode
+ */
+public static final String TUNING_0_IN_DIRECT_MODE_ID = "tuning::0-in-direct-mode";
+public static final String TUNING_0_IN_DIRECT_MODE_ISCP = "TUN0";
+
+/**
+ * ISCP Command: TUN1
+ * sets 1 in Direct Tuning Mode
+ */
+public static final String TUNING_1_IN_DIRECT_MODE_ID = "tuning::1-in-direct-mode";
+public static final String TUNING_1_IN_DIRECT_MODE_ISCP = "TUN1";
+
+/**
+ * ISCP Command: TUN2
+ * sets 2 in Direct Tuning Mode
+ */
+public static final String TUNING_2_IN_DIRECT_MODE_ID = "tuning::2-in-direct-mode";
+public static final String TUNING_2_IN_DIRECT_MODE_ISCP = "TUN2";
+
+/**
+ * ISCP Command: TUN3
+ * sets 3 in Direct Tuning Mode
+ */
+public static final String TUNING_3_IN_DIRECT_MODE_ID = "tuning::3-in-direct-mode";
+public static final String TUNING_3_IN_DIRECT_MODE_ISCP = "TUN3";
+
+/**
+ * ISCP Command: TUN4
+ * sets 4 in Direct Tuning Mode
+ */
+public static final String TUNING_4_IN_DIRECT_MODE_ID = "tuning::4-in-direct-mode";
+public static final String TUNING_4_IN_DIRECT_MODE_ISCP = "TUN4";
+
+/**
+ * ISCP Command: TUN5
+ * sets 5 in Direct Tuning Mode
+ */
+public static final String TUNING_5_IN_DIRECT_MODE_ID = "tuning::5-in-direct-mode";
+public static final String TUNING_5_IN_DIRECT_MODE_ISCP = "TUN5";
+
+/**
+ * ISCP Command: TUN6
+ * sets 6 in Direct Tuning Mode
+ */
+public static final String TUNING_6_IN_DIRECT_MODE_ID = "tuning::6-in-direct-mode";
+public static final String TUNING_6_IN_DIRECT_MODE_ISCP = "TUN6";
+
+/**
+ * ISCP Command: TUN7
+ * sets 7 in Direct Tuning Mode
+ */
+public static final String TUNING_7_IN_DIRECT_MODE_ID = "tuning::7-in-direct-mode";
+public static final String TUNING_7_IN_DIRECT_MODE_ISCP = "TUN7";
+
+/**
+ * ISCP Command: TUN8
+ * sets 8 in Direct Tuning Mode
+ */
+public static final String TUNING_8_IN_DIRECT_MODE_ID = "tuning::8-in-direct-mode";
+public static final String TUNING_8_IN_DIRECT_MODE_ISCP = "TUN8";
+
+/**
+ * ISCP Command: TUN9
+ * sets 9 in Direct Tuning Mode
+ */
+public static final String TUNING_9_IN_DIRECT_MODE_ID = "tuning::9-in-direct-mode";
+public static final String TUNING_9_IN_DIRECT_MODE_ISCP = "TUN9";
+
+/**
+ * ISCP Command: TUNBAND
+ * Change BAND
+ */
+public static final String TUNING_BAND_ID = "tuning::band";
+public static final String TUNING_BAND_ISCP = "TUNBAND";
+
+/**
+ * ISCP Command: TUNDIRECT
+ * starts/restarts Direct Tuning Mode
+ */
+public static final String TUNING_DIRECT_ID = "tuning::direct";
+public static final String TUNING_DIRECT_ISCP = "TUNDIRECT";
+
+/**
+ * ISCP Command: TUNDOWN
  * sets Tuning Frequency Wrap-Around Down
  */
 public static final String TUNING_DOWN_ID = "tuning::down";
-public static final String TUNING_DOWN_ISCP = "UTNDOWN";
+public static final String TUNING_DOWN_ISCP = "TUNDOWN";
 
 /**
- * ISCP Command: UTNnnnnn
- * sets Directly Tuning Frequency (FM nnn.nn MHz / AM nnnnn kHz)
+ * ISCP Command: TUNnnnnn
+ * sets Directly Tuning Frequency (FM nnn.nn MHz / AM nnnnn kHz / SR nnnnn ch)
+put 0 in the first two digits of nnnnn at SR
  */
-public static final String TUNING_NULL_ID = "tuning::null";
-public static final String TUNING_NULL_ISCP = "UTNnnnnn";
+public static final String TUNING_FREQ_NNNNN_ID = "tuning::freq-nnnnn";
+public static final String TUNING_FREQ_NNNNN_ISCP = "TUNnnnnn";
 
 /**
- * ISCP Command: UTNQSTN
+ * ISCP Command: TUNQSTN
  * gets The Tuning Frequency
  */
 public static final String TUNING_QUERY_ID = "tuning::query";
-public static final String TUNING_QUERY_ISCP = "UTNQSTN";
+public static final String TUNING_QUERY_ISCP = "TUNQSTN";
 
 /**
- * ISCP Command: UTNUP
+ * ISCP Command: TUNUP
  * sets Tuning Frequency Wrap-Around Up
  */
 public static final String TUNING_UP_ID = "tuning::up";
-public static final String TUNING_UP_ISCP = "UTNUP";
+public static final String TUNING_UP_ISCP = "TUNUP";
 
 /**
  * CommandBlock
- * ISCP Command prefix: CPT
- * Universal PORT Operation Command
+ * ISCP Command prefix: UPD
+ * Update
  */
-public static final String UNIVERSAL_PORT_ID = "universal-port";
-public static final String UNIVERSAL_PORT_ISCP = "CPT";
+public static final String UPDATE_ID = "update";
+public static final String UPDATE_ISCP = "UPD";
 
 /**
- * ISCP Command: CPT0
- * 0.0
+ * ISCP Command: UPD00
+ * not exist new firmware
  */
-public static final String UNIVERSAL_PORT_0_ID = "universal-port::0";
-public static final String UNIVERSAL_PORT_0_ISCP = "CPT0";
+public static final String UPDATE_00_ID = "update::00";
+public static final String UPDATE_00_ISCP = "UPD00";
 
 /**
- * ISCP Command: CPT1
- * 1.0
+ * ISCP Command: UPD01
+ * exist new firmware
  */
-public static final String UNIVERSAL_PORT_1_ID = "universal-port::1";
-public static final String UNIVERSAL_PORT_1_ISCP = "CPT1";
+public static final String UPDATE_01_ID = "update::01";
+public static final String UPDATE_01_ISCP = "UPD01";
 
 /**
- * ISCP Command: CPT10
- * 10/+10/Direct Tuning
+ * ISCP Command: UPDCMP
+ * Device Update is completed
  */
-public static final String UNIVERSAL_PORT_10_ID = "universal-port::10";
-public static final String UNIVERSAL_PORT_10_ISCP = "CPT10";
+public static final String UPDATE_CMP_ID = "update::cmp";
+public static final String UPDATE_CMP_ISCP = "UPDCMP";
 
 /**
- * ISCP Command: CPT2
- * 2.0
+ * ISCP Command: UPDD**-nn
+ * nn Progress (%)
+**=DL Downloading
+**=NT Arm writng
+**=D1 DSP1
+**=D2 DSP2
+**=D3 DSP3
+**=VM VMPU
+**=OS OSD
+**=MP MMPU
  */
-public static final String UNIVERSAL_PORT_2_ID = "universal-port::2";
-public static final String UNIVERSAL_PORT_2_ISCP = "CPT2";
+public static final String UPDATE_D_NN_ID = "update::d-nn";
+public static final String UPDATE_D_NN_ISCP = "UPDD**-nn";
 
 /**
- * ISCP Command: CPT3
- * 3.0
+ * ISCP Command: UPDE{xx}-yy
+ * xx=ErrorCode1
+yy=ErrorCode2
  */
-public static final String UNIVERSAL_PORT_3_ID = "universal-port::3";
-public static final String UNIVERSAL_PORT_3_ISCP = "CPT3";
+public static final String UPDATE_E_XX_YY_ID = "update::e-xx-yy";
+public static final String UPDATE_E_XX_YY_ISCP = "UPDE{xx}-yy";
 
 /**
- * ISCP Command: CPT4
- * 4.0
+ * ISCP Command: UPD02
+ * exist new firmware(force)
  */
-public static final String UNIVERSAL_PORT_4_ID = "universal-port::4";
-public static final String UNIVERSAL_PORT_4_ISCP = "CPT4";
+public static final String UPDATE_FORCE_ID = "update::force";
+public static final String UPDATE_FORCE_ISCP = "UPD02";
 
 /**
- * ISCP Command: CPT5
- * 5.0
+ * ISCP Command: UPDNET
+ * start Device Update via Network
  */
-public static final String UNIVERSAL_PORT_5_ID = "universal-port::5";
-public static final String UNIVERSAL_PORT_5_ISCP = "CPT5";
+public static final String UPDATE_NET_ID = "update::net";
+public static final String UPDATE_NET_ISCP = "UPDNET";
 
 /**
- * ISCP Command: CPT6
- * 6.0
+ * ISCP Command: UPDQSTN
+ * gets exist new firmware
  */
-public static final String UNIVERSAL_PORT_6_ID = "universal-port::6";
-public static final String UNIVERSAL_PORT_6_ISCP = "CPT6";
+public static final String UPDATE_QUERY_ID = "update::query";
+public static final String UPDATE_QUERY_ISCP = "UPDQSTN";
 
 /**
- * ISCP Command: CPT7
- * 7.0
+ * ISCP Command: UPDUSB
+ * start Device Update via USB
  */
-public static final String UNIVERSAL_PORT_7_ID = "universal-port::7";
-public static final String UNIVERSAL_PORT_7_ISCP = "CPT7";
+public static final String UPDATE_USB_ID = "update::usb";
+public static final String UPDATE_USB_ISCP = "UPDUSB";
 
 /**
- * ISCP Command: CPT8
- * 8.0
+ * CommandBlock
+ * ISCP Command prefix: UPS
+ * Upsampling
  */
-public static final String UNIVERSAL_PORT_8_ID = "universal-port::8";
-public static final String UNIVERSAL_PORT_8_ISCP = "CPT8";
+public static final String UPSAMPLING_ID = "upsampling";
+public static final String UPSAMPLING_ISCP = "UPS";
 
 /**
- * ISCP Command: CPT9
- * 9.0
+ * ISCP Command: UPSQSTN
+ * gets The Upscaling State
  */
-public static final String UNIVERSAL_PORT_9_ID = "universal-port::9";
-public static final String UNIVERSAL_PORT_9_ISCP = "CPT9";
+public static final String UPSAMPLING_QUERY_ID = "upsampling::query";
+public static final String UPSAMPLING_QUERY_ISCP = "UPSQSTN";
 
 /**
- * ISCP Command: CPTDISP
- * DISPLAY
+ * ISCP Command: UPSUP
+ * sets Upsampling Wrap-Around
  */
-public static final String UNIVERSAL_PORT_DISP_ID = "universal-port::disp";
-public static final String UNIVERSAL_PORT_DISP_ISCP = "CPTDISP";
+public static final String UPSAMPLING_UP_ID = "upsampling::up";
+public static final String UPSAMPLING_UP_ISCP = "UPSUP";
 
 /**
- * ISCP Command: CPTDOWN
- * DOWN/Tuning Down
+ * ISCP Command: UPS00
+ * sets Upsampling x1
  */
-public static final String UNIVERSAL_PORT_DOWN_ID = "universal-port::down";
-public static final String UNIVERSAL_PORT_DOWN_ISCP = "CPTDOWN";
+public static final String UPSAMPLING_X1_ID = "upsampling::x1";
+public static final String UPSAMPLING_X1_ISCP = "UPS00";
 
 /**
- * ISCP Command: CPTENTER
- * ENTER
+ * ISCP Command: UPS01
+ * sets Upsampling x2
  */
-public static final String UNIVERSAL_PORT_ENTER_ID = "universal-port::enter";
-public static final String UNIVERSAL_PORT_ENTER_ISCP = "CPTENTER";
+public static final String UPSAMPLING_X2_ID = "upsampling::x2";
+public static final String UPSAMPLING_X2_ISCP = "UPS01";
 
 /**
- * ISCP Command: CPTFF
- * FF >>
+ * ISCP Command: UPS02
+ * sets Upsampling x4
  */
-public static final String UNIVERSAL_PORT_FF_ID = "universal-port::ff";
-public static final String UNIVERSAL_PORT_FF_ISCP = "CPTFF";
+public static final String UPSAMPLING_X4_ID = "upsampling::x4";
+public static final String UPSAMPLING_X4_ISCP = "UPS02";
 
 /**
- * ISCP Command: CPTLEFT
- * LEFT/Multicast Down
+ * ISCP Command: UPS03
+ * sets Upsampling x8
  */
-public static final String UNIVERSAL_PORT_LEFT_ID = "universal-port::left";
-public static final String UNIVERSAL_PORT_LEFT_ISCP = "CPTLEFT";
-
-/**
- * ISCP Command: CPTMODE
- * MODE
- */
-public static final String UNIVERSAL_PORT_MODE_ID = "universal-port::mode";
-public static final String UNIVERSAL_PORT_MODE_ISCP = "CPTMODE";
-
-/**
- * ISCP Command: CPTPAUSE
- * PAUSE
- */
-public static final String UNIVERSAL_PORT_PAUSE_ID = "universal-port::pause";
-public static final String UNIVERSAL_PORT_PAUSE_ISCP = "CPTPAUSE";
-
-/**
- * ISCP Command: CPTPLAY
- * PLAY/BAND
- */
-public static final String UNIVERSAL_PORT_PLAY_ID = "universal-port::play";
-public static final String UNIVERSAL_PORT_PLAY_ISCP = "CPTPLAY";
-
-/**
- * ISCP Command: CPTPRSDN
- * PRESET DOWN
- */
-public static final String UNIVERSAL_PORT_PRSDN_ID = "universal-port::prsdn";
-public static final String UNIVERSAL_PORT_PRSDN_ISCP = "CPTPRSDN";
-
-/**
- * ISCP Command: CPTPRSUP
- * PRESET UP
- */
-public static final String UNIVERSAL_PORT_PRSUP_ID = "universal-port::prsup";
-public static final String UNIVERSAL_PORT_PRSUP_ISCP = "CPTPRSUP";
-
-/**
- * ISCP Command: CPTREPEAT
- * REPEAT
- */
-public static final String UNIVERSAL_PORT_REPEAT_ID = "universal-port::repeat";
-public static final String UNIVERSAL_PORT_REPEAT_ISCP = "CPTREPEAT";
-
-/**
- * ISCP Command: CPTRETURN
- * RETURN
- */
-public static final String UNIVERSAL_PORT_RETURN_ID = "universal-port::return";
-public static final String UNIVERSAL_PORT_RETURN_ISCP = "CPTRETURN";
-
-/**
- * ISCP Command: CPTREW
- * REW <<
- */
-public static final String UNIVERSAL_PORT_REW_ID = "universal-port::rew";
-public static final String UNIVERSAL_PORT_REW_ISCP = "CPTREW";
-
-/**
- * ISCP Command: CPTRIGHT
- * RIGHT/Multicast Up
- */
-public static final String UNIVERSAL_PORT_RIGHT_ID = "universal-port::right";
-public static final String UNIVERSAL_PORT_RIGHT_ISCP = "CPTRIGHT";
-
-/**
- * ISCP Command: CPTSETUP
- * SETUP
- */
-public static final String UNIVERSAL_PORT_SETUP_ID = "universal-port::setup";
-public static final String UNIVERSAL_PORT_SETUP_ISCP = "CPTSETUP";
-
-/**
- * ISCP Command: CPTSHUFFLE
- * SHUFFLE
- */
-public static final String UNIVERSAL_PORT_SHUFFLE_ID = "universal-port::shuffle";
-public static final String UNIVERSAL_PORT_SHUFFLE_ISCP = "CPTSHUFFLE";
-
-/**
- * ISCP Command: CPTSKIP.F
- * >>I
- */
-public static final String UNIVERSAL_PORT_SKIP_F_ID = "universal-port::skip-f";
-public static final String UNIVERSAL_PORT_SKIP_F_ISCP = "CPTSKIP.F";
-
-/**
- * ISCP Command: CPTSKIP.R
- * I<<
- */
-public static final String UNIVERSAL_PORT_SKIP_R_ID = "universal-port::skip-r";
-public static final String UNIVERSAL_PORT_SKIP_R_ISCP = "CPTSKIP.R";
-
-/**
- * ISCP Command: CPTSTOP
- * STOP
- */
-public static final String UNIVERSAL_PORT_STOP_ID = "universal-port::stop";
-public static final String UNIVERSAL_PORT_STOP_ISCP = "CPTSTOP";
-
-/**
- * ISCP Command: CPTUP
- * UP/Tuning Up
- */
-public static final String UNIVERSAL_PORT_UP_ID = "universal-port::up";
-public static final String UNIVERSAL_PORT_UP_ISCP = "CPTUP";
+public static final String UPSAMPLING_X8_ID = "upsampling::x8";
+public static final String UPSAMPLING_X8_ISCP = "UPS03";
 
 /**
  * CommandBlock
  * ISCP Command prefix: IFV
- * Video Infomation Command
+ * Video Information Command
  */
-public static final String VIDEO_INFOMATION_ID = "video-infomation";
-public static final String VIDEO_INFOMATION_ISCP = "IFV";
+public static final String VIDEO_INFORMATION_ID = "video-information";
+public static final String VIDEO_INFORMATION_ISCP = "IFV";
 
 /**
- * ISCP Command: IFVnnnnn:nnnnn
- * infomation of Video(Same Immediate Display ',' is separator of infomations)
+ * ISCP Command: IFVa..a,b..b,c…c,d..d,e…e,f…f,g…g,h…h,i…i,
+ * information of Video(Same Immediate Display ',' is separator of informations)
+a…a: Video Input Port
+b…b: Input Resolution, Frame Rate
+c…c: RGB/YCbCr
+d…d: Color Depth 
+e…e: Video Output Port
+f…f: Output Resolution, Frame Rate
+g…g: RGB/YCbCr
+h…h: Color Depth
+i...i: Picture Mode
  */
-public static final String VIDEO_INFOMATION_NULL_ID = "video-infomation::null";
-public static final String VIDEO_INFOMATION_NULL_ISCP = "IFVnnnnn:nnnnn";
+public static final String VIDEO_INFORMATION_A_A_B_B_C_C_D_D_E_E_F_F_G_G_H_H_I_I_ID = "video-information::a-a-b-b-c-c-d-d-e-e-f-f-g-g-h-h-i-i";
+public static final String VIDEO_INFORMATION_A_A_B_B_C_C_D_D_E_E_F_F_G_G_H_H_I_I_ISCP = "IFVa..a,b..b,c…c,d..d,e…e,f…f,g…g,h…h,i…i,";
 
 /**
  * ISCP Command: IFVQSTN
- * gets Infomation of Video
+ * gets Information of Video
  */
-public static final String VIDEO_INFOMATION_QUERY_ID = "video-infomation::query";
-public static final String VIDEO_INFOMATION_QUERY_ISCP = "IFVQSTN";
+public static final String VIDEO_INFORMATION_QUERY_ID = "video-information::query";
+public static final String VIDEO_INFORMATION_QUERY_ISCP = "IFVQSTN";
 
 /**
  * CommandBlock
@@ -5551,7 +7127,7 @@ public static final String VIDEO_PICTURE_MODE_STREAMING_ISCP = "VPM07";
 
 /**
  * ISCP Command: VPM00
- * sets Through
+ * sets Through, Standard
  */
 public static final String VIDEO_PICTURE_MODE_THROUGH_ID = "video-picture-mode::through";
 public static final String VIDEO_PICTURE_MODE_THROUGH_ISCP = "VPM00";
@@ -5614,11 +7190,11 @@ public static final String VIDEO_WIDE_MODE_UP_ID = "video-wide-mode::up";
 public static final String VIDEO_WIDE_MODE_UP_ISCP = "VWMUP";
 
 /**
- * ISCP Command: VWM03
- * sets Zoom
+ * ISCP Command: VWM04
+ * sets Wide Zoom
  */
 public static final String VIDEO_WIDE_MODE_ZOOM_ID = "video-wide-mode::zoom";
-public static final String VIDEO_WIDE_MODE_ZOOM_ISCP = "VWM03";
+public static final String VIDEO_WIDE_MODE_ZOOM_ISCP = "VWM04";
 
 /**
  * CommandBlock
@@ -5632,8 +7208,8 @@ public static final String XM_ARTIST_NAME_INFO_ISCP = "XAT";
  * ISCP Command: XATnnnnnnnnnn
  * XM Artist Name
  */
-public static final String XM_ARTIST_NAME_INFO_NULL_ID = "xm-artist-name-info::null";
-public static final String XM_ARTIST_NAME_INFO_NULL_ISCP = "XATnnnnnnnnnn";
+public static final String XM_ARTIST_NAME_INFO_ARTIST_NAME_ID = "xm-artist-name-info::artist-name";
+public static final String XM_ARTIST_NAME_INFO_ARTIST_NAME_ISCP = "XATnnnnnnnnnn";
 
 /**
  * ISCP Command: XATQSTN
@@ -5651,18 +7227,18 @@ public static final String XM_CATEGORY_ID = "xm-category";
 public static final String XM_CATEGORY_ISCP = "XCT";
 
 /**
+ * ISCP Command: XCTnnnnnnnnnn
+ * XM Category Info
+ */
+public static final String XM_CATEGORY_CATEGORY_INFO_ID = "xm-category::category-info";
+public static final String XM_CATEGORY_CATEGORY_INFO_ISCP = "XCTnnnnnnnnnn";
+
+/**
  * ISCP Command: XCTDOWN
  * sets XM Category Wrap-Around Down
  */
 public static final String XM_CATEGORY_DOWN_ID = "xm-category::down";
 public static final String XM_CATEGORY_DOWN_ISCP = "XCTDOWN";
-
-/**
- * ISCP Command: XCTnnnnnnnnnn
- * XM Category Info
- */
-public static final String XM_CATEGORY_NULL_ID = "xm-category::null";
-public static final String XM_CATEGORY_NULL_ISCP = "XCTnnnnnnnnnn";
 
 /**
  * ISCP Command: XCTQSTN
@@ -5690,8 +7266,8 @@ public static final String XM_CHANNEL_NAME_INFO_ISCP = "XCN";
  * ISCP Command: XCNnnnnnnnnnn
  * XM Channel Name
  */
-public static final String XM_CHANNEL_NAME_INFO_NULL_ID = "xm-channel-name-info::null";
-public static final String XM_CHANNEL_NAME_INFO_NULL_ISCP = "XCNnnnnnnnnnn";
+public static final String XM_CHANNEL_NAME_INFO_CHANNEL_NAME_ID = "xm-channel-name-info::channel-name";
+public static final String XM_CHANNEL_NAME_INFO_CHANNEL_NAME_ISCP = "XCNnnnnnnnnnn";
 
 /**
  * ISCP Command: XCNQSTN
@@ -5738,17 +7314,17 @@ public static final String XM_TITLE_INFO_ID = "xm-title-info";
 public static final String XM_TITLE_INFO_ISCP = "XTI";
 
 /**
- * ISCP Command: XTInnnnnnnnnn
- * XM Title
- */
-public static final String XM_TITLE_INFO_NULL_ID = "xm-title-info::null";
-public static final String XM_TITLE_INFO_NULL_ISCP = "XTInnnnnnnnnn";
-
-/**
  * ISCP Command: XTIQSTN
  * gets XM Title
  */
 public static final String XM_TITLE_INFO_QUERY_ID = "xm-title-info::query";
 public static final String XM_TITLE_INFO_QUERY_ISCP = "XTIQSTN";
+
+/**
+ * ISCP Command: XTInnnnnnnnnn
+ * XM Title
+ */
+public static final String XM_TITLE_INFO_TITLE_ID = "xm-title-info::title";
+public static final String XM_TITLE_INFO_TITLE_ISCP = "XTInnnnnnnnnn";
 
 }

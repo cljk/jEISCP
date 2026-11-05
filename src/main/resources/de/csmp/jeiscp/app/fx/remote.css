@@ -1,0 +1,788 @@
+/* jEISCP remote control */
+
+.root {
+    -accent: #2dd4bf;
+    -text: #e6e8eb;
+    -text-dim: #8b929c;
+    -lcd-text: #7af5e4;
+    -fx-background-color: transparent;
+    -fx-font-size: 12px;
+}
+
+/* borderless window: transparent around the remote, room for its shadow */
+.backdrop {
+    -fx-background-color: transparent;
+    -fx-padding: 14 18 22 18;
+}
+
+.window-key {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-min-width: 26;
+    -fx-min-height: 26;
+    -fx-pref-width: 26;
+    -fx-pref-height: 26;
+    -fx-max-width: 26;
+    -fx-max-height: 26;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.window-key .icon.line {
+    -fx-stroke: -text-dim;
+}
+
+.window-key:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+}
+
+.window-key:hover .icon.line {
+    -fx-stroke: -text;
+}
+
+.window-key.close:hover {
+    -fx-background-color: #d93f45;
+}
+
+.window-key.close:hover .icon.line {
+    -fx-stroke: white;
+}
+
+.window-key:pressed {
+    -fx-translate-y: 1;
+}
+
+.remote {
+    -fx-background-color:
+        linear-gradient(to bottom, #5b616a, #2a2d33 60%, #1a1c20),
+        linear-gradient(to bottom, #3a3e45 0%, #26292e 45%, #1e2024 100%);
+    -fx-background-insets: 0, 1.5;
+    -fx-background-radius: 32, 31;
+    -fx-padding: 16 20 24 20;
+    -fx-spacing: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 26, 0.15, 0, 8);
+}
+
+/* header */
+
+.brand {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.led {
+    -fx-fill: #3b2224;
+    -fx-stroke: rgba(0, 0, 0, 0.6);
+}
+
+.led:lit {
+    -fx-fill: #ff5b5b;
+    -fx-effect: dropshadow(gaussian, #ff5b5b, 10, 0.5, 0, 0);
+}
+
+/* keys */
+
+.key {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        linear-gradient(to bottom, #646b75, #3b4047),
+        linear-gradient(to bottom, #4d535c, #383c43);
+    -fx-background-insets: 0 0 -1.5 0, 0, 1;
+    -fx-background-radius: 9, 9, 8;
+    -fx-text-fill: -text;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 8;
+    -fx-cursor: hand;
+}
+
+.key:hover {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        linear-gradient(to bottom, #737a85, #434850),
+        linear-gradient(to bottom, #575e68, #3f444c);
+}
+
+.key:pressed {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        linear-gradient(to bottom, #2c2f35, #3a3e45),
+        linear-gradient(to bottom, #2f3238, #363a40);
+    -fx-translate-y: 1;
+}
+
+.round {
+    -fx-background-radius: 999, 999, 999;
+    -fx-min-width: 44;
+    -fx-min-height: 44;
+    -fx-pref-width: 44;
+    -fx-pref-height: 44;
+    -fx-max-width: 44;
+    -fx-max-height: 44;
+    -fx-padding: 0;
+}
+
+.icon.line {
+    -fx-fill: transparent;
+    -fx-stroke: -text;
+    -fx-stroke-width: 2.2;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+}
+
+.icon.solid {
+    -fx-fill: -text;
+    -fx-stroke: transparent;
+}
+
+/* power and mute light up while active */
+
+.power .icon.line {
+    -fx-stroke: #a35b5d;
+}
+
+.power:on .icon.line {
+    -fx-stroke: #ff4d4f;
+    -fx-effect: dropshadow(gaussian, rgba(255, 77, 79, 0.85), 10, 0.4, 0, 0);
+}
+
+.mute:on .icon.solid {
+    -fx-fill: #fbbf24;
+}
+
+.mute:on .icon.line {
+    -fx-stroke: #fbbf24;
+}
+
+/* source keys */
+
+.source {
+    -fx-font-size: 10px;
+    -fx-padding: 7 4;
+}
+
+.source:selected {
+    -fx-text-fill: -accent;
+    -fx-effect: innershadow(gaussian, rgba(45, 212, 191, 0.45), 8, 0, 0, 0);
+}
+
+/* display */
+
+.lcd {
+    -fx-background-color:
+        #04080a,
+        linear-gradient(to bottom, #0d2f2f, #071b1c 70%, #061516);
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 14, 12;
+    -fx-padding: 10 14 12 14;
+    -fx-spacing: 3;
+}
+
+.lcd .label {
+    -fx-text-fill: -lcd-text;
+    -fx-effect: dropshadow(gaussian, rgba(122, 245, 228, 0.45), 6, 0, 0, 0);
+}
+
+.lcd-source {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.lcd-volume {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.lcd-primary {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.lcd-secondary,
+.lcd-time {
+    -fx-font-size: 11px;
+    -fx-opacity: 0.8;
+}
+
+.lcd:standby .label,
+.lcd:standby .lcd-volume-bar,
+.lcd:standby .lcd-screen {
+    -fx-opacity: 0.3;
+}
+
+.lcd-volume-bar {
+    -fx-padding: 2 0 6 0;
+}
+
+.lcd .progress-bar {
+    -fx-pref-height: 6;
+    -fx-min-height: 6;
+    -fx-max-height: 6;
+    -fx-padding: 0;
+}
+
+.lcd .progress-bar > .track {
+    -fx-background-color: rgba(122, 245, 228, 0.16);
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+}
+
+.lcd .progress-bar > .bar {
+    -fx-background-color: -lcd-text;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+    -fx-padding: 3;
+    -fx-effect: dropshadow(gaussian, rgba(122, 245, 228, 0.6), 6, 0, 0, 0);
+}
+
+.lcd .slider .track {
+    -fx-background-color: transparent;
+}
+
+.lcd .slider .thumb {
+    -fx-background-color: #04080a, -lcd-text;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 999;
+    -fx-padding: 6;
+    -fx-cursor: hand;
+}
+
+.lcd-screen {
+    -fx-border-color: rgba(122, 245, 228, 0.18) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 6 0 0 0;
+}
+
+.lcd .list-view,
+.lcd .list-view:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.lcd .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -lcd-text;
+    -fx-font-size: 12px;
+    -fx-padding: 1 6;
+}
+
+.lcd .list-cell:cursor {
+    -fx-background-color: rgba(122, 245, 228, 0.88);
+    -fx-background-radius: 3;
+    -fx-text-fill: #062022;
+}
+
+.lcd .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-pref-width: 6;
+}
+
+.lcd .scroll-bar .thumb {
+    -fx-background-color: rgba(122, 245, 228, 0.35);
+    -fx-background-radius: 3;
+}
+
+.lcd .scroll-bar .increment-button,
+.lcd .scroll-bar .decrement-button {
+    -fx-padding: 0;
+}
+
+.lcd .scroll-bar .increment-arrow,
+.lcd .scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* volume rocker */
+
+.rocker {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        linear-gradient(to bottom, #565c66, #33373d),
+        linear-gradient(to bottom, #43484f, #31353b);
+    -fx-background-insets: 0 0 -1.5 0, 0, 1;
+    -fx-background-radius: 999;
+    -fx-padding: 6 4;
+    -fx-alignment: center;
+}
+
+.rocker-key {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-text-fill: -text;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+    -fx-min-width: 42;
+    -fx-min-height: 42;
+    -fx-cursor: hand;
+}
+
+.rocker-key:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+}
+
+.rocker-key:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.25);
+    -fx-text-fill: -accent;
+}
+
+.rocker-label {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* direction pad */
+
+.dpad-ring {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.65),
+        linear-gradient(to bottom, #5a606a, #2e3237),
+        radial-gradient(center 50% 40%, radius 70%, #474c54, #2b2e33);
+    -fx-background-insets: 0 0 -2 0, 0, 1.5;
+    -fx-background-radius: 999;
+}
+
+.dpad-key {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-padding: 0;
+    -fx-min-width: 50;
+    -fx-min-height: 50;
+    -fx-cursor: hand;
+}
+
+.dpad-key:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dpad-key:pressed .icon.line {
+    -fx-stroke: -accent;
+}
+
+.dpad-ok {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        rgba(45, 212, 191, 0.55),
+        linear-gradient(to bottom, #575e68, #363a41);
+    -fx-background-insets: 0, 1, 3;
+    -fx-background-radius: 999;
+    -fx-text-fill: -text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-min-width: 64;
+    -fx-min-height: 64;
+    -fx-pref-width: 64;
+    -fx-pref-height: 64;
+    -fx-max-width: 64;
+    -fx-max-height: 64;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.dpad-ok:hover {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        rgba(45, 212, 191, 0.8),
+        linear-gradient(to bottom, #5f6671, #3a3e45);
+}
+
+.dpad-ok:pressed {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        -accent,
+        linear-gradient(to bottom, #30343a, #3a3e45);
+    -fx-translate-y: 1;
+}
+
+/* transport and number keys */
+
+.transport {
+    -fx-padding: 8 4;
+    -fx-background-radius: 999, 999, 999;
+}
+
+.num {
+    -fx-font-size: 13px;
+    -fx-padding: 5 4;
+}
+
+.tooltip {
+    -fx-background-color: #24272c;
+    -fx-text-fill: -text;
+    -fx-font-size: 11px;
+    -fx-background-radius: 6;
+}
+
+/* header model */
+
+.model {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 6 0 0;
+}
+
+/* function row: mode keys, SETUP, QUICK, more */
+
+.fn-key {
+    -fx-font-size: 10px;
+    -fx-padding: 6 2;
+    -fx-graphic-text-gap: 5;
+}
+
+/* NET | TV switch in the top corners of the direction pad, outside the ring */
+
+.mode {
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-dim;
+    -fx-padding: 0;
+    -fx-background-radius: 999, 999, 999;
+    -fx-min-width: 34;
+    -fx-pref-width: 34;
+    -fx-max-width: 34;
+    -fx-min-height: 20;
+    -fx-pref-height: 20;
+    -fx-max-height: 20;
+}
+
+.mode:selected {
+    -fx-text-fill: -accent;
+    -fx-effect: innershadow(gaussian, rgba(45, 212, 191, 0.5), 8, 0, 0, 0);
+}
+
+.dpad-ok-label {
+    -fx-text-fill: -text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.dpad-ok-mode {
+    -fx-text-fill: -accent;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+}
+
+.round-small {
+    -fx-background-radius: 999, 999, 999;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-pref-width: 30;
+    -fx-pref-height: 30;
+    -fx-max-width: 30;
+    -fx-max-height: 30;
+    -fx-padding: 0;
+}
+
+/* functions page */
+
+.functions {
+    -fx-padding: 2 0 0 0;
+}
+
+.fn-heading {
+    -fx-text-fill: -text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.fn-scope {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 11px;
+}
+
+.fn-search {
+    -fx-background-color: #04080a, #0d1d1e;
+    -fx-background-insets: 0, 1.5;
+    -fx-background-radius: 9, 8;
+    -fx-text-fill: -lcd-text;
+    -fx-prompt-text-fill: rgba(122, 245, 228, 0.4);
+    -fx-highlight-fill: rgba(122, 245, 228, 0.4);
+    -fx-padding: 7 10;
+}
+
+.fn-list,
+.fn-list:focused {
+    -fx-background-color: #04080a, #0b1819;
+    -fx-background-insets: 0, 1.5;
+    -fx-background-radius: 9, 8;
+    -fx-padding: 4;
+}
+
+.fn-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text;
+    -fx-font-size: 12px;
+    -fx-padding: 3 8;
+    -fx-cursor: hand;
+}
+
+.fn-list .list-cell:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 5;
+}
+
+.fn-list .list-cell:selected {
+    -fx-background-color: rgba(45, 212, 191, 0.85);
+    -fx-background-radius: 5;
+    -fx-text-fill: #062022;
+}
+
+.fn-prefix {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 10px;
+}
+
+.fn-list .list-cell:selected .fn-prefix {
+    -fx-text-fill: #0b3b37;
+}
+
+.fn-list .scroll-bar,
+.fn-scroll .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-pref-width: 6;
+}
+
+.fn-list .scroll-bar .thumb,
+.fn-scroll .scroll-bar .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+    -fx-background-radius: 3;
+}
+
+.fn-list .scroll-bar .increment-button,
+.fn-list .scroll-bar .decrement-button,
+.fn-scroll .scroll-bar .increment-button,
+.fn-scroll .scroll-bar .decrement-button {
+    -fx-padding: 0;
+}
+
+.fn-list .scroll-bar .increment-arrow,
+.fn-list .scroll-bar .decrement-arrow,
+.fn-scroll .scroll-bar .increment-arrow,
+.fn-scroll .scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.fn-title {
+    -fx-text-fill: -text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.fn-description {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 11px;
+}
+
+.fn-current {
+    -fx-text-fill: -accent;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.fn-scroll,
+.fn-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.fn-action {
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+    -fx-padding: 5 9;
+}
+
+.fn-action:selected {
+    -fx-text-fill: -accent;
+    -fx-font-weight: bold;
+    -fx-effect: innershadow(gaussian, rgba(45, 212, 191, 0.45), 8, 0, 0, 0);
+}
+
+/* LED in the header doubles as the key for the log window */
+
+.led-key {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-padding: 5;
+    -fx-cursor: hand;
+}
+
+.led-key:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.07);
+}
+
+/* log window */
+
+.log-window {
+    -fx-background-color:
+        rgba(0, 0, 0, 0.6),
+        linear-gradient(to bottom, #33373e, #1d1f23);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 16, 15;
+    -fx-padding: 8 10 12 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 22, 0.15, 0, 6);
+}
+
+.log-title {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.log-toggle {
+    -fx-font-size: 9px;
+    -fx-padding: 4 8;
+    -fx-background-radius: 999, 999, 999;
+    -fx-text-fill: -text-dim;
+}
+
+.log-toggle:selected {
+    -fx-text-fill: -accent;
+}
+
+.log-list,
+.log-list:focused {
+    -fx-background-color: #04080a, #071112;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 9, 8;
+    -fx-padding: 4 2;
+}
+
+.log-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 6;
+}
+
+.log-list .list-cell:selected {
+    -fx-background-color: rgba(45, 212, 191, 0.22);
+}
+
+.log-list .label {
+    -fx-font-family: "Consolas";
+    -fx-font-size: 11px;
+}
+
+.log-time {
+    -fx-text-fill: #56606a;
+}
+
+.log-marker {
+    -fx-text-fill: #7d8691;
+}
+
+.log-source {
+    -fx-text-fill: #6b737d;
+}
+
+.log-message {
+    -fx-text-fill: #8f98a3;
+}
+
+.log-cell:sent .log-marker,
+.log-cell:sent .log-message {
+    -fx-text-fill: -accent;
+}
+
+.log-cell:received .log-marker,
+.log-cell:received .log-message {
+    -fx-text-fill: -text;
+}
+
+.log-cell:warn .log-marker,
+.log-cell:warn .log-message {
+    -fx-text-fill: #fbbf24;
+}
+
+.log-cell:error .log-marker,
+.log-cell:error .log-message {
+    -fx-text-fill: #ff6b6b;
+}
+
+.log-list .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-pref-width: 7;
+    -fx-pref-height: 7;
+}
+
+.log-list .scroll-bar .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+    -fx-background-radius: 3;
+}
+
+.log-list .scroll-bar .increment-button,
+.log-list .scroll-bar .decrement-button {
+    -fx-padding: 0;
+}
+
+.log-list .scroll-bar .increment-arrow,
+.log-list .scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.log-list .corner {
+    -fx-background-color: transparent;
+}
+
+.log-grip {
+    -fx-background-color: transparent, rgba(255, 255, 255, 0.25);
+    -fx-shape: "M10 0 L10 10 L0 10 Z";
+    -fx-min-width: 10;
+    -fx-min-height: 10;
+    -fx-max-width: 10;
+    -fx-max-height: 10;
+    -fx-translate-x: -24;
+    -fx-translate-y: -28;
+}
+
+/* NET popup (NPU) over the list in the display */
+
+.lcd-popup {
+    -fx-background-color: rgba(122, 245, 228, 0.55), #071b1c;
+    -fx-background-insets: 0, 1.5;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 8 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.2, 0, 2);
+}
+
+.lcd .lcd-popup-top {
+    -fx-font-size: 10px;
+    -fx-opacity: 0.7;
+}
+
+.lcd .lcd-popup-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.lcd .lcd-popup-message {
+    -fx-font-size: 11px;
+}
+
+.lcd .lcd-popup-buttons {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* receiver address in the header, a link to its web interface */
+
+.address,
+.address:visited {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 10px;
+    -fx-padding: 0;
+    -fx-border-color: transparent;
+    -fx-underline: false;
+}
+
+.address:hover {
+    -fx-text-fill: -accent;
+    -fx-underline: true;
+}

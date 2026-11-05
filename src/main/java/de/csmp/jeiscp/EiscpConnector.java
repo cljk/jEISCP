@@ -5,9 +5,6 @@ import static de.csmp.jeiscp.EiscpConstants.DEFAULT_EISCP_PORT;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -37,51 +34,13 @@ public class EiscpConnector {
 	
 	
 	
-	public static EiscpConnector autodiscover() throws Exception {
-		String queryDatagramString = EiscpConstants.AUTODISCOVER_QSTN;
-		byte[] queryDatagram = EiscpProtocolHelper.iscpToEiscpMessage(queryDatagramString);
-		
-		int port = DEFAULT_EISCP_PORT;
-
-		DatagramSocket datagramSocket = new DatagramSocket();
-		datagramSocket.setBroadcast(true);
-		
-		log.debug("send autodiscover datagram: " + queryDatagramString);// + " -> " + EiscpProtocolHelper.convertToHexString(queryDatagram));
-		DatagramPacket p = new DatagramPacket(
-				queryDatagram, queryDatagram.length);
-		p.setAddress(
-			InetAddress.getByAddress(
-				new byte[] { 
-					(byte) 255, (byte) 255, (byte) 255, (byte) 255 }));
-		p.setPort(port);
-		datagramSocket.send(p);
-
-		do {
-			try {
-				log.info("wait for autodiscover answere");
-				return receiveAutodiscoverAnswere(datagramSocket);	
-			} catch (Exception ex) {
-				log.warn(ex.getMessage(), ex);
-			}
-		} while(true);
-	}
-
-	public static EiscpConnector receiveAutodiscoverAnswere(DatagramSocket datagramSocket) throws Exception {
-		byte[] buf = new byte[256];
-		
-		DatagramPacket pct = new DatagramPacket(buf, buf.length);
-		
-		datagramSocket.receive(pct);
-
-		byte[] receivedMessage = new byte[pct.getLength()];
-		System.arraycopy(buf, 0, receivedMessage, 0, receivedMessage.length);
-
-		log.debug("answere from " + pct.getSocketAddress());
-		
-		String responseString = EiscpProtocolHelper.interpreteEiscpResponse(receivedMessage);
-		String address = pct.getAddress().getHostAddress().toString();
-		EiscpConnector conn = new EiscpConnector(address, responseString);
-		return conn;
+	/**
+	 * Connects to the first receiver that answers the broadcast.
+	 * @throws java.net.SocketTimeoutException if none answers within {@link EiscpAutodiscovery#DEFAULT_TIMEOUT}
+	 */
+	public static EiscpConnector autodiscover() throws IOException {
+		EiscpDevice device = new EiscpAutodiscovery().discover();
+		return new EiscpConnector(device.getIpAddress(), device.getPort());
 	}
 
 
@@ -129,7 +88,11 @@ public class EiscpConnector {
 		super.finalize();
 	}
 
-	
+	/** IP address of the connected receiver, e.g. {@code 192.168.0.97}. */
+	public String getAddress() {
+		return socket.getInetAddress().getHostAddress();
+	}
+
 	public int available() throws IOException {
 		return socketIn.available();
 	}
@@ -158,7 +121,7 @@ public class EiscpConnector {
 	 * @param message already has prepended !1
 	 * @throws IOException
 	 */
-	public void sendIscpMessage(String message) throws IOException {
+	public synchronized void sendIscpMessage(String message) throws IOException {
 		byte[] eiscpMessage = EiscpProtocolHelper.iscpToEiscpMessage(message);
 		
 		log.trace("sendIscpMessage: {} - eISCP message: {} bytes - {}",

@@ -1,5 +1,7 @@
 package de.csmp.jeiscp.eiscp;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,31 @@ public class EiscpCommandsParserTest {
 	@Before
 	public void setup() {
 		parser = new EiscpCommandsParser();
+	}
+
+	/** Fails after a submodule update until the constants are regenerated. */
+	@Test
+	public void generatedConstantsMatchCatalogue() throws Exception {
+		String checkedIn = Files.readString(EiscpCommandsParserConstGenerator.SOURCE, StandardCharsets.UTF_8).replace("\r\n", "\n");
+
+		Assert.assertTrue("EiscpCommmandsConstants is out of date: run mvn test -Dtest=EiscpCommandsParserConstGenerator"
+				+ " and copy target/EiscpCommmandsConstants.java to " + EiscpCommandsParserConstGenerator.SOURCE,
+				EiscpCommandsParserConstGenerator.generate().equals(checkedIn));
+	}
+
+	@Test
+	public void readsNetUsbCommandsFromDockZone() {
+		Command play = EiscpCommandsParser.getCommandByIscp("NTCPLAY");
+
+		Assert.assertNotNull(play);
+		Assert.assertEquals("network-usb::play", play.getIdentifier());
+		Assert.assertNotNull(EiscpCommandsParser.getCommandByIscp("PWR01"));
+	}
+
+	@Test
+	public void sharedBlockNameResolvesToFirstBlock() {
+		// NLS, NLA and NLU are all called net-usb-list-info
+		Assert.assertEquals("NLS", EiscpCommandsParser.getIdToCommandBlockMap().get("net-usb-list-info").getCommand());
 	}
 	
 

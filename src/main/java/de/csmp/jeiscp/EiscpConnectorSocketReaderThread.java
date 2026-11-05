@@ -51,11 +51,10 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				}
 				
 				String iscpResult = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
-				try {
-					fireReceivedIscpMessage(iscpResult);
-				} catch (Throwable ex) {
-					log.error("error in listener {}", ex.getMessage(), ex);
+				if (log.isDebugEnabled()) {
+					log.debug("received: {}", abbreviate(iscpResult));
 				}
+				fireReceivedIscpMessage(iscpResult);
 			} catch (EiscpMessageFormatException ex) {
 				log.warn(ex.getMessage() + " - " + EiscpProtocolHelper.convertToHexString(response));
 				log.debug("skip bytes until EOF/CR");
@@ -82,16 +81,30 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 					}
 				}
 			} catch (Exception ex) {
-				log.warn(ex.getMessage());
-				ex.printStackTrace();
+				if (quit) {
+					log.debug("reader stopped: {}", ex.getMessage());	// connection closed on purpose
+				} else {
+					log.warn("connection lost: {}", ex.getMessage(), ex);
+				}
 				quit();
 			}
 		}
 	}
 
+	/** Cover art (NJA) arrives as long hex blocks; the log keeps only their start. */
+	static String abbreviate(String message) {
+		int max = 120;
+		return message.length() <= max ? message : message.substring(0, max) + "... (" + message.length() + " chars)";
+	}
+
+	/** A failing listener is logged and does not keep the message from the others. */
 	public void fireReceivedIscpMessage(String iscpResult) {
 		for (EiscpListener listener : listenerList) {
-			listener.receivedIscpMessage(iscpResult);	
+			try {
+				listener.receivedIscpMessage(iscpResult);
+			} catch (RuntimeException ex) {
+				log.error("error in listener {}", ex.getMessage(), ex);
+			}
 		}
 	}
 	

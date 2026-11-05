@@ -1,9 +1,14 @@
 package de.csmp.jeiscp.app;
 
+import java.net.SocketTimeoutException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.csmp.jeiscp.EiscpAutodiscovery;
 import de.csmp.jeiscp.EiscpConnector;
+import de.csmp.jeiscp.EiscpDevice;
+import de.csmp.jeiscp.app.fx.FxGuiController;
 
 
 public class ThreadedConsoleApp {
@@ -45,23 +50,36 @@ public class ThreadedConsoleApp {
 		}
 		
 		
+		if (ENABLE_GUI) {
+			LogBuffer.install();	// from the start, so the GUI's log window also shows the autodiscovery
+		}
+
+		EiscpDevice device = null;	// model, for the functions the GUI offers
 		if (address == null) {
-			conn = EiscpConnector.autodiscover();
+			try {
+				device = new EiscpAutodiscovery().discover();
+			} catch (SocketTimeoutException ex) {
+				System.err.println(ex.getMessage() + ". Is the receiver on (or network standby enabled)"
+						+ " and in this network? Otherwise connect directly with -a {ip-address}.");
+				System.exit(1);
+			}
+			conn = new EiscpConnector(device.getIpAddress(), device.getPort());
 		} else {
 			conn = new EiscpConnector(address);
+			if (ENABLE_GUI) {
+				device = EiscpAutodiscovery.identify(address);
+			}
 		}
 		
 		
 		if (ENABLE_CONSOLE) {
-			ConsoleController consoleController = new ConsoleController(conn);
+			ConsoleController consoleController = new ConsoleController(conn, !ENABLE_GUI);
 			Thread consoleThread = new Thread(consoleController);
 			consoleThread.start();
 		}
 		
 		if (ENABLE_GUI) {
-			AppGuiController guiController = new AppGuiController(conn);
-        	Thread guiThread = new Thread(guiController);
-        	guiThread.start();
+			new FxGuiController(conn, device).start();
         }
 		
 		log.debug("controller threads started");
