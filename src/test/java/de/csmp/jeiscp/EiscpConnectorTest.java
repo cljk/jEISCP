@@ -139,6 +139,48 @@ public class EiscpConnectorTest {
 	}
 
 	@Test
+	public void garbageEndingInCrLfDoesNotSwallowTheNextFrame() throws Exception {
+		conn.addListener(received::add);
+
+		send("garbage\r\n".getBytes(StandardCharsets.US_ASCII), frame("!1AMT01\u001a\r\n"));
+
+		assertEquals("AMT01", next());
+	}
+
+	@Test
+	public void resyncsAfterPartialMarkers() throws Exception {
+		conn.addListener(received::add);
+
+		send("ISCISIS".getBytes(StandardCharsets.US_ASCII), frame("!1PWR01\r\n"));
+
+		assertEquals("PWR01", next());
+	}
+
+	@Test
+	public void skipsFramesWithImplausibleHeaders() throws Exception {
+		conn.addListener(received::add);
+
+		send(header(16, Integer.MAX_VALUE, 1),	// would allocate 2 GB
+				header(16, 9, 2), "!1PWR00\r\n".getBytes(StandardCharsets.US_ASCII),	// unknown version
+				header(20, 9, 1),	// unknown header size
+				frame("!1MVL1A\r\n"));
+
+		assertEquals("MVL1A", next());
+		assertNull(received.poll(200, TimeUnit.MILLISECONDS));
+		assertEquals(ConnectionState.CONNECTED, conn.getState());
+	}
+
+	@Test
+	public void skipsMessagesWithoutStartCharactersOrContent() throws Exception {
+		conn.addListener(received::add);
+
+		send(frame("XXPWR00\r\n"), frame("!1\r\n"), frame("!1PWR01\r\n"));
+
+		assertEquals("PWR01", next());
+		assertEquals(ConnectionState.CONNECTED, conn.getState());
+	}
+
+	@Test
 	public void failingListenerDoesNotStopDelivery() throws Exception {
 		conn.addListener(message -> {
 			throw new IllegalStateException("broken listener");
@@ -193,6 +235,16 @@ public class EiscpConnectorTest {
 		byte[] payload = new byte[ByteBuffer.wrap(header, 8, 4).getInt()];
 		in.readFully(payload);
 		return new String(payload, StandardCharsets.US_ASCII);
+	}
+
+	/** Marker and header only, with freely chosen fields. */
+	static byte[] header(int headerSize, int dataSize, int version) {
+		return ByteBuffer.allocate(16)
+				.put("ISCP".getBytes(StandardCharsets.US_ASCII))
+				.putInt(headerSize)
+				.putInt(dataSize)
+				.put(new byte[] { (byte) version, 0, 0, 0 })
+				.array();
 	}
 
 	/** Frame as a receiver sends it; the payload includes its terminators. */

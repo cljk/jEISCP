@@ -3,6 +3,7 @@ package de.csmp.jeiscp;
 import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
@@ -10,10 +11,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Reads the eISCP frames of one connection and hands their ISCP messages to {@code sink}.
- * If reading ends without {@link #quit()} (end of stream, I/O error), {@code onLost} learns about it.
+ * After corrupt data it resynchronizes on the next {@code ISCP} marker. If reading ends without {@link #quit()}
+ * (end of stream, I/O error), {@code onLost} learns about it.
  */
 public class EiscpConnectorSocketReaderThread implements Runnable {
 	private static final Logger log = LoggerFactory.getLogger(EiscpConnectorSocketReaderThread.class);
+
+	/** Larger data sizes come from a corrupt header; cover art blocks are far smaller. */
+	static final int MAX_MESSAGE_SIZE = 64 * 1024;
+	private static final byte[] MAGIC = "ISCP".getBytes(StandardCharsets.US_ASCII);
 
 	private final BufferedInputStream socketIn;
 	private final EiscpListener sink;
@@ -30,24 +36,19 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 
 	@Override
 	public void run() {
-		byte[] response = new byte[4];
+		byte[] header = new byte[12];	// header size, data size, version; the marker is read by syncToMarker()
 
 		while (! quit) {
 			log.trace("readLoop");
 			try {
-				readFully(response);
-				EiscpProtocolHelper.validateIscpSignature(response, 0);
-
-				readFully(response);
-				EiscpProtocolHelper.validateHeaderLengthSignature(response, 0);
-
-				readFully(response);
-				int messageSize = EiscpProtocolHelper.readMessageSize(response, 0);
-
-				readFully(response);
-				EiscpProtocolHelper.validateEiscpVersion(response, 0);
-
-				// eISCP encapulation-header ends here - ISCP begins !1xxx
+				syncToMarker();
+				readFully(header);
+				EiscpProtocolHelper.validateHeaderLengthSignature(header, 0);
+				int messageSize = EiscpProtocolHelper.readMessageSize(header, 4);
+				EiscpProtocolHelper.validateEiscpVersion(header, 8);
+				if (messageSize < 2 || messageSize > MAX_MESSAGE_SIZE) {
+					throw new EiscpMessageFormatException("implausible data size " + messageSize);
+				}
 
 				byte[] iscpMessage = new byte[messageSize];
 				readFully(iscpMessage);
@@ -58,22 +59,38 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				}
 				sink.receivedIscpMessage(iscpResult);
 			} catch (EiscpMessageFormatException ex) {
-				log.warn(ex.getMessage() + " - " + EiscpProtocolHelper.convertToHexString(response));
-				log.debug("skip bytes until EOF/CR");
-
-				if (isEofMarkerfInArray(response)) {
-					log.debug("found eof in response block");
-				} else {
-					try {
-						skipToTerminator();
-						log.trace("found EOF");
-					} catch (IOException ex2) {
-						stopped(ex2);
-					}
-				}
+				// the next syncToMarker() skips whatever follows up to the next frame
+				log.warn("{} - {}; resync on the next ISCP marker", ex.getMessage(), EiscpProtocolHelper.convertToHexString(header));
 			} catch (Exception ex) {
 				stopped(ex);
 			}
+		}
+	}
+
+	/** Consumes bytes until the last four were "ISCP"; anything before them is logged as skipped. */
+	private void syncToMarker() throws IOException {
+		int matched = 0;
+		long skipped = 0;
+		while (matched < MAGIC.length) {
+			int b = socketIn.read();
+			if (b == -1) {
+				throw new EOFException("end of stream");
+			}
+			if (b == MAGIC[matched]) {
+				matched++;
+			} else {
+				skipped += matched;
+				// the marker's letters are all different, so only its first letter can start a new match
+				if (b == MAGIC[0]) {
+					matched = 1;
+				} else {
+					matched = 0;
+					skipped++;
+				}
+			}
+		}
+		if (skipped > 0) {
+			log.warn("skipped {} bytes before the next ISCP frame", skipped);
 		}
 	}
 
@@ -90,26 +107,6 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 	static String abbreviate(String message) {
 		int max = 120;
 		return message.length() <= max ? message : message.substring(0, max) + "... (" + message.length() + " chars)";
-	}
-
-	public boolean isEofMarkerfInArray(byte[] response) {
-		boolean eofFound = false;
-		for (int i=0; i<response.length; i++) {
-			eofFound = eofFound || EiscpProtocolHelper.isEofMarker(response[i]);
-		}
-		return eofFound;
-	}
-
-	private void skipToTerminator() throws IOException {
-		while (true) {
-			int b = socketIn.read();
-			if (b == -1) {
-				throw new EOFException("end of stream");
-			}
-			if (EiscpProtocolHelper.isEofMarker((byte) b)) {
-				return;
-			}
-		}
 	}
 
 	private void readFully(byte[] buffer) throws IOException {

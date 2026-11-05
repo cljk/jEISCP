@@ -46,6 +46,13 @@ public class EiscpProtocolHelperTest {
 	}
 
 	@Test
+	public void rejectsTooShortOrEmptyMessage() {
+		assertThrows(EiscpMessageFormatException.class, () -> EiscpProtocolHelper.parseIscpMessage(new byte[0]));
+		assertThrows(EiscpMessageFormatException.class, () -> EiscpProtocolHelper.parseIscpMessage(ascii("!")));
+		assertThrows(EiscpMessageFormatException.class, () -> EiscpProtocolHelper.parseIscpMessage(ascii("!1\u001a\r\n")));
+	}
+
+	@Test
 	public void rejectsTooLongMessage() {
 		assertThrows(IOException.class, () -> EiscpProtocolHelper.iscpToEiscpMessage("!1" + "X".repeat(254)));
 	}

@@ -140,8 +140,10 @@ public class EiscpProtocolHelper {
 		}
 	}
 
+	/** @throws EiscpMessageFormatException without the start characters {@code !1} or without content */
 	public static String parseIscpMessage(byte[] iscpMessage) throws EiscpMessageFormatException {
-		if ((iscpMessage[0] == 0x21)	// !
+		if (iscpMessage.length >= 2
+			&& (iscpMessage[0] == 0x21)	// !
 			&& (iscpMessage[1] == 0x31)) { 	// 1
 			
 			int SKIP_PREFIX_LEN = 2;	// !1
@@ -158,8 +160,10 @@ public class EiscpProtocolHelper {
 				}
 			}
 			
-			String res = new String(iscpMessage, SKIP_PREFIX_LEN, length - SKIP_PREFIX_LEN, UTF_8);
-			return res;
+			if (length <= SKIP_PREFIX_LEN) {
+				throw new EiscpMessageFormatException("empty ISCP message");
+			}
+			return new String(iscpMessage, SKIP_PREFIX_LEN, length - SKIP_PREFIX_LEN, UTF_8);
 		} else {
 			throw new EiscpMessageFormatException("wrong ISC signature");
 		}
