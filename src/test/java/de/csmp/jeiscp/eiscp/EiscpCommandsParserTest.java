@@ -42,6 +42,23 @@ public class EiscpCommandsParserTest {
 		Assert.assertNotNull(EiscpCommandsParser.getCommandByIscp("PWR01"));
 	}
 
+	/** The catalogue is shared by the reader, FX and main threads, so nobody may change it. */
+	@Test
+	public void catalogueIsUnmodifiable() {
+		Command play = EiscpCommandsParser.getCommandByIscp("NTCPLAY");
+
+		Assert.assertThrows(UnsupportedOperationException.class, () -> EiscpCommandsParser.getIscpToCommandMap().put("X", play));
+		Assert.assertThrows(UnsupportedOperationException.class, () -> EiscpCommandsParser.getMainCommandBlocks().clear());
+		Assert.assertThrows(UnsupportedOperationException.class, () -> play.getCommandBlock().getValues().clear());
+		Assert.assertThrows(UnsupportedOperationException.class, () -> EiscpCommandsParser.getModelsets().get("set1").add("X"));
+	}
+
+	@Test
+	public void derivedModelNamesMatch() {
+		// the catalogue lists "TX-NR609(Ether)"; autodiscovery reports "TX-NR609"
+		Assert.assertFalse(EiscpCommandsParser.getKeysetForModel("TX-NR609").isEmpty());
+	}
+
 	@Test
 	public void sharedBlockNameResolvesToFirstBlock() {
 		// NLS, NLA and NLU are all called net-usb-list-info
