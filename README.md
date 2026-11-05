@@ -43,12 +43,12 @@ All arguments are passed to the application:
 
 | Argument | |
 |---|---|
-| `-a <ip-address>` | connect to this receiver, no autodiscovery |
+| `-a <ip-address>[:port]` | connect to this receiver, no autodiscovery |
 | `-nogui` | console only |
 | `-noconsole` | GUI only |
 | `-?` | parameter help (`./run.sh -?`; in PowerShell `Get-Help .\run.ps1`) |
 
-Without `-a`, the autodiscovery broadcasts on every network interface and repeats the query every second. If no receiver answers within 30 seconds, it gives up with a hint. In that case, make sure the receiver is on or has network standby enabled, or connect directly:
+Without `-a`, the autodiscovery broadcasts on every network interface and repeats the query every second. A small window shows the search and the connect. If no receiver answers within 30 seconds, it asks for the receiver's address or another search; without the GUI, jEISCP gives up with a hint. In that case, make sure the receiver is on or has network standby enabled, or connect directly:
 
     .\run.ps1 -a 192.168.0.97
 
@@ -61,7 +61,7 @@ The GUI looks like a remote control in a borderless window: drag it to move it; 
 * **Direction pad:** the small NET and TV keys at its top corners decide what it controls: the NET/USB lists or the receiver's menus on the TV. The OK key shows the current target. NET is the default and returns with every input change; SETUP and QUICK switch to TV.
 * **"⋯" key:** all functions the connected model supports according to the command catalogue, e.g. listening mode, dimmer or late night. They are searchable and show their current value.
 * **Header:** the receiver's model and IP address. Clicking the address opens the receiver's web interface, e.g. http://192.168.0.97/.
-* **LED:** blinks with every command sent. Clicking it (or pressing L) opens the log window. It shows the complete log live, with commands sent (→) and received (←) highlighted, and can be filtered to ISCP traffic and copied.
+* **LED:** blinks with every command sent. Clicking it (or pressing L) opens the log window. It shows the complete log live, with commands sent (→) and received (←) highlighted, and can be filtered to ISCP traffic and copied. Below the log, any ISCP command can be typed and sent with Enter, e.g. `MVLQSTN`; up/down recall earlier ones.
 
 Keyboard shortcuts: arrow keys, Enter and Backspace navigate; +/- change the volume; M mutes; L opens the log; digits are the number keys.
 
@@ -71,7 +71,17 @@ In the console you can enter ISCP commands, e.g. `MVL20` to set the volume or `P
 
 Development
 -----------
-`mvn test` runs the tests and writes a coverage report to `target/site/jacoco/index.html`. The network tests simulate the receiver on local sockets, so no device is needed. [AGENTS.md](AGENTS.md) describes the architecture and how the command constants are generated from the catalogue.
+`mvn test` runs the tests and writes a coverage report to `target/site/jacoco/index.html`. The network tests simulate the receiver on local sockets, so no device is needed.
+
+To try jEISCP without a receiver, start the emulator of a TX-NR626 (power, volume, inputs, Spotify playback with covers). It prints the port to pass with `-a`:
+
+```bash
+java src/test/java/de/csmp/jeiscp/ReceiverEmulator.java 0
+```
+
+```bash
+./run.sh -a 127.0.0.1:<port>
+``` [AGENTS.md](AGENTS.md) describes the architecture and how the command constants are generated from the catalogue.
 
 Status/Version
 ==============

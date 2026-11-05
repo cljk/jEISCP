@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import de.csmp.jeiscp.app.LogBuffer;
+import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.LogBuffer.Entry;
 import de.csmp.jeiscp.app.LogBuffer.Kind;
 import javafx.application.Platform;
@@ -28,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
@@ -46,8 +48,8 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 /**
- * Borderless window with the live application log, sent (→) and received (←) ISCP commands highlighted.
- * Must be used on the JavaFX thread; there is at most one.
+ * Borderless window with the live application log, sent (→) and received (←) ISCP commands highlighted, and a
+ * command line below it. Must be used on the JavaFX thread; there is at most one.
  */
 final class LogWindow {
 
@@ -63,6 +65,8 @@ final class LogWindow {
 	private static final String ICON_COPY = "M8 8h10v12H8zM5 16V4h10";
 
 	private static LogWindow open;
+	/** Typed commands, oldest first; kept while the app runs, also when the window is closed. */
+	private static final List<String> history = new ArrayList<>();
 
 	private final Stage stage;
 	private final LogBuffer buffer;
@@ -73,18 +77,23 @@ final class LogWindow {
 	private final Queue<Entry> pending = new ConcurrentLinkedQueue<>();
 	private final AtomicBoolean flushScheduled = new AtomicBoolean();
 	private final Consumer<Entry> listener = this::enqueue;
+	private final ReceiverControl control;
+	private final TextField input = new TextField();
+	private int historyIndex = history.size();
 
 	/** Shows the log window next to {@code owner}, or brings the open one to the front. */
-	static void show(Window owner, LogBuffer buffer) {
+	static void show(Window owner, LogBuffer buffer, ReceiverControl control) {
 		if (open == null) {
-			open = new LogWindow(owner, buffer);
+			open = new LogWindow(owner, buffer, control);
 		}
 		open.stage.show();
 		open.stage.toFront();
+		open.input.requestFocus();
 	}
 
-	private LogWindow(Window owner, LogBuffer buffer) {
+	private LogWindow(Window owner, LogBuffer buffer, ReceiverControl control) {
 		this.buffer = buffer;
+		this.control = control;
 		stage = new Stage(StageStyle.TRANSPARENT);
 		lines.setAll(buffer.subscribe(listener));
 
@@ -129,17 +138,41 @@ final class LogWindow {
 		});
 		StackPane.setAlignment(grip, Pos.BOTTOM_RIGHT);
 
-		VBox panel = new VBox(6, header, list);
+		// command line: Enter sends, up/down go through the earlier commands
+		input.getStyleClass().add("log-input");
+		input.setPromptText("ISCP command, e.g. MVLQSTN or NTCPLAY");
+		input.setOnAction(e -> sendInput());
+		input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+			if (e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN) {
+				browseHistory(e.getCode() == KeyCode.UP ? -1 : 1);
+				e.consume();
+			}
+		});
+		HBox.setHgrow(input, Priority.ALWAYS);
+		Button send = new Button("SEND");
+		send.getStyleClass().addAll("key", "log-toggle");
+		send.setFocusTraversable(false);
+		send.setOnAction(e -> sendInput());
+		HBox commandLine = new HBox(6, input, send);
+		commandLine.setAlignment(Pos.CENTER_LEFT);
+		commandLine.getStyleClass().add("log-command-line");
+
+		VBox panel = new VBox(6, header, list, commandLine);
 		panel.getStyleClass().add("log-window");
 		StackPane root = new StackPane(panel, grip);
 		root.getStyleClass().add("backdrop");
 
-		Scene scene = new Scene(root, 600, 340);
+		Scene scene = new Scene(root, 600, 595);
 		scene.setFill(Color.TRANSPARENT);
 		scene.getStylesheets().add(RemoteControlView.class.getResource("remote.css").toExternalForm());
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
 			if (e.getCode() == KeyCode.ESCAPE) {
-				close();
+				if (input.isFocused() && !input.getText().isEmpty()) {
+					input.clear();	// the first Escape only empties the command line
+				} else {
+					close();
+				}
+				e.consume();
 			}
 		});
 
@@ -164,8 +197,29 @@ final class LogWindow {
 		if (x + width > screen.getMaxX()) {
 			x = Math.max(screen.getMinX(), owner.getX() - width + 12);
 		}
+		double y = Math.max(screen.getMinY(), owner.getY() + 40);
 		stage.setX(x);
-		stage.setY(Math.max(screen.getMinY(), owner.getY() + 40));
+		stage.setY(y);
+		if (y + stage.getScene().getHeight() > screen.getMaxY()) {
+			stage.setHeight(Math.max(180, screen.getMaxY() - y));
+		}
+	}
+
+	private void sendInput() {
+		String sent = control.sendTyped(input.getText());
+		if (sent != null) {
+			history.remove(sent);
+			history.add(sent);
+		}
+		historyIndex = history.size();
+		input.clear();
+	}
+
+	/** {@code -1} goes to an older command, {@code 1} to a newer one; past the newest the line is empty. */
+	private void browseHistory(int step) {
+		historyIndex = Math.max(0, Math.min(history.size(), historyIndex + step));
+		input.setText(historyIndex < history.size() ? history.get(historyIndex) : "");
+		input.end();
 	}
 
 	private void close() {

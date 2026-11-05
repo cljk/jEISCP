@@ -1,6 +1,7 @@
 package de.csmp.jeiscp.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 import java.util.ArrayList;
@@ -84,6 +85,15 @@ public class ReceiverControlTest {
 		assertEquals(List.of("OSDMENU", "OSDQUICK", "NTCTRDN", "NTCPLAY", "NTCPAUSE", "NTCSTOP", "NTCTRUP", "NTCREPEAT", "NTCRANDOM",
 				"SLI2B", "NTC0", "NTC9", "LMDQSTN"), sent);
 		assertThrows(IllegalArgumentException.class, () -> control.numberKey(10));
+	}
+
+	@Test
+	public void typedCommands() {
+		assertEquals("MVLQSTN", control.sendTyped("  MVLQSTN "));
+		assertEquals("PWR01", control.sendTyped("!1PWR01"));
+		assertNull(control.sendTyped("   "));
+		assertNull(control.sendTyped("!1"));
+		assertEquals(List.of("MVLQSTN", "PWR01"), sent);
 	}
 
 	@Test

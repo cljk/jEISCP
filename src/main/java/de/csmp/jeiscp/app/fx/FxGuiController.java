@@ -43,7 +43,7 @@ public class FxGuiController {
 		});
 		state.setConnectionState(conn.getState());
 		conn.addStateListener(this::connectionChanged);
-		Platform.startup(this::showWindow);
+		Ui.onFxThread(this::showWindow);	// JavaFX may already run for the StartupWindow
 		control.queryStatus();
 	}
 

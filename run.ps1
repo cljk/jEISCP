@@ -5,7 +5,7 @@ Starts jEISCP: the ISCP console and the JavaFX remote control.
 .DESCRIPTION
 All arguments are passed to the application:
 
-  -a <ip-address>   connect to this receiver, no autodiscovery
+  -a <ip-address>[:port]  connect to this receiver, no autodiscovery
   -nogui            console only
   -noconsole        GUI only
 

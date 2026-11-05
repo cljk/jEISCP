@@ -4,6 +4,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -26,6 +27,15 @@ final class Ui {
 	}
 
 	/** Keys never take the focus, so the arrow keys stay shortcuts for the direction pad. */
+	/** Runs {@code task} on the JavaFX thread, starting JavaFX first if needed; tasks run in the order given. */
+	static void onFxThread(Runnable task) {
+		try {
+			Platform.startup(task);
+		} catch (IllegalStateException alreadyStarted) {
+			Platform.runLater(task);
+		}
+	}
+
 	static Button key(String text, EventHandler<ActionEvent> action) {
 		Button button = new Button(text);
 		button.getStyleClass().add("key");

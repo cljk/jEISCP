@@ -55,6 +55,11 @@ public class EiscpAutodiscovery {
 		return identify(address, DEFAULT_EISCP_PORT, Duration.ofSeconds(2));
 	}
 
+	/** Like {@link #identify(String)} for a receiver, or an emulator, on another port. */
+	public static EiscpDevice identify(String address, int port) {
+		return identify(address, port, Duration.ofSeconds(2));
+	}
+
 	static EiscpDevice identify(String address, int port, Duration timeout) {
 		try {
 			List<InetAddress> target = List.of(InetAddress.getByName(address));

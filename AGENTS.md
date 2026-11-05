@@ -48,9 +48,15 @@ The app takes these flags:
 - `-noconsole`
 - `-?`: show parameter help.
 
-Without `-a`, the app runs autodiscovery and exits with a hint if no receiver answers within 30 s. With `-a`, it asks that address for its model by UDP (`EiscpAutodiscovery.identify`); if there is no answer, the model is unknown. Logs are appended to `eiscp.log` in the working directory.
+Without `-a`, the app runs autodiscovery. With the GUI, `fx/StartupWindow` shows the search with a 30 s countdown and then the connect; if nothing answers or the connect fails, it asks for an address (`host[:port]`) or another search, and its close key quits. Without the GUI, the app exits with a hint instead. With `-a`, it asks that address for its model by UDP (`EiscpAutodiscovery.identify`); if there is no answer, the model is unknown. Logs are appended to `eiscp.log` in the working directory.
 
-The receiver port is fixed at 60128, and `-a` takes no port. On Windows this port can fall into an excluded port range (check with `netsh interface ipv4 show excludedportrange protocol=tcp`), so a fake receiver for local tests may not be able to bind it. In that case, connect with `new EiscpConnector("127.0.0.1", port)` from a test launcher instead.
+`-a` also takes `host:port`, for the receiver emulator in the test sources. `ReceiverEmulator` plays a TX-NR626 on 127.0.0.1 with TCP and autodiscovery on one port, including its quirks (no answer to `NSTQSTN` and `NJAREQ`, the old cover again before a new one). It needs only the JDK and runs without a build:
+
+```bash
+java src/test/java/de/csmp/jeiscp/ReceiverEmulator.java 0
+```
+
+`0` picks a port that is free for both TCP and UDP; the emulator prints it. On Windows, other port ranges are excluded for UDP than for TCP (`netsh interface ipv4 show excludedportrange protocol=udp`), and 60128 may be one of them. `ReceiverEmulatorTest` drives it through the real connector and `ReceiverState`.
 
 ## Architecture
 
@@ -97,7 +103,7 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
     - `queryNowPlayingIfMissing` (on input changes) asks for artist, title, album, time and play status.
     - `requestCoverIfMissing` (on now-playing updates) sends `NJAREQ` only while time and title are known, i.e. something plays, and once per title. The TX-NR626 (2013 firmware) does not answer `NJAREQ`; it only pushes the cover itself, as BMP, when the track changes. It usually sends the previous cover once more first. That is why `ReceiverState` hides the cover after a title change, ignores a transfer identical to the old cover, and shows the old cover again after `STALE_COVER_TIMEOUT` (15 s), since tracks of one album share their cover.
   - `DeviceFunctions`: GUI-independent. It lists the command blocks a model supports (`EiscpDevice.isCapable`), reduced to literal values without `QSTN` or placeholders. The YAML's model sets are coarse: `set1` covers almost everything, so a TX-NR626 is offered Sirius/XM/HD Radio as well.
-  - `fx/FxGuiController`: starts JavaFX with `Platform.startup`, so `ThreadedConsoleApp` does not extend `Application`.
+  - `fx/FxGuiController`: starts JavaFX through `Ui.onFxThread` (`Platform.startup`, or `runLater` once the `StartupWindow` started it), so `ThreadedConsoleApp` does not extend `Application`. `ThreadedConsoleApp` hides the `StartupWindow` only after `start()`, because JavaFX ends with its last window.
     - Its constructor registers `ReceiverState` on the connector, so `ThreadedConsoleApp` creates it before `connect()`: right after connecting, the receiver pushes `NLT` with the NET service unasked.
     - It sends the initial queries, and sends them again after every reconnect.
     - It mirrors the connection state into `ReceiverState`, so the display shows OFFLINE or CONNECTING.
@@ -121,7 +127,7 @@ The receiver port is fixed at 60128, and `-a` takes no port. On Windows this por
   - `LogBuffer`: a log4j appender on the root logger that keeps the last 5000 entries for the GUI. `ThreadedConsoleApp` installs it before autodiscovery when the GUI is on.
     - It recognizes ISCP traffic by the message prefixes `sendIscpCommand: ` (from `EiscpConnector`) and `received: ` (from the reader thread). Changing those log texts breaks the →/← marking.
     - `subscribe` returns the history and passes on later entries, with no gap between the two.
-  - `fx/LogWindow`: borderless, owned by the remote. Clicking the header LED or pressing L opens it. It batches entries from the logging thread into one `runLater` and offers FOLLOW, ISCP ONLY, copy (Ctrl+C for the selection), clear and a resize grip.
+  - `fx/LogWindow`: borderless, owned by the remote. Clicking the header LED or pressing L opens it. It batches entries from the logging thread into one `runLater` and offers FOLLOW, ISCP ONLY, copy (Ctrl+C for the selection), clear and a resize grip. Below the log is a command line: Enter sends through `ReceiverControl.sendTyped` (drops a leading `!1`), up/down browse the earlier commands of this run, the first Escape empties the line.
   - `fx/FunctionsPage`: opened by the "⋯" key. A searchable list of `DeviceFunctions`; selecting a function sends its `QSTN` and shows the current value.
   - The app icon PNGs in `src/main/resources/de/csmp/jeiscp/app/fx/icons/` are rendered by `src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java`, which is a standalone `java` program, not a test.
 

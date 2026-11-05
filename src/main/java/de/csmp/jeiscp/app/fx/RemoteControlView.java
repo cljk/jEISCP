@@ -154,7 +154,7 @@ public class RemoteControlView {
 	}
 
 	private void openLog() {
-		LogWindow.show(root.getScene().getWindow(), LogBuffer.install());
+		LogWindow.show(root.getScene().getWindow(), LogBuffer.install(), control);
 	}
 
 	private void onKeyPressed(KeyEvent event) {

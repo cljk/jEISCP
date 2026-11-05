@@ -191,7 +191,7 @@
 
 .lcd-volume {
     -fx-font-size: 12px;
-    -fx-font-weight: bold;
+    -fx-opacity: 0.6;	/* subtle, like the service */
 }
 
 .lcd-primary {
@@ -660,6 +660,12 @@
     -fx-background-color: rgba(255, 255, 255, 0.07);
 }
 
+/* startup window while jEISCP searches for the receiver */
+
+.startup {
+    -fx-pref-width: 440;
+}
+
 /* log window */
 
 .log-window {
@@ -771,6 +777,22 @@
 
 .log-list .corner {
     -fx-background-color: transparent;
+}
+
+.log-input {
+    -fx-background-color: #04080a, #071112;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 9, 8;
+    -fx-text-fill: -accent;
+    -fx-prompt-text-fill: #56606a;
+    -fx-highlight-fill: rgba(45, 212, 191, 0.3);
+    -fx-font-family: "Consolas";
+    -fx-font-size: 12px;
+    -fx-padding: 6 10;
+}
+
+.log-command-line {
+    -fx-padding: 0 30 0 0;	/* keeps the resize grip free */
 }
 
 .log-grip {

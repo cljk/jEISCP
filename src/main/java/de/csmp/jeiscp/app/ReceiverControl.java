@@ -248,6 +248,22 @@ public class ReceiverControl {
 		}
 	}
 
+	/**
+	 * A command typed by the user, e.g. {@code MVLQSTN}; trimmed, a leading {@code !1} is dropped.
+	 * @return what was sent, {@code null} if nothing was typed
+	 */
+	public String sendTyped(String input) {
+		String command = input == null ? "" : input.strip();
+		if (command.startsWith("!1")) {
+			command = command.substring(2).strip();
+		}
+		if (command.isEmpty()) {
+			return null;
+		}
+		send(command);
+		return command;
+	}
+
 	/** Any ISCP command, e.g. a value from the functions page. */
 	public void send(String command) {
 		sender.accept(command);

@@ -8,8 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import de.csmp.jeiscp.EiscpAutodiscovery;
 import de.csmp.jeiscp.EiscpConnector;
+import de.csmp.jeiscp.EiscpConstants;
 import de.csmp.jeiscp.EiscpDevice;
 import de.csmp.jeiscp.app.fx.FxGuiController;
+import de.csmp.jeiscp.app.fx.StartupWindow;
 
 
 public class ThreadedConsoleApp {
@@ -51,44 +53,66 @@ public class ThreadedConsoleApp {
 		}
 		
 		
+		StartupWindow startup = null;	// with the GUI, search and connection show there instead of only on the console
 		if (ENABLE_GUI) {
 			LogBuffer.install();	// from the start, so the GUI's log window also shows the autodiscovery
+			startup = StartupWindow.open();
 		}
 
-		EiscpDevice device = null;	// model, for the functions the GUI offers
-		if (address == null) {
+		FxGuiController gui = null;
+		while (conn == null) {
+			EiscpDevice device = null;	// model, for the functions the GUI offers
+			EiscpConnector candidate;
+			if (address == null) {
+				if (startup != null) {
+					startup.searching(EiscpAutodiscovery.DEFAULT_TIMEOUT);
+				}
+				try {
+					device = new EiscpAutodiscovery().discover();
+				} catch (SocketTimeoutException ex) {
+					address = giveUp(startup, ex.getMessage() + ". Is the receiver on (or network standby enabled)"
+							+ " and in this network?", "Otherwise enter its address.", "Otherwise connect directly with -a {ip-address}.");
+					continue;
+				}
+				candidate = new EiscpConnector(device.getIpAddress(), device.getPort());
+			} else {
+				if (startup != null) {
+					startup.connecting(address);
+				}
+				try {
+					candidate = new EiscpConnector(host(address), port(address));
+				} catch (NumberFormatException ex) {
+					address = giveUp(startup, "Not an address: " + address, "", "");
+					continue;
+				}
+				if (ENABLE_GUI) {
+					device = EiscpAutodiscovery.identify(host(address), port(address));
+				}
+			}
+			if (startup != null) {
+				startup.connecting(candidate.getAddress() + (device != null ? " · " + device.getDeviceType() : ""));
+			}
+			// listens before connecting: right after the connect the receiver pushes the NET list title with the service
+			gui = ENABLE_GUI ? new FxGuiController(candidate, device) : null;
 			try {
-				device = new EiscpAutodiscovery().discover();
-			} catch (SocketTimeoutException ex) {
-				System.err.println(ex.getMessage() + ". Is the receiver on (or network standby enabled)"
-						+ " and in this network? Otherwise connect directly with -a {ip-address}.");
-				System.exit(1);
+				candidate.connect();	// later losses are reconnected in the background
+				conn = candidate;
+			} catch (IOException | IllegalArgumentException ex) {
+				candidate.close();
+				String target = address != null ? address : candidate.getAddress();
+				address = giveUp(startup, "Cannot connect to " + target + ": " + ex.getMessage(), "", "");
 			}
-			conn = new EiscpConnector(device.getIpAddress(), device.getPort());
-		} else {
-			conn = new EiscpConnector(address);
-			if (ENABLE_GUI) {
-				device = EiscpAutodiscovery.identify(address);
-			}
-		}
-		// listens before connecting: right after the connect the receiver pushes the NET list title with the service
-		FxGuiController gui = ENABLE_GUI ? new FxGuiController(conn, device) : null;
-		try {
-			conn.connect();	// later losses are reconnected in the background
-		} catch (IOException ex) {
-			System.err.println("Cannot connect to " + conn.getAddress() + ": " + ex.getMessage());
-			System.exit(1);
 		}
 
-		
 		if (ENABLE_CONSOLE) {
 			ConsoleController consoleController = new ConsoleController(conn, !ENABLE_GUI);
 			Thread consoleThread = new Thread(consoleController);
 			consoleThread.start();
 		}
-		
+
 		if (gui != null) {
 			gui.start();
+			startup.close();	// after the remote is shown: both run on the FX thread in this order
 		}
 		
 		log.debug("controller threads started");
@@ -97,10 +121,38 @@ public class ThreadedConsoleApp {
 
 
 
+	/**
+	 * Without the GUI prints the problem and exits; with it shows the problem and waits.
+	 * @return the address the user entered, {@code null} to search again
+	 */
+	private static String giveUp(StartupWindow startup, String problem, String guiHint, String consoleHint) {
+		log.warn(problem);
+		if (startup == null) {
+			System.err.println((problem + " " + consoleHint).strip());
+			System.exit(1);
+		}
+		return startup.failed((problem + " " + guiHint).strip());
+	}
+
+	/** {@code -a} takes {@code host} or {@code host:port}, e.g. for the ReceiverEmulator in the test sources. */
+	static String host(String address) {
+		return hasPort(address) ? address.substring(0, address.lastIndexOf(':')) : address;
+	}
+
+	static int port(String address) {
+		return hasPort(address) ? Integer.parseInt(address.substring(address.lastIndexOf(':') + 1)) : EiscpConstants.DEFAULT_EISCP_PORT;
+	}
+
+	/** One colon only: an IPv6 address has several. */
+	private static boolean hasPort(String address) {
+		int colon = address.lastIndexOf(':');
+		return colon > 0 && address.indexOf(':') == colon;
+	}
+
 	private static void displayParameterHelp() {
 		System.out.println("available parameters:");
 		System.out.println("\t-?             \t\tdisplay parameter help (this page)");
-		System.out.println("\t-a {ip-address}\t\tspecify ip-adress, no autodiscovery");
+		System.out.println("\t-a {ip-address}[:port]\tconnect to this receiver, no autodiscovery");
 		System.out.println("\t-nogui         \t\tdisable gui");
 		System.out.println("\t-noconsole     \t\tdisable console (manual ISCP in-/output)");
 	}    
