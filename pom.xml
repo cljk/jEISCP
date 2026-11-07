@@ -266,18 +266,19 @@
 										<argument>jeiscp-app.jar</argument>
 										<argument>--main-class</argument>
 										<argument>${mainClass}</argument>
-										<!-- Windows: next to the exe; Linux: in lib/. Both are $APPDIR/.. -->
+										<!-- Windows: next to the exe; Linux: in lib/; macOS: in Contents/. All are $APPDIR/.. -->
 										<argument>--app-content</argument>
 										<argument>${project.build.directory}/dist/javafx</argument>
 										<argument>--java-options</argument>
-										<argument>--enable-native-access=javafx.graphics --module-path $APPDIR/../javafx --add-modules javafx.controls</argument>
+										<argument>--enable-native-access=javafx.graphics --module-path $APPDIR/../javafx --add-modules javafx.controls --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</argument>
 										<!-- without arguments: no console reader, there is no console -->
 										<argument>--arguments</argument>
 										<argument>-noconsole</argument>
 										<argument>--add-modules</argument>
 										<argument>${dist.modules}</argument>
+										<!-- not strip-debug: on Linux that also strips the native libraries and needs objcopy (binutils) -->
 										<argument>--jlink-options</argument>
-										<argument>--strip-debug --no-man-pages --no-header-files --strip-native-commands --compress=zip-6</argument>
+										<argument>--strip-java-debug-attributes --no-man-pages --no-header-files --strip-native-commands --compress=zip-6</argument>
 										<argument>--dest</argument>
 										<argument>${project.build.directory}/dist</argument>
 									</arguments>
@@ -300,14 +301,26 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>dist-unix</id>
+			<id>dist-linux</id>
 			<activation>
 				<os>
-					<family>unix</family>
+					<name>Linux</name>
 				</os>
 			</activation>
 			<properties>
 				<dist.icon>${project.basedir}/src/main/resources/de/csmp/jeiscp/app/fx/icons/icon-256.png</dist.icon>
+			</properties>
+		</profile>
+		<profile>
+			<!-- Maven counts macOS as family unix too, hence the name above -->
+			<id>dist-mac</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<dist.icon>${project.basedir}/src/main/jpackage/jeiscp.icns</dist.icon>
 			</properties>
 		</profile>
 	</profiles>

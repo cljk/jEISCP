@@ -21,7 +21,7 @@ Usage
 =====
 You can use the source code "as it is" at your own risk. I'll not be responsible for any damage to your devices or computer.
 
-You need Java 21 and a working [Maven] installation. Check out the repository together with its submodule:
+You need Java 21; Maven comes with the Maven wrapper (`mvnw`) and is downloaded on first use. Check out the repository together with its submodule:
 
     git clone https://github.com/cljk/jEISCP.git
     cd jEISCP
@@ -37,7 +37,7 @@ on Windows (if script execution is blocked: `powershell -ExecutionPolicy Bypass 
 
 on Linux/macOS.
 
-The scripts check for Java 21 and Maven and fetch a missing submodule. The JDK from `JAVA_HOME` is used for build and run; without `JAVA_HOME`, the one on the PATH is used. Maven only builds the project and pulls JavaFX from Maven Central; Java then runs directly in your terminal, so Ctrl+C ends the application.
+The scripts check for Java 21 and fetch a missing submodule. The JDK from `JAVA_HOME` is used for build and run; without `JAVA_HOME`, the one on the PATH is used. Maven (through the wrapper) only builds the project and pulls JavaFX from Maven Central; Java then runs directly in your terminal, so Ctrl+C ends the application.
 
 All arguments are passed to the application:
 
@@ -60,7 +60,7 @@ on Windows, or
 
     ./dist.sh
 
-on Linux, builds `target/dist/jEISCP`, a folder with its own Java runtime: start `jEISCP.exe` on Windows or `bin/jEISCP` on Linux, without a console window and without an installed Java. Next to it the script packs the folder as `jEISCP-<version>-windows.zip` or `jEISCP-<version>-linux.tar.gz` to pass on. It is built for the system it is built on, so build the Windows starter on Windows and the Linux one on Linux. The log `eiscp.log` goes to `%LOCALAPPDATA%\jEISCP` on Windows and `~/.local/state/jeiscp` on Linux.
+on Linux and macOS, builds `target/dist/jEISCP` (on macOS `target/dist/jEISCP.app`), a starter with its own Java runtime: start `jEISCP.exe` on Windows, `bin/jEISCP` on Linux or the app `jEISCP.app` on macOS, without a console window and without an installed Java. Next to it the script packs the starter as `jEISCP-<version>-windows.zip`, `jEISCP-<version>-linux.tar.gz` or `jEISCP-<version>-mac-<aarch64|x64>.zip` to pass on. It is built for the system it is built on, so build the Windows starter on Windows, the Linux one on Linux and the Mac one on a Mac (an Apple Silicon Mac builds for Apple Silicon only). The Mac app is not signed: macOS blocks it after a download until it is allowed under System Settings › Privacy & Security, or `xattr -dr com.apple.quarantine jEISCP.app` removes the download mark. The log `eiscp.log` goes to `%LOCALAPPDATA%\jEISCP` on Windows, `~/.local/state/jeiscp` on Linux and `~/Library/Logs/jEISCP` on macOS.
 
 Remote control
 --------------
@@ -82,7 +82,7 @@ In the console you can enter ISCP commands, e.g. `MVL20` to set the volume or `P
 
 Development
 -----------
-`mvn test` runs the tests and writes a coverage report to `target/site/jacoco/index.html`. The network tests simulate the receiver on local sockets, so no device is needed.
+`./mvnw test` (Windows: `.\mvnw.cmd test`) runs the tests and writes a coverage report to `target/site/jacoco/index.html`. The network tests simulate the receiver on local sockets, so no device is needed.
 
 To try jEISCP without a receiver, start the emulator of a TX-NR626 (power, volume, inputs, Spotify playback with covers). It prints the port to pass with `-a`:
 
@@ -114,5 +114,4 @@ License
 =======
 Needs further thinking, but for now and until stated otherwise the source code is licensed under **[GPL v3]**.
 
-  [maven]: https://maven.apache.org/
   [gpl v3]: https://www.gnu.org/licenses/gpl.html

@@ -9,7 +9,7 @@ All arguments are passed to the application:
   -nogui            console only
   -noconsole        GUI only
 
-Needs Maven and Java 21 or newer. The JDK from JAVA_HOME is used for build and run,
+Needs Java 21 or newer; Maven comes with the wrapper mvnw.cmd. The JDK from JAVA_HOME is used for build and run,
 otherwise the one on the PATH. A missing command catalogue submodule is fetched first.
 Maven only builds; java runs in this console, so Ctrl+C ends the application.
 
@@ -31,7 +31,7 @@ function Get-JavaMajorVersion([string] $java) {
 }
 
 $java = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin\java.exe' } else { 'java' }
-foreach ($tool in @($java, 'mvn')) {
+foreach ($tool in @($java)) {
     if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
         Write-Error "Not found: $tool"
     }
@@ -52,7 +52,7 @@ try {
         }
     }
 
-    & mvn -q compile 'dependency:build-classpath@javafx-module-path' 'dependency:build-classpath@app-class-path'
+    & .\mvnw.cmd -q compile 'dependency:build-classpath@javafx-module-path' 'dependency:build-classpath@app-class-path'
     $exitCode = $LASTEXITCODE
     if ($exitCode -eq 0) {
         $sep = [IO.Path]::PathSeparator
@@ -64,6 +64,8 @@ try {
         $javaArgs += @(
             '--module-path', (Get-Content -Raw 'target/javafx-module-path.txt').Trim(),
             '--add-modules', 'javafx.controls',
+            # lets the app name its windows jEISCP instead of java, see Ui.setApplicationName
+            '--add-exports', 'javafx.graphics/com.sun.glass.ui=ALL-UNNAMED',
             '--class-path', ('target/classes' + $sep + (Get-Content -Raw 'target/class-path.txt').Trim()),
             'de.csmp.jeiscp.app.ThreadedConsoleApp'
         )

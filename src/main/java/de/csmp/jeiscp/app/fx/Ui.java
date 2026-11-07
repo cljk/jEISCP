@@ -1,5 +1,8 @@
 package de.csmp.jeiscp.app.fx;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -22,6 +25,7 @@ import javafx.util.Duration;
 
 /** Small building blocks of the remote's look; styles live in {@code remote.css}. */
 final class Ui {
+	private static final Logger log = LoggerFactory.getLogger(Ui.class);
 
 	private Ui() {
 	}
@@ -30,9 +34,29 @@ final class Ui {
 	/** Runs {@code task} on the JavaFX thread, starting JavaFX first if needed; tasks run in the order given. */
 	static void onFxThread(Runnable task) {
 		try {
-			Platform.startup(task);
+			Platform.startup(() -> {
+				setApplicationName();
+				task.run();
+			});
 		} catch (IllegalStateException alreadyStarted) {
 			Platform.runLater(task);
+		}
+	}
+
+	/**
+	 * Names the application "jEISCP" before the first window opens. On Linux, JavaFX uses this name as the windows'
+	 * WM_CLASS, by which the desktop finds the name and icon for the dock; without it, all windows are "java". Only
+	 * {@code Application.launch} sets the name, and there is no public API for it, so this needs
+	 * {@code --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED} (run scripts, jpackage). Without the export
+	 * the windows stay "java".
+	 */
+	private static void setApplicationName() {
+		try {
+			Class<?> glass = Class.forName("com.sun.glass.ui.Application");
+			Object application = glass.getMethod("GetApplication").invoke(null);
+			glass.getMethod("setName", String.class).invoke(application, "jEISCP");
+		} catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+			log.debug("cannot set the application name: {}", e.toString());
 		}
 	}
 

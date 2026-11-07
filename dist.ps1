@@ -3,9 +3,9 @@
 Builds the jEISCP starter: target\dist\jEISCP with jEISCP.exe and its own Java runtime, and a zip of it.
 
 .DESCRIPTION
-Needs Maven and a JDK 21 or newer with jpackage. The JDK from JAVA_HOME is used, otherwise the one
+Needs a JDK 21 or newer with jpackage. The JDK from JAVA_HOME is used, otherwise the one
 on the PATH. A missing command catalogue submodule is fetched first. The tests are skipped; run
-mvn test for them. jpackage builds for this system only; build the Linux starter with dist.sh.
+.\mvnw.cmd test for them. jpackage builds for this system only; build the Linux starter with dist.sh.
 
 .EXAMPLE
 .\dist.ps1
@@ -26,7 +26,7 @@ function Get-JavaMajorVersion([string] $java) {
 
 $java = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin\java.exe' } else { 'java' }
 $jpackage = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin\jpackage.exe' } else { 'jpackage' }
-foreach ($tool in @($java, $jpackage, 'mvn')) {
+foreach ($tool in @($java, $jpackage)) {
     if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
         Write-Error "Not found: $tool"
     }
@@ -55,7 +55,7 @@ try {
     }
 
     Write-Host 'Building the starter (jpackage) ...'
-    & mvn -q -Pdist -DskipTests package
+    & .\mvnw.cmd -q -Pdist -DskipTests package
     $exitCode = $LASTEXITCODE
     if ($exitCode -eq 0) {
         $image = 'target\dist\jEISCP'

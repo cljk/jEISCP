@@ -17,14 +17,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
 /**
- * Renders the app icon PNGs that {@link FxGuiController} puts on the stage, and the .ico of the Windows launcher.
- * Run: {@code java src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java src/main/resources/de/csmp/jeiscp/app/fx/icons [src/main/jpackage/jeiscp.ico] [preview.png]}
+ * Renders the app icon PNGs that {@link FxGuiController} puts on the stage, the .ico of the Windows launcher and the
+ * .icns of the macOS app.
+ * Run: {@code java src/test/java/de/csmp/jeiscp/app/fx/IconGenerator.java src/main/resources/de/csmp/jeiscp/app/fx/icons [src/main/jpackage/jeiscp.ico] [src/main/jpackage/jeiscp.icns] [preview.png]}
  */
 public class IconGenerator {
 
@@ -41,6 +43,8 @@ public class IconGenerator {
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].endsWith(".ico")) {
 				writeIco(new File(args[i]));
+			} else if (args[i].endsWith(".icns")) {
+				writeIcns(new File(args[i]));
 			} else {
 				ImageIO.write(previewSheet(), "png", new File(args[i]));
 			}
@@ -71,6 +75,29 @@ public class IconGenerator {
 			for (byte[] image : images) {
 				out.write(image);
 			}
+		}
+	}
+
+	/** The .icns types with PNG data, as macOS reads them since 10.7; the @2x types are the Retina variants. */
+	private static final String[] ICNS_TYPES = { "icp4", "icp5", "icp6", "ic07", "ic08", "ic09", "ic10", "ic11", "ic12",
+			"ic13", "ic14" };
+	private static final int[] ICNS_SIZES = { 16, 32, 64, 128, 256, 512, 1024, 32, 64, 256, 512 };
+
+	/** An .icns: the magic and total length, then per entry its type, length (including the 8-byte header) and PNG. */
+	static void writeIcns(File file) throws IOException {
+		ByteArrayOutputStream entries = new ByteArrayOutputStream();
+		for (int i = 0; i < ICNS_TYPES.length; i++) {
+			ByteArrayOutputStream png = new ByteArrayOutputStream();
+			ImageIO.write(render(ICNS_SIZES[i]), "png", png);
+			entries.write(ICNS_TYPES[i].getBytes(StandardCharsets.US_ASCII));
+			entries.write(ByteBuffer.allocate(4).putInt(8 + png.size()).array());	// big-endian
+			png.writeTo(entries);
+		}
+		file.getParentFile().mkdirs();
+		try (OutputStream out = new FileOutputStream(file)) {
+			out.write("icns".getBytes(StandardCharsets.US_ASCII));
+			out.write(ByteBuffer.allocate(4).putInt(8 + entries.size()).array());
+			entries.writeTo(out);
 		}
 	}
 
