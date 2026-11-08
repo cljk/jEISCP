@@ -34,6 +34,13 @@ public class SettingsTest {
 	}
 
 	@Test
+	public void remembersWhetherZonesAreShown() {
+		assertEquals(false, settings.zonesShown());
+		settings.rememberZonesShown(true);
+		assertEquals(true, new Settings(node).zonesShown());
+	}
+
+	@Test
 	public void logDirectoryPerPlatform() {
 		assertEquals(new File("."), LogFile.directory(".", Map.of(), "Windows 11", "C:/home"));
 		assertEquals(new File("C:/Users/me/AppData/Local", "jEISCP"),

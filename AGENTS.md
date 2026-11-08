@@ -52,7 +52,7 @@ The app takes these flags:
 
 Without `-a`, the app first tries the last receiver it connected to (`Settings`, kept with `java.util.prefs`) and runs autodiscovery only if that fails. With the GUI, `fx/StartupWindow` shows the search with a 30 s countdown and then the connect; if nothing answers or the connect fails, it asks for an address (`host[:port]`) or another search, and its close key quits. Without the GUI, the app exits with a hint instead. With `-a`, it asks that address for its model by UDP (`EiscpAutodiscovery.identify`); if there is no answer, the model is unknown. `LogFile` writes a rolling `eiscp.log` (3 × 5 MB) to `%LOCALAPPDATA%\jEISCP`, `~/.local/state/jeiscp` or `~/Library/Logs/jEISCP`; `run.sh` and `run.ps1` pass `-Djeiscp.logDir=.` to keep it in the working directory. `log4j.properties` has no file appender, so tests write no log file.
 
-`-a` also takes `host:port`, for the receiver emulator in the test sources. `ReceiverEmulator` plays a TX-NR626 on 127.0.0.1 with TCP and autodiscovery on one port, including its quirks (no answer to `NSTQSTN` and `NJAREQ`, the old cover again before a new one). It needs only the JDK and runs without a build:
+`-a` also takes `host:port`, for the receiver emulator in the test sources. `ReceiverEmulator` plays a TX-NR626 on 127.0.0.1 with TCP and autodiscovery on one port, including its quirks (no answer to `NSTQSTN` and `NJAREQ`, the old cover again before a new one). Its zone 2 (`ZPW`, `ZVL`, `ZMT`, `SLZ`, also in standby) follows the command catalogue, not a logged receiver. It needs only the JDK and runs without a build:
 
 ```bash
 java src/test/java/de/csmp/jeiscp/ReceiverEmulator.java 0
@@ -84,7 +84,7 @@ The `dist` profile builds a native starter with `jpackage` (app image, no instal
   - the `!1…` payload, terminated by CR LF.
 
   `EiscpConnector` owns the TCP socket.
-  - The constructor only stores host and port. `connect()` makes the first connection and throws if it fails (5 s timeout).
+  - The constructor only stores host and port; `EiscpConnector(EiscpDevice)` takes them from a discovered receiver, and `getDevice()` then returns it (`null` for a plain address). `connect()` makes the first connection and throws if it fails (5 s timeout).
   - When the connection is lost later, the connector reconnects in the background, pausing 1 s, doubling up to 30 s, until `close()`.
   - `ConnectionState` (`DISCONNECTED`, `CONNECTING`, `CONNECTED`, `LOST`, `CLOSED`) goes to `addStateListener` listeners. Message listeners stay registered across reconnects.
   - `sendIscpCommand("MVL20")` prepends `!1` itself; `sendIscpMessage` expects the `!1` to be there already. Both throw `IOException` while the connection is lost.
@@ -93,7 +93,7 @@ The `dist` profile builds a native starter with `jpackage` (app image, no instal
   - It resends every second and gives up with a `SocketTimeoutException` after 30 s. Answers that are not `ECN…` are ignored.
   - The constructor with targets, port, interval and timeout exists for tests.
 - **Receiving is listener-based.** Every connection gets its own daemon `EiscpConnectorSocketReaderThread`, which blocks on the socket and reports an end of stream or I/O error back to the connector; the connector passes messages on to its listeners. After a malformed frame (wrong header size or version, data size outside 2 bytes..64 KiB, no `!1`, empty message) it resyncs on the next `ISCP` marker, and the connection stays up. Listeners get the message without the `!1` prefix and without trailing terminators (e.g. `MVL16`). Callbacks run on this reader thread, not on the JavaFX thread. Sending is synchronized because the console, the GUI and listener callbacks all send.
-- **Command catalogue** (`de.csmp.jeiscp.eiscp`): `EiscpCommandsParser` parses the YAML zones `main` and `dock` once, on first use, through a holder class; class initialization makes that thread-safe for the reader, FX and main threads. All maps, lists and each block's value set are unmodifiable. Upstream keeps the NET/USB commands (`NTC`, `NLS`, `NJA`, …) in `dock`; `zone2`–`zone4` are ignored. The maps are:
+- **Command catalogue** (`de.csmp.jeiscp.eiscp`): `EiscpCommandsParser` parses the YAML zones `main`, `dock` and `zone2`–`zone4` once, on first use, through a holder class; class initialization makes that thread-safe for the reader, FX and main threads. All maps, lists and each block's value set are unmodifiable. Upstream keeps the NET/USB commands (`NTC`, `NLS`, `NJA`, …) in `dock`. `getMainCommandBlocks`, the id maps and so the generated constants cover only `main` and `dock`, because the other zones repeat block names (`power`) and prefixes (`NTC`, `TUN`, `PRS`). `getCommandBlocks(zone)` returns one zone; the lookup by ISCP string also knows the other zones, without replacing a main command. The maps are:
   - `CommandBlock`: the 3-letter prefix, e.g. `MVL`.
   - `Command`: prefix + value, with the id `block-name::value-name`.
   - `modelsets`: maps set ids to receiver model names.
@@ -114,6 +114,7 @@ The `dist` profile builds a native starter with `jpackage` (app image, no instal
     - `playback()` (`NetPlayback`): titles (`NAT`, `NTI`, `NAL`), time (`NTM`), play status, repeat and shuffle (`NST`).
     - `cover()` (`CoverArt`): assembles the `NJA` blocks and decides whether the cover is current.
     - `netList()` (`NetList`): list title and NET service (`NLT`), lines and cursor (`NLS`), popups (`NPU`).
+    - `zone(Zone)` (`ZoneState`): power, volume, mute and input of an additional zone; every change fires `ZONE`. `N/A` makes a value unknown.
     - It keeps the last value of every 3-letter command (`getLastValue`).
     - It notifies its listeners with an `Aspect`, on the reader thread. Messages without a dedicated aspect fire `OTHER`.
   - `ReceiverControl`: GUI-independent. It holds the remote's operations as ISCP commands, so views never build command strings or import `EiscpCommmandsConstants`.
@@ -123,7 +124,8 @@ The `dist` profile builds a native starter with `jpackage` (app image, no instal
     - `queryNowPlayingIfMissing` (on input changes) asks for artist, title, album, time and play status.
     - `requestCoverIfMissing` (on now-playing updates) sends `NJAREQ` only while time and title are known, i.e. something plays, and once per title. The TX-NR626 (2013 firmware) does not answer `NJAREQ`; it only pushes the cover itself, as BMP, when the track changes. It usually sends the previous cover once more first. That is why `CoverArt` hides the cover after a title change, ignores a transfer identical to the old cover, and shows the old cover again after `STALE_TIMEOUT` (15 s), since tracks of one album share their cover.
     - `ReceiverProfile` names what a model leaves unanswered; for the TX-NR626 the control sends neither `NSTQSTN` nor `NJAREQ`. Unknown models are asked everything.
-  - `DeviceFunctions`: GUI-independent. It lists the command blocks a model supports (`EiscpDevice.isCapable`), reduced to literal values without `QSTN` or placeholders. The YAML's model sets are coarse: `set1` covers almost everything, so a TX-NR626 is offered Sirius/XM/HD Radio as well.
+  - `Zone`: GUI-independent enum of zones 2 to 4 with their 3-letter commands. `Zone.supportedBy` goes by the catalogue (`ZPWQSTN` and so on); an unknown model is offered all. `ReceiverControl` holds the zone operations and `queryZones`, which `FxGuiController` sends with `queryStatus`. Only zone 2 can be tried on the emulator; no real multi-zone setup has been tested yet.
+  - `DeviceFunctions`: GUI-independent. It lists the command blocks a model supports (`EiscpDevice.isCapable`), reduced to literal values without `QSTN` or placeholders. Blocks of the additional zones are labelled with the zone (`Zone 2 · Power`), except the ones repeating a main prefix. The YAML's model sets are coarse: `set1` covers almost everything, so a TX-NR626 is offered Sirius/XM/HD Radio as well.
   - `fx/FxGuiController`: starts JavaFX through `Ui.onFxThread` (`Platform.startup`, or `runLater` once the `StartupWindow` started it), so `ThreadedConsoleApp` does not extend `Application`. `ThreadedConsoleApp` hides the `StartupWindow` only after `start()`, because JavaFX ends with its last window.
     - Its constructor registers `ReceiverState` on the connector, so `ThreadedConsoleApp` creates it before `connect()`: right after connecting, the receiver pushes `NLT` with the NET service unasked.
     - It sends the initial queries, and sends them again after every reconnect.
@@ -145,6 +147,7 @@ The `dist` profile builds a native starter with `jpackage` (app image, no instal
       - The keys sit in uniform grids (`grid`): three columns for the text keys (inputs; SETUP, QUICK, ⋯), five for playback and digits. Repeat and shuffle are small keys in the pad's bottom corners, mirroring NET and TV at the top, and lit while on.
       - The digits fold behind the full-width "123" handle, which is lit while they show; the window resizes with them and `Settings` keeps the choice.
       - Play, pause and stop light up with `NetPlayback.getPlayStatus()`, repeat and shuffle while they are on. The TX-NR626 does not answer `NSTQSTN` and sends `NST` only on a change, so at start `NetPlayback` infers PLAY from a running `NTM` (it stops in pause); repeat and shuffle stay unknown until the first `NST`. All of them only on a NET input; repeat and shuffle are disabled elsewhere and when the service reports none (`x`).
+    - `ZonePanel`: one row per `Zone` of the model (power, input menu, volume, mute), folded behind the "ZONES" handle, which shares a row with "123"; `Settings` keeps the choice. A model without zones gets no handle. Input `80` is the main zone's source, shown as MAIN.
     - `WindowDrag`: moves a borderless window while it is dragged on a non-control area; also used by `LogWindow`.
     - `Ui`: key, icon and spacer helpers. Icons are SVG paths on a 24×24 grid.
     - `Ui.onFxThread` names the app `jEISCP` (`com.sun.glass.ui.Application.setName`, by reflection) before the first window. On Linux, JavaFX uses that name as WM_CLASS, by which GNOME finds name and icon for the dock; only `Application.launch` would set it, otherwise every window is `java` and GNOME matches it to the OpenJDK desktop entry. It needs `--add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED`, which `run.sh`, `run.ps1` and the jpackage `--java-options` pass; without it the windows stay `java`.

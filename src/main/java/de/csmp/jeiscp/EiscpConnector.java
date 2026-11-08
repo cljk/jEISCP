@@ -40,15 +40,26 @@ public class EiscpConnector {
 	private EiscpConnectorSocketReaderThread reader;
 	private Thread reconnecting;
 	private volatile String address;
+	private final EiscpDevice device;
 
 	public EiscpConnector(String host) {
 		this(host, DEFAULT_EISCP_PORT);
 	}
 
 	public EiscpConnector(String host, int port) {
+		this(host, port, null);
+	}
+
+	/** For a receiver found by {@link EiscpAutodiscovery}: its address and port, and {@link #getDevice()} knows its model. */
+	public EiscpConnector(EiscpDevice device) {
+		this(device.getIpAddress(), device.getPort(), device);
+	}
+
+	private EiscpConnector(String host, int port, EiscpDevice device) {
 		this.host = host;
 		this.port = port;
 		this.address = host;
+		this.device = device;
 	}
 
 	/**
@@ -56,8 +67,7 @@ public class EiscpConnector {
 	 * @throws java.net.SocketTimeoutException if none answers within {@link EiscpAutodiscovery#DEFAULT_TIMEOUT}
 	 */
 	public static EiscpConnector autodiscover() throws IOException {
-		EiscpDevice device = new EiscpAutodiscovery().discover();
-		EiscpConnector conn = new EiscpConnector(device.getIpAddress(), device.getPort());
+		EiscpConnector conn = new EiscpConnector(new EiscpAutodiscovery().discover());
 		conn.connect();
 		return conn;
 	}
@@ -189,6 +199,11 @@ public class EiscpConnector {
 	/** IP address of the receiver, e.g. {@code 192.168.0.97}; the configured host until connected. */
 	public String getAddress() {
 		return address;
+	}
+
+	/** @return the discovered receiver, {@code null} if this connector was created with a plain address */
+	public EiscpDevice getDevice() {
+		return device;
 	}
 
 	/** A failing listener is logged and does not keep the message from the others. */

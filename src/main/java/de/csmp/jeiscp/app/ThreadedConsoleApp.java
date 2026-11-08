@@ -83,7 +83,7 @@ public class ThreadedConsoleApp {
 							+ " and in this network?", "Otherwise enter its address.", "Otherwise connect directly with -a {ip-address}.");
 					continue;
 				}
-				candidate = new EiscpConnector(device.getIpAddress(), device.getPort());
+				candidate = new EiscpConnector(device);
 				target = device.getIpAddress() + (device.getPort() == EiscpConstants.DEFAULT_EISCP_PORT ? "" : ":" + device.getPort());
 			} else {
 				if (startup != null) {

@@ -1,5 +1,7 @@
 package de.csmp.jeiscp.app.fx;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import de.csmp.jeiscp.app.ReceiverProfile;
 import de.csmp.jeiscp.app.ReceiverState;
 import de.csmp.jeiscp.app.ReceiverState.Aspect;
 import de.csmp.jeiscp.app.Settings;
+import de.csmp.jeiscp.app.Zone;
 import javafx.application.Platform;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -27,6 +30,7 @@ public class FxGuiController {
 	private final Settings settings;
 	private final ReceiverState state = new ReceiverState();
 	private final ReceiverControl control;
+	private final List<Zone> zones;
 	private RemoteControlView view;
 
 	public FxGuiController(EiscpConnector conn, EiscpDevice device) {
@@ -42,6 +46,7 @@ public class FxGuiController {
 		this.device = device;
 		this.settings = settings;
 		control = new ReceiverControl(this::send, state, ReceiverProfile.of(device != null ? device.getDeviceType() : null));
+		zones = Zone.supportedBy(device);
 		conn.addListener(state);
 	}
 
@@ -57,13 +62,18 @@ public class FxGuiController {
 		state.setConnectionState(conn.getState());
 		conn.addStateListener(this::connectionChanged);
 		Ui.onFxThread(this::showWindow);	// JavaFX may already run for the StartupWindow
+		queryAll();
+	}
+
+	private void queryAll() {
 		control.queryStatus();
+		control.queryZones(zones);
 	}
 
 	private void connectionChanged(ConnectionState next) {
 		state.setConnectionState(next);
 		if (next == ConnectionState.CONNECTED) {
-			control.queryStatus();	// after a reconnect the receiver may have changed meanwhile
+			queryAll();	// after a reconnect the receiver may have changed meanwhile
 		}
 	}
 

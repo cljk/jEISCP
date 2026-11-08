@@ -62,6 +62,37 @@ public class ReceiverControlTest {
 	}
 
 	@Test
+	public void zoneKeysUseTheCommandsOfTheirZone() {
+		control.toggleZonePower(Zone.ZONE2);
+		control.toggleZoneMute(Zone.ZONE3);
+		control.zoneVolumeUp(Zone.ZONE4);
+		control.zoneVolumeDown(Zone.ZONE2);
+		control.selectZoneInput(Zone.ZONE3, "80");
+
+		assertEquals(List.of("ZPW01", "MT301", "VL4UP", "ZVLDOWN", "SL380"), sent);
+	}
+
+	@Test
+	public void zoneTogglesFollowTheReportedState() {
+		state.receivedIscpMessage("PW401");
+		state.receivedIscpMessage("MT401");
+		control.toggleZonePower(Zone.ZONE4);
+		control.toggleZoneMute(Zone.ZONE4);
+
+		assertEquals(List.of("PW400", "MT400"), sent);
+	}
+
+	@Test
+	public void zoneQueriesCoverEachGivenZone() {
+		control.queryZones(List.of(Zone.ZONE2));
+		assertEquals(List.of("ZPWQSTN", "ZVLQSTN", "ZMTQSTN", "SLZQSTN"), sent);
+
+		sent.clear();
+		control.queryZones(List.of());
+		assertEquals(List.of(), sent);
+	}
+
+	@Test
 	public void volumeIsHexClampedAndNotEchoed() {
 		control.setVolume(26);
 		control.setVolume(150);

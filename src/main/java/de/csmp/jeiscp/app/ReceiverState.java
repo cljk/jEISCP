@@ -15,6 +15,7 @@ import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.NET_USB_TITLE_NAME_IS
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.SYSTEM_POWER_ISCP;
 
 import java.time.Clock;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +35,7 @@ public class ReceiverState implements EiscpListener {
 	private static final Logger log = LoggerFactory.getLogger(ReceiverState.class);
 
 	/** {@code OTHER}: a message without a dedicated aspect; see {@link #getLastValue(String)}. */
-	public enum Aspect { CONNECTION, POWER, VOLUME, MUTE, INPUT, NOW_PLAYING, PLAY_STATUS, NET_LIST, COVER_ART, POPUP, OTHER }
+	public enum Aspect { CONNECTION, POWER, VOLUME, MUTE, INPUT, NOW_PLAYING, PLAY_STATUS, NET_LIST, COVER_ART, POPUP, ZONE, OTHER }
 
 	public interface Listener {
 		void changed(Aspect aspect);
@@ -44,6 +45,7 @@ public class ReceiverState implements EiscpListener {
 	private final NetPlayback playback = new NetPlayback();
 	private final CoverArt cover;
 	private final NetList netList = new NetList();
+	private final Map<Zone, ZoneState> zones = new EnumMap<>(Zone.class);	// filled once, read by all threads
 
 	private volatile Boolean power;
 	private volatile Integer volume;
@@ -58,6 +60,9 @@ public class ReceiverState implements EiscpListener {
 
 	ReceiverState(Clock clock) {
 		cover = new CoverArt(clock);
+		for (Zone zone : Zone.values()) {
+			zones.put(zone, new ZoneState(zone));
+		}
 	}
 
 	public void addListener(Listener listener) {
@@ -76,6 +81,13 @@ public class ReceiverState implements EiscpListener {
 		String command = message.substring(0, 3);
 		String parameter = message.substring(3);
 		lastValues.put(command, parameter);
+
+		Zone zone = Zone.ofCommand(command);
+		if (zone != null) {
+			zones.get(zone).received(command, parameter);
+			fire(Aspect.ZONE);
+			return;
+		}
 
 		switch (command) {
 			case SYSTEM_POWER_ISCP -> {
@@ -179,6 +191,10 @@ public class ReceiverState implements EiscpListener {
 	/** List, cursor, service and popup of the NET menu. */
 	public NetList netList() {
 		return netList;
+	}
+
+	public ZoneState zone(Zone zone) {
+		return zones.get(zone);
 	}
 
 	/** @return {@code null} while unknown */

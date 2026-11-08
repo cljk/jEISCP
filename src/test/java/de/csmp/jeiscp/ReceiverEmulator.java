@@ -34,7 +34,9 @@ import javax.imageio.ImageIO;
 
 /**
  * Emulates a TX-NR626 on 127.0.0.1, TCP and autodiscovery on one port, with its quirks: it ignores {@code NSTQSTN}
- * and {@code NJAREQ} and repeats the old cover before a new one. JDK only: {@code java ReceiverEmulator.java [port|0]}.
+ * and {@code NJAREQ} and repeats the old cover before a new one. Zone 2 answers power, volume, mute and input, also
+ * while the main zone is in standby; that part follows the command catalogue, not a logged receiver.
+ * JDK only: {@code java ReceiverEmulator.java [port|0]}.
  */
 public final class ReceiverEmulator implements AutoCloseable {
 
@@ -74,6 +76,10 @@ public final class ReceiverEmulator implements AutoCloseable {
 	private char repeat = '-';
 	private char shuffle = '-';
 	private byte[] lastCover;
+	private boolean zonePower;
+	private int zoneVolume = 0x14;
+	private boolean zoneMuted;
+	private String zoneInput = "80";	// the main zone's source
 
 	/** @param port {@code 0} for a free one */
 	public ReceiverEmulator(int port) throws IOException {
@@ -250,10 +256,46 @@ public final class ReceiverEmulator implements AutoCloseable {
 		String head = command.substring(0, 3);
 		String arg = command.substring(3);
 		boolean query = arg.equals("QSTN");
-		if (!power && !head.equals("PWR")) {
-			return;	// in standby only power answers
+		if (!power && !head.equals("PWR") && !List.of("ZPW", "ZVL", "ZMT", "SLZ").contains(head)) {
+			return;	// in standby only power and zone 2 answer
 		}
 		switch (head) {
+			case "ZPW" -> {
+				if (query) {
+					from.send(zonePowerMessage());
+				} else if (arg.matches("0[01]")) {
+					zonePower = arg.equals("01");
+					broadcast(zonePowerMessage());
+				}
+			}
+			case "ZVL" -> {
+				switch (arg) {
+					case "QSTN" -> from.send(zoneVolumeMessage());
+					case "UP", "UP1" -> setZoneVolume(zoneVolume + 1);
+					case "DOWN", "DOWN1" -> setZoneVolume(zoneVolume - 1);
+					default -> {
+						if (arg.matches("[0-9A-F]{2}")) {
+							setZoneVolume(Integer.parseInt(arg, 16));
+						}
+					}
+				}
+			}
+			case "ZMT" -> {
+				if (query) {
+					from.send(zoneMuteMessage());
+				} else if (arg.matches("0[01]|TG")) {
+					zoneMuted = arg.equals("TG") ? !zoneMuted : arg.equals("01");
+					broadcast(zoneMuteMessage());
+				}
+			}
+			case "SLZ" -> {
+				if (query) {
+					from.send("SLZ" + zoneInput);
+				} else if (arg.matches("[0-9A-F]{2}")) {
+					zoneInput = arg;
+					broadcast("SLZ" + zoneInput);
+				}
+			}
 			case "PWR" -> {
 				if (query) {
 					from.send(power());
@@ -361,6 +403,11 @@ public final class ReceiverEmulator implements AutoCloseable {
 		broadcast(volume());
 	}
 
+	private void setZoneVolume(int value) {
+		zoneVolume = Math.max(0, Math.min(MAX_VOLUME, value));
+		broadcast(zoneVolumeMessage());
+	}
+
 	private void setPlay(char status) {
 		if (play != status) {
 			play = status;
@@ -454,6 +501,18 @@ public final class ReceiverEmulator implements AutoCloseable {
 
 	private String mute() {
 		return muted ? "AMT01" : "AMT00";
+	}
+
+	private String zonePowerMessage() {
+		return zonePower ? "ZPW01" : "ZPW00";
+	}
+
+	private String zoneVolumeMessage() {
+		return String.format("ZVL%02X", zoneVolume);
+	}
+
+	private String zoneMuteMessage() {
+		return zoneMuted ? "ZMT01" : "ZMT00";
 	}
 
 	private String time() {

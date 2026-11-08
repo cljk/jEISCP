@@ -6,7 +6,7 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** What jEISCP remembers between runs, kept with {@code java.util.prefs}: last receiver, window position, number keys. */
+/** What jEISCP remembers between runs, kept with {@code java.util.prefs}: last receiver, window position, number keys, zones. */
 public final class Settings {
 	private static final Logger log = LoggerFactory.getLogger(Settings.class);
 
@@ -14,6 +14,7 @@ public final class Settings {
 	private static final String WINDOW_X = "window.x";
 	private static final String WINDOW_Y = "window.y";
 	private static final String NUMBER_KEYS = "numberKeys";
+	private static final String ZONES = "zones";
 
 	private final Preferences prefs;
 
@@ -58,6 +59,16 @@ public final class Settings {
 
 	public void rememberNumberKeysShown(boolean shown) {
 		prefs.putBoolean(NUMBER_KEYS, shown);
+		flush();
+	}
+
+	/** Whether the remote shows its zone rows; hidden by default. */
+	public boolean zonesShown() {
+		return prefs.getBoolean(ZONES, false);
+	}
+
+	public void rememberZonesShown(boolean shown) {
+		prefs.putBoolean(ZONES, shown);
 		flush();
 	}
 

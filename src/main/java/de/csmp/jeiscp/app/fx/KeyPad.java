@@ -68,8 +68,8 @@ final class KeyPad {
 	private static final String ICON_RIGHT = "M9 6l6 6-6 6";
 	private static final String ICON_HOME = "M3.5 11.5L12 4l8.5 7.5M6 10v9.5h12V10";
 	private static final String ICON_RETURN = "M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11";
-	private static final String ICON_SPEAKER = "M3 9.5v5h4l5 4.5v-14L7 9.5z";
-	private static final String ICON_CROSS = "M16 9.5l5 5M21 9.5l-5 5";
+	static final String ICON_SPEAKER = "M3 9.5v5h4l5 4.5v-14L7 9.5z";
+	static final String ICON_CROSS = "M16 9.5l5 5M21 9.5l-5 5";
 	private static final String ICON_PLAY = "M8 5.5v13l11-6.5z";
 	private static final String ICON_PAUSE = "M6.5 5.5h3.5v13H6.5zM14 5.5h3.5v13H14z";
 	private static final String ICON_STOP = "M6.5 6.5h11v11h-11z";
@@ -94,6 +94,7 @@ final class KeyPad {
 	private final Map<Target, Button> modeButtons = new LinkedHashMap<>();
 	private final ToggleButton numbersKey = new ToggleButton("123");
 	private final Node numbers;
+	private final ZonePanel zones;
 	private final Map<PlayStatus, Button> playStatusKeys = new EnumMap<>(PlayStatus.class);
 	private final SVGPath repeatOne = line(ICON_REPEAT_ONE);
 	private Button repeatKey;
@@ -107,13 +108,15 @@ final class KeyPad {
 	/**
 	 * @param numbersShown whether the number keys start unfolded
 	 * @param numbersToggled told when the "123" key folds or unfolds them
+	 * @param zones the rows of the additional zones, folded below the digits
 	 */
 	KeyPad(ReceiverState state, ReceiverControl control, Runnable showFunctions, Runnable dismissPopup,
-			boolean numbersShown, Consumer<Boolean> numbersToggled) {
+			boolean numbersShown, Consumer<Boolean> numbersToggled, ZonePanel zones) {
 		this.state = state;
 		this.control = control;
 		this.showFunctions = showFunctions;
 		this.dismissPopup = dismissPopup;
+		this.zones = zones;
 		numbers = numberKeys();
 		numbersKey.setSelected(numbersShown);
 		showNumbers(numbersShown);
@@ -334,7 +337,7 @@ final class KeyPad {
 		return button;
 	}
 
-	/** Playback in five columns, then the "123" handle over the full width and the digits, again in five columns. */
+	/** Playback in five columns, then the "123" and "ZONES" handles side by side (or "123" alone) and what they unfold. */
 	private Node playbackKeys() {
 		GridPane transport = grid(5, List.of(
 				transportKey(ICON_PREV, Playback.PREVIOUS, "Previous"),
@@ -346,7 +349,8 @@ final class KeyPad {
 		numbersKey.setFocusTraversable(false);
 		numbersKey.setTooltip(new Tooltip("Number keys"));
 		numbersKey.setMaxWidth(Double.MAX_VALUE);
-		return new VBox(8, transport, numbersKey, numbers);
+		return zones.isEmpty() ? new VBox(8, transport, numbersKey, numbers)
+				: new VBox(8, transport, grid(2, List.of(numbersKey, zones.getHandle())), numbers, zones.getNode());
 	}
 
 	private Button statusKey(PlayStatus status, Button key) {

@@ -42,6 +42,27 @@ public class EiscpCommandsParserTest {
 		Assert.assertNotNull(EiscpCommandsParser.getCommandByIscp("PWR01"));
 	}
 
+	@Test
+	public void zonesAreKeptApartFromTheMainCommands() {
+		List<String> zone2 = EiscpCommandsParser.getCommandBlocks("zone2").stream().map(CommandBlock::getCommand).toList();
+
+		Assert.assertTrue(zone2.containsAll(List.of("ZPW", "ZVL", "ZMT", "SLZ")));
+		Assert.assertFalse("getMainCommandBlocks stays main and dock",
+				EiscpCommandsParser.getMainCommandBlocks().stream().anyMatch(b -> b.getCommand().equals("ZPW")));
+		Assert.assertTrue(EiscpCommandsParser.getCommandBlocks("no-such-zone").isEmpty());
+		Assert.assertThrows(UnsupportedOperationException.class, () -> EiscpCommandsParser.getCommandBlocks("zone2").clear());
+	}
+
+	@Test
+	public void zoneCommandsResolveWithoutReplacingMainOnes() {
+		Assert.assertEquals("power", EiscpCommandsParser.getCommandByIscp("ZPW01").getCommandBlock().getName());
+		Assert.assertEquals("PW3", EiscpCommandsParser.getCommandByIscp("PW3QSTN").getCommandBlock().getCommand());
+
+		// zone2 lists NTC as well, with the same value
+		Command fromMain = EiscpCommandsParser.getCommandByIscp("NTCPLAY");
+		Assert.assertTrue(EiscpCommandsParser.getMainCommandBlocks().contains(fromMain.getCommandBlock()));
+	}
+
 	/** The catalogue is shared by the reader, FX and main threads, so nobody may change it. */
 	@Test
 	public void catalogueIsUnmodifiable() {

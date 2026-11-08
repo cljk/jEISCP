@@ -2,6 +2,7 @@ package de.csmp.jeiscp.app;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -24,9 +25,12 @@ public final class DeviceFunctions {
 	private static final Set<String> ACRONYMS = Set.of("am", "arc", "av", "bd", "cd", "cec", "dlna", "dsd", "dsx", "dts", "dvd", "eq",
 			"ex", "fm", "hd", "hdmi", "ipv", "isf", "lfe", "mcacc", "net", "osd", "pc", "pcm", "pqls", "rds", "thx", "tv", "usb", "xm");
 
-	public record Function(CommandBlock block, List<Command> actions, boolean queryable) {
+	/** @param zone the additional zone it acts on, {@code null} for the main zone */
+	public record Function(CommandBlock block, List<Command> actions, boolean queryable, Zone zone) {
+		/** Block names repeat per zone ("power"), so a zone's functions carry its name, unless the block has it anyway. */
 		public String label() {
-			return prettify(block.getName());
+			String name = prettify(block.getName());
+			return zone == null || name.startsWith(zone.label()) ? name : zone.label() + " · " + name;
 		}
 
 		public String prefix() {
@@ -40,26 +44,39 @@ public final class DeviceFunctions {
 	/** @param device {@code null} if the model is unknown; then every function is offered */
 	public static List<Function> forDevice(EiscpDevice device) {
 		List<Function> functions = new ArrayList<>();
+		Set<String> mainPrefixes = new HashSet<>();
 		for (CommandBlock block : EiscpCommandsParser.getMainCommandBlocks()) {
-			List<Command> actions = new ArrayList<>();
-			boolean queryable = false;
-			for (Command cmd : block.getValues()) {
-				if (device != null && !device.isCapable(cmd)) {
-					continue;
+			mainPrefixes.add(block.getCommand());
+			addFunction(functions, block, null, device);
+		}
+		for (Zone zone : Zone.values()) {
+			for (CommandBlock block : EiscpCommandsParser.getCommandBlocks(zone.catalogueName())) {
+				if (!mainPrefixes.contains(block.getCommand())) {	// the zones repeat e.g. NTC and TUN
+					addFunction(functions, block, zone, device);
 				}
-				if (QUERY.equals(cmd.getCommand())) {
-					queryable = true;
-				} else if (ACTION.matcher(cmd.getCommand()).matches()) {
-					actions.add(cmd);
-				}
-			}
-			if (!actions.isEmpty()) {
-				actions.sort(Comparator.comparing(Command::getCommand));
-				functions.add(new Function(block, List.copyOf(actions), queryable));
 			}
 		}
 		functions.sort(Comparator.comparing(Function::label).thenComparing(Function::prefix));
 		return List.copyOf(functions);
+	}
+
+	private static void addFunction(List<Function> functions, CommandBlock block, Zone zone, EiscpDevice device) {
+		List<Command> actions = new ArrayList<>();
+		boolean queryable = false;
+		for (Command cmd : block.getValues()) {
+			if (device != null && !device.isCapable(cmd)) {
+				continue;
+			}
+			if (QUERY.equals(cmd.getCommand())) {
+				queryable = true;
+			} else if (ACTION.matcher(cmd.getCommand()).matches()) {
+				actions.add(cmd);
+			}
+		}
+		if (!actions.isEmpty()) {
+			actions.sort(Comparator.comparing(Command::getCommand));
+			functions.add(new Function(block, List.copyOf(actions), queryable, zone));
+		}
 	}
 
 	/** Label for a value key: its catalogue name, or the raw value if it has none. */

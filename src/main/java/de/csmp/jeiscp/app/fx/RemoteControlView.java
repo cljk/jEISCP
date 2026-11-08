@@ -10,6 +10,7 @@ import de.csmp.jeiscp.app.ReceiverControl.Direction;
 import de.csmp.jeiscp.app.ReceiverState;
 import de.csmp.jeiscp.app.ReceiverState.Aspect;
 import de.csmp.jeiscp.app.Settings;
+import de.csmp.jeiscp.app.Zone;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.Parent;
@@ -34,6 +35,7 @@ public class RemoteControlView {
 	private final HeaderBar header;
 	private final DisplayPanel display;
 	private final KeyPad keys;
+	private final ZonePanel zones;
 	private final FunctionsPage functionsPage;
 
 	/** @param device the connected model, {@code null} if unknown; decides which functions are offered */
@@ -52,13 +54,19 @@ public class RemoteControlView {
 		this.control = control;
 		header = new HeaderBar(state, control, device, receiverAddress, this::openLog);
 		display = new DisplayPanel(state, control);
+		zones = new ZonePanel(state, control, Zone.supportedBy(device), settings != null && settings.zonesShown(), shown -> {
+			if (settings != null) {
+				settings.rememberZonesShown(shown);
+			}
+			fitWindow();
+		});
 		keys = new KeyPad(state, control, () -> showFunctions(true), display::dismissPopupIfShown,
 				settings != null && settings.numberKeysShown(), shown -> {
 					if (settings != null) {
 						settings.rememberNumberKeysShown(shown);
 					}
 					fitWindow();
-				});
+				}, zones);
 		functionsPage = new FunctionsPage(state, device, control, () -> showFunctions(false));
 		functionsPage.getRoot().setVisible(false);
 		StackPane pages = new StackPane(keys.getNode(), functionsPage.getRoot());
@@ -137,6 +145,7 @@ public class RemoteControlView {
 			case PLAY_STATUS -> keys.refreshPlayStatus();
 			case COVER_ART -> display.refreshScreen();
 			case POPUP -> display.refreshPopup();
+			case ZONE -> zones.refresh();
 			case OTHER -> {
 				// only the functions page shows these values
 			}
@@ -155,6 +164,7 @@ public class RemoteControlView {
 		display.refreshNetList();
 		keys.refreshSources();
 		display.refreshText();
+		zones.refresh();
 	}
 
 	/** The borderless window grows or shrinks with the number keys. */

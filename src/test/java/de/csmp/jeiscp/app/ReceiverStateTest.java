@@ -42,6 +42,41 @@ public class ReceiverStateTest {
 	}
 
 	@Test
+	public void zonesKeepTheirOwnValues() {
+		state.receivedIscpMessage("ZPW01");
+		state.receivedIscpMessage("ZVL1A");
+		state.receivedIscpMessage("ZMT01");
+		state.receivedIscpMessage("SLZ2B");
+		state.receivedIscpMessage("PW300");
+
+		ZoneState zone2 = state.zone(Zone.ZONE2);
+		assertTrue(zone2.getPower());
+		assertEquals(Integer.valueOf(26), zone2.getVolume());
+		assertTrue(zone2.getMuted());
+		assertEquals("2B", zone2.getInput());
+		assertFalse(state.zone(Zone.ZONE3).getPower());
+		assertNull("the main zone is a different one", state.getPower());
+		assertEquals(List.of(Aspect.ZONE, Aspect.ZONE, Aspect.ZONE, Aspect.ZONE, Aspect.ZONE), fired);
+		assertEquals("for the functions page", "1A", state.getLastValue("ZVL"));
+	}
+
+	@Test
+	public void zoneAnswerNotAvailableMeansUnknown() {
+		state.receivedIscpMessage("ZPW01");
+		state.receivedIscpMessage("ZVL1A");
+		state.receivedIscpMessage("ZPWN/A");
+		state.receivedIscpMessage("ZVLN/A");
+		state.receivedIscpMessage("ZMTN/A");
+		state.receivedIscpMessage("SLZN/A");
+
+		ZoneState zone2 = state.zone(Zone.ZONE2);
+		assertNull(zone2.getPower());
+		assertNull(zone2.getVolume());
+		assertNull(zone2.getMuted());
+		assertNull(zone2.getInput());
+	}
+
+	@Test
 	public void keepsLastValueOfEveryCommand() {
 		state.receivedIscpMessage("LMD0C");
 		state.receivedIscpMessage("PWR01");

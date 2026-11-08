@@ -72,6 +72,10 @@ public class ReceiverControl {
 	public static final int MAX_VOLUME_LEVEL = 100;
 
 	private static final String QUERY = "QSTN";
+	private static final String OFF = "00";
+	private static final String ON = "01";
+	private static final String UP = "UP";
+	private static final String DOWN = "DOWN";
 
 	private final Consumer<String> sender;
 	private final ReceiverState state;
@@ -157,6 +161,37 @@ public class ReceiverControl {
 		Integer current = state.getVolume();
 		if (current == null || current != clamped) {
 			send(MASTER_VOLUME_ISCP + String.format("%02X", clamped));
+		}
+	}
+
+	public void toggleZonePower(Zone zone) {
+		send(zone.powerCommand() + (Boolean.TRUE.equals(state.zone(zone).getPower()) ? OFF : ON));
+	}
+
+	public void toggleZoneMute(Zone zone) {
+		send(zone.muteCommand() + (Boolean.TRUE.equals(state.zone(zone).getMuted()) ? OFF : ON));
+	}
+
+	public void zoneVolumeUp(Zone zone) {
+		send(zone.volumeCommand() + UP);
+	}
+
+	public void zoneVolumeDown(Zone zone) {
+		send(zone.volumeCommand() + DOWN);
+	}
+
+	/** @param code input code as for {@code SLI}, {@code 80} for "the main zone's source" */
+	public void selectZoneInput(Zone zone, String code) {
+		send(zone.inputCommand() + code);
+	}
+
+	/** What the zone rows show; at start and after a reconnect. */
+	public void queryZones(List<Zone> zones) {
+		for (Zone zone : zones) {
+			send(zone.powerCommand() + QUERY);
+			send(zone.volumeCommand() + QUERY);
+			send(zone.muteCommand() + QUERY);
+			send(zone.inputCommand() + QUERY);
 		}
 	}
 

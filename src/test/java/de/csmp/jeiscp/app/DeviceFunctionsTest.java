@@ -44,6 +44,23 @@ public class DeviceFunctionsTest {
 	}
 
 	@Test
+	public void offersOnlyTheZonesOfTheModel() {
+		List<Function> functions = DeviceFunctions.forDevice(NR626);
+
+		Function power = find(functions, "ZPW").orElseThrow();
+		assertEquals("Zone 2 · Power", power.label());
+		assertEquals(Zone.ZONE2, power.zone());
+		assertTrue(values(power).containsAll(List.of("00", "01")));
+		assertEquals("no doubled zone name", "Zone 2 a", find(functions, "ZPA").orElseThrow().label());
+		assertFalse("the NR626 has no zone 3", find(functions, "PW3").isPresent());
+	}
+
+	@Test
+	public void repeatedMainCommandsAreOfferedOnce() {
+		assertEquals(1, DeviceFunctions.forDevice(null).stream().filter(f -> f.prefix().equals("NTC")).count());
+	}
+
+	@Test
 	public void unknownModelGetsEveryFunction() {
 		assertTrue(DeviceFunctions.forDevice(null).size() >= DeviceFunctions.forDevice(NR626).size());
 	}

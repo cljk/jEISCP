@@ -1,7 +1,7 @@
 jEISCP
 ======
 
-jEISCP is a Java implementation of the eISCP protocol used by network-enabled Onkyo/Integra AV receivers (and other devices, but the focus here is on AV receivers). It controls power, volume, input selection, network services and more, through a remote-control style JavaFX GUI and an ISCP console.
+jEISCP is a Java implementation of the eISCP protocol used by network-enabled Onkyo/Integra AV receivers (and other devices, but the focus here is on AV receivers). It controls power, volume, input selection, network services, additional zones and more, through a remote-control style JavaFX GUI and an ISCP console.
 
 _ISCP_ (Integra Serial Control Protocol) is the message format for serial connections to the devices. _eISCP_ (ISCP over Ethernet) is its TCP/IP encapsulation, used for LAN and WLAN (default port 60128). Both are described in a technical documentation maintained by Onkyo (search for "onkyo iscp technical documentation").
 

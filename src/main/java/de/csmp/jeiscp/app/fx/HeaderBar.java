@@ -28,7 +28,7 @@ import javafx.util.Duration;
 /** Top row of the remote: power key, traffic LED (opens the log), model and address link, minimize and close keys. */
 final class HeaderBar {
 
-	private static final String ICON_POWER = "M7.05 6.05a7 7 0 1 0 9.9 0M12 3v9";
+	static final String ICON_POWER = "M7.05 6.05a7 7 0 1 0 9.9 0M12 3v9";
 	private static final String ICON_MINIMIZE = "M6 12h12";
 	private static final String ICON_CLOSE = "M7 7l10 10M17 7L7 17";
 

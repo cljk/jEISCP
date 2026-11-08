@@ -540,6 +540,57 @@
     -fx-effect: innershadow(gaussian, rgba(45, 212, 191, 0.45), 8, 0, 0, 0);
 }
 
+/* one row per additional zone, unfolded by the "ZONES" handle */
+.zone-name {
+    -fx-text-fill: -text-dim;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-min-width: 40;
+}
+
+.zone-input {
+    -fx-font-size: 10px;
+    -fx-padding: 6 4;
+}
+
+.zone-volume {
+    -fx-font-size: 15px;
+    -fx-min-width: 24;
+    -fx-pref-width: 24;
+    -fx-max-width: 24;
+    -fx-min-height: 28;
+    -fx-pref-height: 28;
+    -fx-max-height: 28;
+}
+
+.zone-level {
+    -fx-text-fill: -text;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-min-width: 22;
+}
+
+.context-menu {
+    -fx-background-color: #24272c;
+    -fx-background-radius: 8;
+    -fx-padding: 4;
+}
+
+.context-menu .menu-item {
+    -fx-background-radius: 5;
+    -fx-padding: 4 12;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: -text;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.context-menu .menu-item:focused {
+    -fx-background-color: rgba(45, 212, 191, 0.25);
+}
+
 .dpad-ok-label {
     -fx-text-fill: -text;
     -fx-font-size: 13px;

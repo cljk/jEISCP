@@ -25,14 +25,16 @@ public class EiscpCommandsParser {
 	private static final String YAML_VALUES = "values";
 
 	private static final String EISCP_COMMANDS_YAML = "miracle2k-onkyo-eiscp/eiscp-commands.yaml";
-	private static final List<String> ZONES = List.of("main", "dock");
+	private static final List<String> MAIN_ZONES = List.of("main", "dock");
+	private static final List<String> OTHER_ZONES = List.of("zone2", "zone3", "zone4");
 
 	private static final Logger log = LoggerFactory.getLogger(EiscpCommandsParser.class);
 
 	private static final Map<String, List<String>> keysetForModel = new ConcurrentHashMap<>();
 
-	private record Catalog(Map<String, Object> yaml, List<CommandBlock> blocks, Map<String, Command> byId,
-			Map<String, CommandBlock> blockById, Map<String, Command> byIscp, Map<String, List<String>> modelsets) {
+	private record Catalog(Map<String, Object> yaml, List<CommandBlock> blocks, Map<String, List<CommandBlock>> blocksByZone,
+			Map<String, Command> byId, Map<String, CommandBlock> blockById, Map<String, Command> byIscp,
+			Map<String, List<String>> modelsets) {
 	}
 
 	/** Holder idiom: loaded when first accessed, exactly once. */
@@ -50,14 +52,15 @@ public class EiscpCommandsParser {
 		}
 		log.debug("parsed YAML @ " + EISCP_COMMANDS_YAML);
 
-		List<CommandBlock> blocks = new ArrayList<>();
-		for (String zone : ZONES) {
-			Map<String, Object> commands = (Map<String, Object>) yaml.get(zone);
-			if (commands != null) {
-				for (Map.Entry<String, Object> command : commands.entrySet()) {
-					blocks.add(parseCommandBlock(command.getKey(), (Map<String, Object>) command.getValue()));
-				}
+		Map<String, List<CommandBlock>> blocksByZone = new LinkedHashMap<>();
+		for (List<String> zones : List.of(MAIN_ZONES, OTHER_ZONES)) {
+			for (String zone : zones) {
+				blocksByZone.put(zone, parseZone((Map<String, Object>) yaml.get(zone)));
 			}
+		}
+		List<CommandBlock> blocks = new ArrayList<>();
+		for (String zone : MAIN_ZONES) {
+			blocks.addAll(blocksByZone.get(zone));
 		}
 
 		// names are not unique (e.g. NLS, NLA and NLU are all "net-usb-list-info"): the first block or command wins
@@ -72,9 +75,29 @@ public class EiscpCommandsParser {
 			}
 		}
 
-		return new Catalog(Collections.unmodifiableMap(yaml), List.copyOf(blocks), Collections.unmodifiableMap(byId),
-				Collections.unmodifiableMap(blockById), Collections.unmodifiableMap(byIscp),
+		// the other zones repeat names like "power" and prefixes like NTC or TUN: they only add what the main zones lack
+		for (String zone : OTHER_ZONES) {
+			for (CommandBlock block : blocksByZone.get(zone)) {
+				for (Command cmd : block.getValues()) {
+					byIscp.putIfAbsent(cmd.getIscpCommand(), cmd);
+				}
+			}
+		}
+
+		return new Catalog(Collections.unmodifiableMap(yaml), List.copyOf(blocks), Collections.unmodifiableMap(blocksByZone),
+				Collections.unmodifiableMap(byId), Collections.unmodifiableMap(blockById), Collections.unmodifiableMap(byIscp),
 				modelsets((Map<String, List<String>>) yaml.get("modelsets")));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static List<CommandBlock> parseZone(Map<String, Object> commands) {
+		List<CommandBlock> blocks = new ArrayList<>();
+		if (commands != null) {
+			for (Map.Entry<String, Object> command : commands.entrySet()) {
+				blocks.add(parseCommandBlock(command.getKey(), (Map<String, Object>) command.getValue()));
+			}
+		}
+		return List.copyOf(blocks);
 	}
 
 	/** Also lists "TX-NR609" for an entry "TX-NR609(Ether)", so device types from autodiscovery match. */
@@ -155,6 +178,16 @@ public class EiscpCommandsParser {
 	/** Commands of the main zone plus the "dock" zone, where upstream keeps the NET/USB commands (NTC, NLS, NJA, ...). */
 	public static List<CommandBlock> getMainCommandBlocks() {
 		return Holder.CATALOG.blocks();
+	}
+
+	/**
+	 * Commands of one zone of the YAML. Also {@code zone2} to {@code zone4}, which share only the lookup by ISCP string
+	 * with {@link #getMainCommandBlocks()}; they repeat some main commands such as {@code NTC}.
+	 * @param zone {@code main}, {@code dock}, {@code zone2}, {@code zone3} or {@code zone4}
+	 * @return empty for any other name
+	 */
+	public static List<CommandBlock> getCommandBlocks(String zone) {
+		return Holder.CATALOG.blocksByZone().getOrDefault(zone, List.of());
 	}
 
 	/** The raw YAML; only its top level is unmodifiable. */

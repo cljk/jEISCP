@@ -4,16 +4,24 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Duration;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.csmp.jeiscp.app.ReceiverControl;
 import de.csmp.jeiscp.app.ReceiverState;
+import de.csmp.jeiscp.app.Zone;
+import de.csmp.jeiscp.app.ZoneState;
 import de.csmp.jeiscp.app.NetPlayback.PlayStatus;
 import de.csmp.jeiscp.app.NetPlayback.Repeat;
 import de.csmp.jeiscp.app.NetPlayback.Shuffle;
@@ -47,6 +55,59 @@ public class ReceiverEmulatorTest {
 		assertNotNull(device);
 		assertEquals(ReceiverEmulator.MODEL, device.getDeviceType());
 		assertEquals(emulator.port(), (int) device.getPort());
+	}
+
+	@Test
+	public void connectorKnowsTheDiscoveredDevice() throws Exception {
+		EiscpDevice device = EiscpAutodiscovery.identify("127.0.0.1", emulator.port(), Duration.ofSeconds(10));
+
+		EiscpConnector discovered = new EiscpConnector(device);
+		try {
+			discovered.connect();
+			assertEquals(EiscpConnector.ConnectionState.CONNECTED, discovered.getState());
+			assertSame(device, discovered.getDevice());
+		} finally {
+			discovered.close();
+		}
+		assertNull("connected by address only", conn.getDevice());
+	}
+
+	@Test
+	public void zoneTwoIsControlledThroughTheModel() {
+		ReceiverControl control = new ReceiverControl(this::send, state);
+		ZoneState zone = state.zone(Zone.ZONE2);
+
+		control.queryZones(List.of(Zone.ZONE2));
+		await(() -> Boolean.FALSE.equals(zone.getPower()) && Integer.valueOf(0x14).equals(zone.getVolume())
+				&& Boolean.FALSE.equals(zone.getMuted()) && "80".equals(zone.getInput()));
+
+		control.toggleZonePower(Zone.ZONE2);
+		control.toggleZoneMute(Zone.ZONE2);
+		control.zoneVolumeUp(Zone.ZONE2);
+		control.selectZoneInput(Zone.ZONE2, "2B");
+		await(() -> Boolean.TRUE.equals(zone.getPower()) && Integer.valueOf(0x15).equals(zone.getVolume())
+				&& Boolean.TRUE.equals(zone.getMuted()) && "2B".equals(zone.getInput()));
+
+		control.toggleZonePower(Zone.ZONE2);
+		await(() -> Boolean.FALSE.equals(zone.getPower()));
+		assertEquals("the main zone is untouched", null, state.getVolume());
+	}
+
+	@Test
+	public void zoneTwoStillAnswersInStandby() throws Exception {
+		conn.sendIscpCommand("PWR00");
+		await(() -> Boolean.FALSE.equals(state.getPower()));
+
+		conn.sendIscpCommand("ZPW01");
+		await(() -> Boolean.TRUE.equals(state.zone(Zone.ZONE2).getPower()));
+	}
+
+	private void send(String command) {
+		try {
+			conn.sendIscpCommand(command);
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
+		}
 	}
 
 	@Test
